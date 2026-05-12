@@ -2,7 +2,7 @@ remote_theme: pmarsceill/just-the-docs
 title: "IsCodigo | Blog"
 description: "Blog de Enrique Avila | UNAH"
 url: "https://iscodigo.github.io"
-logo: ""
+logo: "assets/logo.png"
 
 # Configuración de navegación
 nav_enabled: true
