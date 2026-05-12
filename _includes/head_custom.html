@@ -1,0 +1,107 @@
+<style>
+  /* --- 0. Ajuste Maestro de Logo y Header --- */
+  .site-header {
+    display: flex !important;
+    flex-direction: column !important; /* Apilamos verticalmente para centrar mejor */
+    align-items: flex-end !important; /* Movemos el contenido hacia la derecha */
+    justify-content: center !important;
+    padding: 2rem 1.5rem 1rem 0 !important; /* Ajustamos padding inferior */
+    height: auto !important;
+    min-height: 200px !important; /* Suficiente espacio para que no se salga */
+    width: 100% !important;
+    border-bottom: none !important; /* Quitamos la línea horizontal larga */
+  }
+
+  .site-title {
+    display: flex !important;
+    justify-content: flex-end !important; /* Alineamos el contenido del link a la derecha */
+    align-items: center !important;
+    width: 100% !important;
+    margin-right: 0 !important; /* Quitamos márgenes que lo tiran a la izquierda */
+  }
+
+  .site-logo {
+    width: 180px !important;  /* Ajusta este tamaño a tu gusto (Ancho) */
+    height: 180px !important; /* Ajusta este tamaño a tu gusto (Alto) */
+    background-size: contain !important;
+    background-position: right center !important; /* Imagen de fondo alineada a la derecha */
+    background-repeat: no-repeat !important;
+    margin: 0 !important; /* Quitamos el auto para que no se centre */
+  }
+
+  /* --- 1. Justificado y Estética de Imágenes --- */
+  .main-content p, .main-content li { text-align: justify; hyphens: auto; }
+  .main-content img { display: block; margin: 2rem auto; max-width: 85%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+  h1, h2, h3, h4 { text-align: left; }
+  
+  /* Forzamos al contenedor de Mermaid a ser un bloque centrado */
+  code.language-mermaid { 
+    display: block !important; 
+    text-align: center !important; 
+    background: transparent !important;
+    padding: 0 !important;
+  }
+  code.language-mermaid svg { 
+    display: inline-block !important; 
+    margin: 0 auto !important; 
+  }
+  /* Limpiamos el formato de 'pre' que el tema le pone por error */
+  pre:has(code.language-mermaid) { 
+    background: transparent !important; 
+    border: none !important; 
+    display: block !important;
+    width: 100% !important;
+  }
+/* --- 3. Botón Zen con Icono --- */
+  #toggle-nav {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 9999;
+    width: 45px;
+    height: 45px;
+    background: #BB86FC;
+    color: #000;
+    border: none;
+    border-radius: 50%; /* Circular */
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  #toggle-nav:hover { transform: scale(1.1); background: #03DAC6; }
+
+  /* --- 4. Lógica de Ocultar Menú --- */
+  body.hide-menu .side-bar { display: none !important; }
+  body.hide-menu .main { margin-left: 0 !important; max-width: 100% !important; }
+  body.hide-menu .main-header { left: 0 !important; width: 100% !important; }
+
+  /* --- 5. Estilo para el Logo del Footer --- */
+  .footer-logo {
+    width: 60px;
+    opacity: 0.5;
+    filter: grayscale(100%);
+    transition: 0.3s;
+    margin-bottom: 10px;
+  }
+  .footer-logo:hover { opacity: 1; filter: grayscale(0%); }
+
+  /* --- 4. Limpieza del Índice (TOC) --- */
+  h2.text-delta, h2.text-delta + ul, hr {
+    display: none !important;
+  }
+ </style>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.querySelector('.search-input');
+    if (searchInput) {
+      searchInput.placeholder = "Buscar...";
+    }
+  });
+</script>
+<button id="toggle-nav" onclick="document.body.classList.toggle('hide-menu')" title="Modo Enfoque">
+  🖥️
+</button>
