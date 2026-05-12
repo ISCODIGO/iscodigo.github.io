@@ -334,7 +334,7 @@ int res = ptr_func(5, 10);        // Llamada indirecta
 
 <div style="margin: 25px 0; border: 2px solid #BB86FC; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
     <iframe 
-        src="{{ site.baseurl }}/compilerc.html?file=https://raw.githubusercontent.com/ConsSorto/ConsSorto.github.io/main/isc-102/unidad-2/code/resumenpunteros.c" 
+        src="{{ site.baseurl }}/compilerc.html?file=https://raw.githubusercontent.com/ISCODIGO/iscodigo.github.io/main/isc-102/unidad-2/code/resumenpunteros.c" 
         width="100%" 
         height="600px" 
         frameborder="0">
@@ -345,7 +345,7 @@ int res = ptr_func(5, 10);        // Llamada indirecta
 
 <div style="margin: 25px 0; border: 2px solid #BB86FC; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
     <iframe 
-        src="{{ site.baseurl }}/compilerc.html?file=https://raw.githubusercontent.com/ConsSorto/ConsSorto.github.io/main/isc-102/unidad-2/code/punterosreferencia.c" 
+        src="{{ site.baseurl }}/compilerc.html?file=https://raw.githubusercontent.com/ISCODIGO/iscodigo.github.io/main/isc-102/unidad-2/code/punterosreferencia.c" 
         width="100%" 
         height="600px" 
         frameborder="0">

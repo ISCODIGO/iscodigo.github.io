@@ -19,7 +19,7 @@ Toda función consta de una **cabecera** y un **cuerpo**. La cabecera define el 
 
 <div style="margin: 25px 0; border: 2px solid #BB86FC; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
     <iframe 
-        src="{{ site.baseurl }}/compilerc.html?file=https://raw.githubusercontent.com/ConsSorto/ConsSorto.github.io/main/isc-102/unidad-2/code/ejemplo1-1.c" 
+        src="{{ site.baseurl }}/compilerc.html?file=https://raw.githubusercontent.com/ISCODIGO/iscodigo.github.io/main/isc-102/unidad-2/code/ejemplo1-1.c" 
         width="100%" 
         height="600px" 
         frameborder="0">
@@ -36,7 +36,7 @@ Se declaran fuera de cualquier función, normalmente al principio del archivo fu
 
 <div style="margin: 25px 0; border: 2px solid #BB86FC; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
     <iframe 
-        src="{{ site.baseurl }}/compilerc.html?file=https://raw.githubusercontent.com/ConsSorto/ConsSorto.github.io/main/isc-102/unidad-2/code/ejemplo2-1.c" 
+        src="{{ site.baseurl }}/compilerc.html?file=https://raw.githubusercontent.com/ISCODIGO/iscodigo.github.io/main/isc-102/unidad-2/code/ejemplo2-1.c" 
         width="100%" 
         height="600px" 
         frameborder="0">
@@ -136,7 +136,7 @@ En el caso del factorial de un número ($n!$), la definición recursiva establec
 
 <div style="margin: 25px 0; border: 2px solid #BB86FC; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
     <iframe 
-        src="{{ site.baseurl }}/compilerc.html?file=https://raw.githubusercontent.com/ConsSorto/ConsSorto.github.io/main/isc-102/unidad-2/code/ejemplo3-1.c" 
+        src="{{ site.baseurl }}/compilerc.html?file=https://raw.githubusercontent.com/ISCODIGO/iscodigo.github.io/main/isc-102/unidad-2/code/ejemplo3-1.c" 
         width="100%" 
         height="600px" 
         frameborder="0">
@@ -231,7 +231,7 @@ Permite decidir qué partes del código se compilan y cuáles se ignoran. Es vit
 **Ejemplo de If para activar caclulos condicionales:**
 <div style="margin: 25px 0; border: 2px solid #BB86FC; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
     <iframe 
-        src="{{ site.baseurl }}/compilerc.html?file=https://raw.githubusercontent.com/ConsSorto/ConsSorto.github.io/main/isc-102/unidad-2/code/ejemplo4-1.c" 
+        src="{{ site.baseurl }}/compilerc.html?file=https://raw.githubusercontent.com/ISCODIGO/iscodigo.github.io/main/isc-102/unidad-2/code/ejemplo4-1.c" 
         width="100%" 
         height="600px" 
         frameborder="0">
