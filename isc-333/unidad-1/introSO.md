@@ -21,6 +21,46 @@ Vrije Universiteit Amsterdam
   - [1.3.4 Dispositivos de E/S](#134-dispositivos-de-es)
   - [1.3.5 Buses](#135-buses)
   - [1.3.6 Arranque del computador](#136-arranque-del-computador)
+- [1.4 El Zoológico de los Sistemas Operativos](#14-el-zoológico-de-los-sistemas-operativos)
+  - [1.4.1 SO para Mainframes](#141-so-para-mainframes)
+  - [1.4.2 SO para Servidores](#142-so-para-servidores)
+  - [1.4.3 SO para Multiprocesadores](#143-so-para-multiprocesadores)
+  - [1.4.4 SO para Computadoras Personales](#144-so-para-computadoras-personales)
+  - [1.4.5 SO para Dispositivos de Mano](#145-so-para-dispositivos-de-mano)
+  - [1.4.6 SO Embebidos](#146-so-embebidos)
+  - [1.4.7 SO para Nodos Sensores](#147-so-para-nodos-sensores)
+  - [1.4.8 SO de Tiempo Real](#148-so-de-tiempo-real)
+  - [1.4.9 SO para Tarjetas Inteligentes](#149-so-para-tarjetas-inteligentes)
+- [1.5 Conceptos de Sistemas Operativos](#15-conceptos-de-sistemas-operativos)
+  - [1.5.1 Procesos](#151-procesos)
+  - [1.5.2 Espacios de Direcciones](#152-espacios-de-direcciones)
+  - [1.5.3 Archivos](#153-archivos)
+  - [1.5.4 Entrada/Salida](#154-entradasalida)
+  - [1.5.5 Protección](#155-protección)
+  - [1.5.6 El Shell](#156-el-shell)
+  - [1.5.7 La Ontogenia Recapitula la Filogenia](#157-la-ontogenia-recapitula-la-filogenia)
+- [1.6 Llamadas al Sistema](#16-llamadas-al-sistema)
+  - [1.6.1 Llamadas al Sistema para Gestión de Procesos](#161-llamadas-al-sistema-para-gestión-de-procesos)
+  - [1.6.2 Llamadas al Sistema para Gestión de Archivos](#162-llamadas-al-sistema-para-gestión-de-archivos)
+  - [1.6.3 Llamadas al Sistema para Gestión de Directorios](#163-llamadas-al-sistema-para-gestión-de-directorios)
+  - [1.6.4 Llamadas Misceláneas](#164-llamadas-misceláneas)
+  - [1.6.5 La API Win32 de Windows](#165-la-api-win32-de-windows)
+- [1.7 Estructura del Sistema Operativo](#17-estructura-del-sistema-operativo)
+  - [1.7.1 Sistemas Monolíticos](#171-sistemas-monolíticos)
+  - [1.7.2 Sistemas en Capas](#172-sistemas-en-capas)
+  - [1.7.3 Microkernels](#173-microkernels)
+  - [1.7.4 Modelo Cliente-Servidor](#174-modelo-cliente-servidor)
+  - [1.7.5 Máquinas Virtuales](#175-máquinas-virtuales)
+  - [1.7.6 Exokernels](#176-exokernels)
+- [1.8 El Mundo Según C](#18-el-mundo-según-c)
+  - [1.8.1 El Lenguaje C](#181-el-lenguaje-c)
+  - [1.8.2 Archivos de Cabecera](#182-archivos-de-cabecera)
+  - [1.8.3 Grandes Proyectos de Programación](#183-grandes-proyectos-de-programación)
+  - [1.8.4 El Modelo en Tiempo de Ejecución](#184-el-modelo-en-tiempo-de-ejecución)
+- [1.9 Investigación sobre Sistemas Operativos](#19-investigación-sobre-sistemas-operativos)
+- [1.10 Estructura del Resto del Libro](#110-estructura-del-resto-del-libro)
+- [1.11 Unidades Métricas](#111-unidades-métricas)
+- [1.12 Resumen del Capítulo](#112-resumen-del-capítulo)
 
 ---
 
@@ -280,6 +320,9 @@ Fetch → Decode → Execute → (repetir)
 
 Ha sido válida por más de 3 décadas y está llegando a sus límites físicos a escala atómica.
 
+
+![Ley de Moore](imagenes/moore_law.png)
+
 ---
 
 ### 1.3.2 Memoria
@@ -431,6 +474,738 @@ Interfaz de usuario  (login / GUI)
 
 ---
 
+## 1.4 El Zoológico de los Sistemas Operativos
+
+Los sistemas operativos han evolucionado en distintas direcciones para satisfacer las necesidades de muy diferentes tipos de computadoras. A continuación se describe cada categoría principal.
+
+---
+
+### 1.4.1 SO para Mainframes
+
+Los **mainframes** son computadoras del tamaño de una habitación que procesan millones de transacciones por segundo. Sus SO (como **OS/390**, evolución del OS/360) soportan tres tipos de trabajo simultáneamente:
+
+| Tipo de trabajo | Descripción |
+|-----------------|-------------|
+| **Batch** | Trabajos rutinarios sin interacción del usuario (liquidación de nóminas, actualizaciones de inventario) |
+| **Procesamiento de transacciones** | Miles de peticiones breves por segundo (reservas aéreas, operaciones bancarias) |
+| **Timesharing** | Múltiples usuarios remotos ejecutando consultas interactivas |
+
+Hoy los mainframes sobreviven en grandes bancos y aerolíneas, pero Linux los está desplazando gradualmente.
+
+---
+
+### 1.4.2 SO para Servidores
+
+Los servidores sirven a múltiples usuarios a través de redes. Sus SO deben gestionar bien los recursos compartidos:
+
+- **Solaris**, **FreeBSD**, **Linux**, **Windows Server** son los más comunes.
+- Ofrecen servicios de archivos, impresión, web y bases de datos.
+- Se ejecutan en hardware de alta gama con múltiples procesadores y terabytes de almacenamiento.
+
+---
+
+### 1.4.3 SO para Multiprocesadores
+
+Al conectar varios procesadores en un mismo sistema se obtiene una enorme potencia de cómputo. Los SO para multiprocesadores son básicamente variaciones de los SO de servidor con características añadidas de **comunicación y coherencia entre procesadores**.
+
+---
+
+### 1.4.4 SO para Computadoras Personales
+
+El objetivo es proporcionar buena experiencia a un **usuario individual**. Los más usados son:
+
+- **Linux**, **FreeBSD**, **Windows 7/8/10/11**, **macOS (OS X)**
+
+Todos ofrecen interfaz gráfica, gestión de procesos, sistema de archivos y soporte multimedia.
+
+---
+
+### 1.4.5 SO para Dispositivos de Mano
+
+Incluyen **PDAs**, **tabletas** y **smartphones**. Sus restricciones son:
+
+- Memoria y CPU limitadas
+- Pantalla pequeña y táctil
+- Batería como recurso crítico
+
+Los SO dominantes son:
+- **Android** (Google): basado en Linux, open source, modificable por fabricantes
+- **iOS** (Apple): derivado de BSD/Mach, cerrado, eficiente
+
+---
+
+### 1.4.6 SO Embebidos
+
+Se ejecutan en dispositivos que **no son considerados computadoras** por sus usuarios: microondas, TVs, automóviles, reproductores de DVD, teléfonos IP, equipos médicos.
+
+Características clave:
+- No permiten instalar software por parte del usuario
+- Todo el software está en ROM
+- Deben ser extremadamente fiables (fallar en un avión o en un marcapasos es inaceptable)
+
+SO embebidos comunes: **Embedded Linux**, **QNX**, **VxWorks**.
+
+---
+
+### 1.4.7 SO para Nodos Sensores
+
+Las redes de sensores están formadas por diminutos nodos que miden temperatura, humedad, movimiento o radiación, y envían los datos de forma inalámbrica.
+
+- Funcionan con **batería** (deben durar años)
+- Procesadores lentos y memoria escasa
+- SO típico: **TinyOS** — orientado a eventos, sin bloqueos, muy compacto
+
+---
+
+### 1.4.8 SO de Tiempo Real
+
+El requisito fundamental es que **las acciones deben completarse dentro de plazos estrictos**:
+
+| Tipo | Consecuencia de incumplir el plazo | Ejemplo |
+|------|------------------------------------|---------|
+| **Tiempo real duro** | Falla catastrófica o peligrosa | Control de motor de avión, marcapasos |
+| **Tiempo real suave** | Degradación de calidad tolerable | Streaming de vídeo, audio digital |
+
+SO representativo: **eCos** (software libre para sistemas empotrados de tiempo real).
+
+---
+
+### 1.4.9 SO para Tarjetas Inteligentes
+
+Las **smart cards** contienen un chip y ejecutan un SO extremadamente básico. Algunas incluyen una **JVM** (Java Virtual Machine) para ejecutar applets Java. Sus principales limitaciones son la energía (tomada del lector) y la memoria (<1 KB de RAM).
+
+---
+
+## 1.5 Conceptos de Sistemas Operativos
+
+Todo SO proporciona ciertas abstracciones fundamentales a los programas. A continuación se describen los conceptos esenciales.
+
+---
+
+### 1.5.1 Procesos
+
+Un **proceso** es esencialmente un **programa en ejecución**. Asociado a cada proceso hay:
+
+- Su **espacio de direcciones** (mapa de memoria): segmentos de texto, datos y pila
+- El contenido de los **registros del CPU** (PC, SP, PSW, etc.)
+- Información del SO: **tabla de procesos** (*process table*), que almacena el estado de cada proceso
+
+#### Llamadas clave para gestión de procesos (UNIX)
+
+```c
+fork()      // Crea una copia exacta del proceso actual (proceso hijo)
+exec()      // Reemplaza la imagen del proceso con un nuevo programa
+waitpid()   // El padre espera que el hijo termine
+exit()      // El proceso termina y devuelve un código de estado
+```
+
+#### Comunicación entre procesos
+
+El SO gestiona las **señales** (*signals*): notificaciones asíncronas enviadas a un proceso (equivalente a interrupciones por software). Cada proceso puede definir su manejador de señal o usar el comportamiento por defecto.
+
+#### Identificación
+
+- **UID** (*User ID*): identifica al usuario propietario del proceso
+- **GID** (*Group ID*): identifica el grupo al que pertenece
+- Un proceso con UID = 0 es el **superusuario (root)** y tiene privilegios totales
+
+---
+
+### 1.5.2 Espacios de Direcciones
+
+Cada proceso tiene su propio **espacio de direcciones virtual**, que el hardware (MMU) traduce a direcciones físicas de RAM.
+
+- En arquitecturas de 32 bits: espacio de hasta **2³² = 4 GB**
+- En arquitecturas de 64 bits: espacio de hasta **2⁶⁴ bytes** (teóricamente)
+
+La **memoria virtual** permite que el espacio de direcciones de un proceso sea mayor que la RAM física disponible, paginando partes al disco de forma transparente.
+
+---
+
+### 1.5.3 Archivos
+
+El SO provee una abstracción de **archivo** que oculta los detalles del hardware de almacenamiento.
+
+#### Jerarquía de directorios
+
+```
+/ (raíz)
+├── bin/          ← ejecutables del sistema
+├── etc/          ← archivos de configuración
+├── home/
+│   └── alice/    ← directorio home de un usuario
+│       └── docs/
+│           └── reporte.pdf
+└── tmp/
+```
+
+- **Ruta absoluta:** `/home/alice/docs/reporte.pdf`
+- **Ruta relativa:** `docs/reporte.pdf` (desde `/home/alice`)
+
+#### Descriptor de archivo (*file descriptor*)
+
+Entero pequeño que identifica un archivo abierto. Estándar en UNIX:
+
+| FD | Canal |
+|----|-------|
+| 0 | Entrada estándar (stdin) |
+| 1 | Salida estándar (stdout) |
+| 2 | Error estándar (stderr) |
+
+#### Archivos especiales
+
+| Tipo | Descripción | Ejemplo |
+|------|-------------|---------|
+| **Block special** | Dispositivos de almacenamiento por bloques | `/dev/sda` (disco) |
+| **Character special** | Dispositivos carácter a carácter | `/dev/tty` (terminal) |
+| **Pipe (tubería)** | Comunicación entre procesos | `ls | grep txt` |
+
+#### Sistemas de archivos montados
+
+UNIX unifica múltiples dispositivos en un solo árbol mediante `mount`. Un disco USB montado en `/mnt/usb` aparece como directorio más, de forma transparente.
+
+---
+
+### 1.5.4 Entrada/Salida
+
+El SO abstrae los dispositivos de E/S mediante:
+
+- **Drivers** de dispositivo: código específico del fabricante
+- **Software independiente del dispositivo**: capa intermedia del SO que provee una interfaz uniforme
+
+Las operaciones de E/S pueden ser:
+- **Síncronas (bloqueantes):** el proceso espera a que termine la operación
+- **Asíncronas (no bloqueantes):** el proceso continúa y es notificado por interrupción
+
+---
+
+### 1.5.5 Protección
+
+UNIX controla el acceso a archivos mediante un código de **9 bits** dividido en tres grupos de 3 bits (rwx):
+
+```
+rwxr-xr--
+│││ │││ │││
+│││ │││ └──  Otros:   r=leer, w=no escribir, x=no ejecutar
+│││ └──────  Grupo:   r=leer, x=ejecutar
+└──────────  Propietario: r=leer, w=escribir, x=ejecutar
+```
+
+El comando `chmod 755 archivo` establece estos permisos numéricamente:
+
+| Valor | Bits | Permisos |
+|-------|------|----------|
+| 7 | 111 | rwx |
+| 5 | 101 | r-x |
+| 4 | 100 | r-- |
+
+---
+
+### 1.5.6 El Shell
+
+El **shell** es el intérprete de comandos: un proceso de usuario que acepta órdenes, las ejecuta y devuelve resultados. No forma parte del SO, pero lo utiliza intensivamente.
+
+Shells más comunes: `sh`, `csh`, `ksh`, **`bash`** (Bourne-Again Shell)
+
+#### Características principales
+
+```bash
+# Redirección de entrada/salida
+ls > archivos.txt        # stdout → archivo
+sort < datos.txt         # stdin  ← archivo
+ls 2> errores.txt        # stderr → archivo
+
+# Tuberías (pipes): encadenar comandos
+cat archivo | grep "clave" | sort | uniq
+
+# Procesos en segundo plano
+./compilar_proyecto &    # El '&' lo ejecuta en background
+
+# Variables de entorno
+echo $HOME               # Directorio del usuario actual
+echo $PATH               # Rutas de búsqueda de ejecutables
+```
+
+---
+
+### 1.5.7 La Ontogenia Recapitula la Filogenia
+
+Existe un patrón curioso: cada vez que aparece un nuevo tipo de computadora (mainframes → PCs → smartphones), repite la misma evolución que sus predecesores: primero sin SO, luego básico, luego más sofisticado.
+
+| Recurso | Historia |
+|---------|----------|
+| **Memoria grande** | Los primeros PCs tenían 32 KB; hoy tienen 32 GB. Las técnicas de gestión (overlays, swapping, paginación) evolucionaron igual que en mainframes |
+| **Hardware de protección** | Los primeros PC no tenían; se añadió después conforme se necesitó multitarea |
+| **Discos** | Primero sin SO de archivos, luego CP/M, luego FAT, NTFS, ext4 |
+| **Memoria virtual** | Primero inexistente en PCs, luego adoptada de mainframes |
+
+Este ciclo recurrente fue llamado la **"rueda de la reencarnación"** por los investigadores de SO.
+
+---
+
+## 1.6 Llamadas al Sistema
+
+Las **llamadas al sistema** (*system calls*) son la interfaz entre los programas de usuario y el SO. Permiten que los programas soliciten servicios del kernel de forma controlada.
+
+#### Mecanismo de una llamada al sistema
+
+El siguiente ejemplo muestra los 11 pasos de `count = read(fd, buffer, nbytes)`:
+
+```
+Programa de usuario          Biblioteca C           Kernel (SO)
+─────────────────────────   ──────────────────     ────────────────────
+1. count = read(fd,buf,n) →
+2.                            Parámetros en pila
+3.                            TRAP (instrucción)  →
+4.                                                  Dispatcher
+5.                                                  Manejador de read
+6.                                                  ← Retorna resultado
+7.                            ← Retorna de TRAP
+8. Resultado en count    ←
+```
+
+El programa de usuario **nunca accede directamente al hardware**; siempre pasa por la capa del SO.
+
+---
+
+### 1.6.1 Llamadas al Sistema para Gestión de Procesos
+
+| Llamada | Descripción |
+|---------|-------------|
+| `pid = fork()` | Crea un proceso hijo idéntico al padre. Retorna 0 en el hijo, PID del hijo en el padre |
+| `pid = waitpid(pid, &stat, opts)` | Espera a que un hijo termine; recibe su código de salida |
+| `s = execve(name, argv, envp)` | Reemplaza la imagen del proceso con el programa `name` |
+| `exit(status)` | Termina el proceso y devuelve `status` al padre |
+
+#### Ejemplo: shell simplificado
+
+```c
+while (TRUE) {
+    read_command(command, params);      // leer orden del usuario
+    if (fork() != 0) {                  // proceso padre
+        waitpid(-1, &status, 0);        // esperar al hijo
+    } else {                            // proceso hijo
+        execve(command, params, 0);     // ejecutar el comando
+    }
+}
+```
+
+---
+
+### 1.6.2 Llamadas al Sistema para Gestión de Archivos
+
+| Llamada | Descripción |
+|---------|-------------|
+| `fd = open(file, flags, mode)` | Abre o crea un archivo; retorna descriptor |
+| `s = close(fd)` | Cierra el descriptor de archivo |
+| `n = read(fd, buffer, nbytes)` | Lee hasta `nbytes` del archivo en `buffer` |
+| `n = write(fd, buffer, nbytes)` | Escribe `nbytes` de `buffer` al archivo |
+| `pos = lseek(fd, offset, whence)` | Reposiciona el puntero del archivo |
+| `s = stat(name, &buf)` | Obtiene metadatos del archivo (tamaño, fechas, permisos) |
+
+Flags comunes de `open()`:
+
+```c
+O_RDONLY    // solo lectura
+O_WRONLY    // solo escritura
+O_RDWR      // lectura y escritura
+O_CREAT     // crear si no existe
+O_TRUNC     // truncar a 0 bytes si existe
+```
+
+---
+
+### 1.6.3 Llamadas al Sistema para Gestión de Directorios
+
+| Llamada | Descripción |
+|---------|-------------|
+| `s = mkdir(name, mode)` | Crea un directorio |
+| `s = rmdir(name)` | Elimina un directorio vacío |
+| `s = link(old, new)` | Crea un enlace duro: `new` apunta al mismo i-nodo que `old` |
+| `s = unlink(name)` | Elimina una entrada de directorio (borra el archivo si es el último enlace) |
+| `s = mount(spec, name, flag)` | Monta un sistema de archivos en el árbol |
+| `s = umount(name)` | Desmonta un sistema de archivos |
+
+#### I-nodos e I-numbers
+
+Cada archivo tiene un **i-nodo**: estructura interna que guarda metadatos (propietario, permisos, tamaño, tiempos, bloques de datos). El directorio relaciona nombres con **i-numbers** (índices de i-nodos).
+
+`link()` permite que **dos nombres apunten al mismo i-nodo** (mismo archivo, mismo contenido).
+
+---
+
+### 1.6.4 Llamadas Misceláneas
+
+| Llamada | Descripción |
+|---------|-------------|
+| `s = chdir(dirname)` | Cambia el directorio de trabajo actual |
+| `s = chmod(name, mode)` | Cambia los permisos de acceso de un archivo |
+| `s = kill(pid, signal)` | Envía una señal al proceso con PID dado |
+| `seconds = time(&t)` | Retorna el tiempo actual en segundos (época UNIX: 1 enero 1970) |
+
+---
+
+### 1.6.5 La API Win32 de Windows
+
+Windows no usa las llamadas POSIX directamente. En su lugar expone la **API Win32** (también llamada WinAPI), un conjunto de miles de funciones documentadas en MSDN.
+
+Diferencia conceptual clave:
+
+| Paradigma | Sistema | Descripción |
+|-----------|---------|-------------|
+| **Orientado a procedimientos** | UNIX/Linux | El programa ejecuta instrucciones secuenciales; llama al SO cuando necesita servicios |
+| **Orientado a eventos** | Windows | El programa responde a eventos del entorno (clicks, mensajes de ventana, timers) |
+
+#### Equivalencias seleccionadas UNIX ↔ Win32
+
+| UNIX | Win32 | Función |
+|------|-------|---------|
+| `fork` / `exec` | `CreateProcess` | Crear proceso |
+| `waitpid` | `WaitForSingleObject` | Esperar proceso |
+| `exit` | `ExitProcess` | Terminar proceso |
+| `open` | `CreateFile` | Abrir/crear archivo |
+| `close` | `CloseHandle` | Cerrar handle |
+| `read` | `ReadFile` | Leer archivo |
+| `write` | `WriteFile` | Escribir archivo |
+| `lseek` | `SetFilePointer` | Mover puntero |
+| `stat` | `GetFileAttributesEx` | Metadatos de archivo |
+| `mkdir` | `CreateDirectory` | Crear directorio |
+| `rmdir` | `RemoveDirectory` | Eliminar directorio |
+| `chdir` | `SetCurrentDirectory` | Cambiar directorio |
+| `time` | `GetLocalTime` | Obtener hora |
+
+---
+
+## 1.7 Estructura del Sistema Operativo
+
+Existen varias formas de organizar internamente un SO. Cada enfoque tiene ventajas e inconvenientes en cuanto a rendimiento, fiabilidad y mantenibilidad.
+
+---
+
+### 1.7.1 Sistemas Monolíticos
+
+Es la organización más común. **Todo el SO corre en modo kernel** como un único programa grande:
+
+```
+┌─────────────────────────────────┐
+│        Programa principal       │  ← Recibe las syscalls
+├─────────────────────────────────┤
+│     Procedimientos de servicio  │  ← Implementan las syscalls
+├─────────────────────────────────┤
+│     Procedimientos utilitarios  │  ← Funciones auxiliares
+└─────────────────────────────────┘
+           Modo kernel
+```
+
+- Cualquier procedimiento puede llamar a cualquier otro → **muy eficiente**.
+- Un bug en cualquier parte puede **derribar todo el sistema**.
+- El SO se compila como un único binario; las **DLL / shared libraries** se cargan dinámicamente en tiempo de ejecución.
+
+**Ejemplos:** Linux, FreeBSD, MS-DOS, Windows XP (en gran parte).
+
+---
+
+### 1.7.2 Sistemas en Capas
+
+Generalización del monolítico: el SO se organiza como una **jerarquía de capas**, cada una construida sobre la anterior. Primer ejemplo: sistema **THE** (Dijkstra, 1968):
+
+| Capa | Función |
+|------|---------|
+| 5 | Operador (usuario) |
+| 4 | Programas de usuario |
+| 3 | Gestión de E/S |
+| 2 | Comunicación operador-proceso |
+| 1 | Gestión de memoria y drum |
+| 0 | Asignación de CPU y multiprogramación |
+
+**MULTICS** llevó este concepto más lejos con **anillos concéntricos de protección**: los anillos interiores son más privilegiados. Un proceso en anillo externo necesita una instrucción TRAP verificada por hardware para acceder a un anillo interior.
+
+- **Ventaja:** modularidad clara; cada capa sólo conoce la interfaz de la capa inferior.
+- **Desventaja:** mayor overhead por el cruce de capas; difícil definir capas limpias en la práctica.
+
+---
+
+### 1.7.3 Microkernels
+
+El diseño microkernel lleva al mínimo lo que corre en **modo kernel**. El kernel sólo gestiona:
+
+- Manejo de interrupciones
+- Comunicación entre procesos (IPC por mensajes)
+- Planificación básica de procesos
+
+**Todo lo demás** (drivers de dispositivo, sistema de archivos, red) corre como **procesos de usuario** independientes.
+
+#### Ventajas del diseño microkernel
+
+- Un bug en un driver sólo tumba ese proceso, **no todo el sistema**
+- En un sistema monolítico de 5 millones de líneas puede haber entre **10 000 y 50 000 bugs en el kernel** — todos fatales
+
+#### MINIX 3 como ejemplo
+
+```
+┌────────────────────────────────────────────┐
+│  Shell  Make  ...    Programas de usuario  │  Modo usuario
+├────────────────────────────────────────────┤
+│  FS  Proc  Reinc  ...      Servidores      │
+├────────────────────────────────────────────┤
+│  Disk  TTY  Net  Print  ...   Drivers      │
+├────────────────────────────────────────────┤
+│  Microkernel (interrupciones, procesos,    │  Modo kernel
+│               scheduling, IPC)  + Clock    │
+└────────────────────────────────────────────┘
+```
+
+- El **servidor de reencarnación** (*reincarnation server*) vigila a los demás servidores y drivers; si uno falla, lo reemplaza automáticamente.
+- Principio fundamental: **mecanismo en el kernel, política en el espacio de usuario**.
+
+**Ejemplos:** MINIX 3, QNX, L4, Integrity, Symbian, iOS (parcialmente).
+
+---
+
+### 1.7.4 Modelo Cliente-Servidor
+
+Variante del microkernel donde se distinguen dos clases de procesos:
+
+- **Servidores:** ofrecen servicios (sistema de archivos, impresión, red)
+- **Clientes:** solicitan esos servicios enviando mensajes
+
+La comunicación es **por paso de mensajes**. El cliente construye un mensaje con su petición y lo envía al servidor adecuado; el servidor realiza el trabajo y responde.
+
+```
+[Cliente] ─── mensaje ──→ [Servidor de archivos]
+[Cliente] ←── respuesta ─ [Servidor de archivos]
+              (a través del microkernel o red)
+```
+
+**Generalización en red:** el mismo modelo funciona cuando clientes y servidores están en **máquinas distintas** conectadas por LAN o WAN. El cliente no necesita saber si el servidor está en la misma máquina o en otra — el modelo es transparente.
+
+---
+
+### 1.7.5 Máquinas Virtuales
+
+#### VM/370 — el origen
+
+El sistema **VM/370** de IBM (originalmente CP/CMS, 1970s) separó completamente dos funciones del SO:
+
+1. **Multiprogramación** (gestión de múltiples procesos)
+2. **Máquina extendida** (interfaz de alto nivel para el usuario)
+
+El **monitor de máquina virtual** (*virtual machine monitor*, VMM) corre en el hardware real y presenta varias **máquinas virtuales idénticas al hardware físico** (incluyendo modo kernel/usuario, interrupciones, E/S):
+
+```
+┌────────┐  ┌────────┐  ┌────────┐   ← Máquinas virtuales (VMs)
+│  CMS   │  │  CMS   │  │  CMS   │
+└────┬───┘  └────┬───┘  └────┬───┘
+     └───────────┴───────────┘
+              VM/370 (VMM)
+       ─────────────────────────
+              Hardware 370
+```
+
+Cada VM puede ejecutar **cualquier SO** que corra en el hardware real.
+
+#### Virtualización moderna
+
+| Tipo | Descripción | Ejemplos |
+|------|-------------|----------|
+| **Hipervisor tipo 1** | Corre directamente sobre el hardware (sin SO anfitrión) | VMware ESXi, Xen, Hyper-V |
+| **Hipervisor tipo 2** | Corre sobre un SO anfitrión como proceso de usuario | VMware Workstation, VirtualBox |
+| **Paravirtualización** | El SO invitado es modificado para cooperar con el hipervisor | Xen con kernels modificados |
+
+**Traducción binaria (*binary translation*):** técnica que traduce bloques de código en tiempo de ejecución para instrucciones no virtualizables.
+
+#### La Máquina Virtual Java (JVM)
+
+Sun Microsystems inventó la **JVM** para que el código Java fuera portable: el compilador genera *bytecode* para la JVM (arquitectura virtual), que luego se ejecuta en cualquier máquina que tenga un intérprete JVM. También permite ejecutar código con verificación de seguridad en un entorno protegido (*sandbox*).
+
+---
+
+### 1.7.6 Exokernels
+
+En lugar de clonar la máquina completa (como VM/370), el exokernel **particiona los recursos físicos** directamente:
+
+- Una VM puede recibir los bloques de disco 0–1023, otra los bloques 1024–2047, etc.
+- El **exokernel** (en modo kernel) simplemente asigna recursos y verifica que ninguna VM use los de otra.
+- Cada VM ejecuta su propio SO de usuario con los recursos asignados.
+
+**Ventaja:** elimina una capa de indirección (no se necesita tabla de reasignación de recursos), reduciendo el overhead de virtualización.
+
+---
+
+## 1.8 El Mundo Según C
+
+Los sistemas operativos son programas grandes escritos principalmente en **C** (a veces C++). El entorno de desarrollo de un SO es muy distinto del que usan los estudiantes en Java o Python.
+
+---
+
+### 1.8.1 El Lenguaje C
+
+C tiene similitudes con Java y Python (es lenguaje imperativo, tiene tipos, variables, estructuras de control), pero también diferencias críticas:
+
+#### Punteros — la característica más importante
+
+```c
+char c1, c2, *p;   // c1, c2 son char; p es puntero a char
+c1 = 'c';          // c1 almacena el código ASCII de 'c'
+p  = &c1;          // p apunta a c1 (dirección de c1)
+c2 = *p;           // c2 = contenido al que apunta p (= 'c')
+```
+
+Un **puntero** contiene la dirección de memoria de una variable. Son muy potentes pero fuente frecuente de errores.
+
+#### Lo que C NO tiene (a diferencia de Java)
+
+- Strings incorporadas
+- Threads nativos
+- Paquetes / clases / objetos
+- Seguridad de tipos estricta
+- **Recolección de basura** ← *esto es fundamental para SOs*
+
+En C, toda la memoria se gestiona manualmente con `malloc()` y `free()`. Esto es necesario porque los SO son **sistemas de tiempo real**: el recolector de basura podría interrumpir una operación crítica en el peor momento.
+
+---
+
+### 1.8.2 Archivos de Cabecera
+
+Un proyecto de SO tiene muchos directorios, cada uno con archivos `.c` y archivos `.h` (cabeceras):
+
+```c
+#define BUFFER_SIZE 4096          // constante simbólica (macro)
+#define max(a, b) (a > b ? a : b) // macro con parámetros
+
+#ifdef X86
+    intel_int_ack();               // compilación condicional
+#endif
+```
+
+Las cabeceras permiten:
+- **Macros** con `#define`
+- **Compilación condicional** con `#ifdef / #endif` (código específico por arquitectura)
+- Compartir declaraciones entre múltiples archivos `.c` con `#include`
+
+---
+
+### 1.8.3 Grandes Proyectos de Programación
+
+Un SO moderno tiene **millones de líneas de código**. El proceso de compilación:
+
+```
+Archivos fuente (.c) + Cabeceras (.h)
+         │
+         ▼
+  Preprocesador C    ← expande #include, #define, #ifdef
+         │
+         ▼
+  Compilador C       ← genera archivos objeto (.o)
+         │
+         ▼
+    Enlazador (linker) ← combina todos los .o + bibliotecas (.a)
+         │
+         ▼
+  Binario ejecutable (a.out en UNIX)
+```
+
+La herramienta **`make`** (y variantes `gmake`, `pmake`) automatiza la recompilación:
+- Lee el **Makefile** que describe las dependencias
+- Recompila sólo los archivos `.c` que hayan cambiado desde la última compilación
+- Evita recompilar millones de líneas innecesariamente
+
+---
+
+### 1.8.4 El Modelo en Tiempo de Ejecución
+
+Una vez compilado y enlazado el SO, el binario se carga en RAM al arrancar. En ejecución, el SO ocupa:
+
+| Segmento | Contenido | ¿Cambia? |
+|----------|-----------|----------|
+| **Texto** | Código máquina del SO | No (read-only) |
+| **Datos** | Variables globales e inicializadas | Sí (crece si hace falta) |
+| **Pila** | Variables locales, retornos de función | Sí (crece/decrece con llamadas) |
+
+A diferencia de Java, **el código del SO es ejecutado directamente por el hardware**, sin intérprete ni compilación JIT.
+
+---
+
+## 1.9 Investigación sobre Sistemas Operativos
+
+La informática avanza rápidamente y es difícil predecir qué ideas tendrán impacto. Las investigaciones de universidades y laboratorios industriales tardan **20 a 30 años** en pasar de idea a impacto masivo.
+
+> *Eisenhower creó ARPA en 1958 para coordinar el presupuesto de investigación militar — no para inventar Internet. Pero ARPA financió la conmutación de paquetes, que llevó a ARPANET (1969) y finalmente a Internet.*
+
+Las principales áreas de investigación activa en SO (al momento de la 4ª edición) incluyen:
+
+| Área | Temas representativos |
+|------|-----------------------|
+| Bugs y depuración | Herramientas de análisis estático y dinámico |
+| Recuperación ante fallos | Crash recovery, checkpointing |
+| Gestión de energía | Eficiencia en centros de datos y dispositivos móviles |
+| Sistemas de archivos | Consistencia, rendimiento, deduplicación |
+| E/S de alta velocidad | Almacenamiento NVM, redes de baja latencia |
+| Sistemas multinúcleo | Sincronización, escalabilidad |
+| Seguridad y privacidad | Aislamiento, modelos de seguridad |
+| Virtualización | Hipervisores eficientes, clouds |
+| Corrección formal | Verificación matemática del comportamiento del SO |
+
+Los principales foros de publicación son conferencias de **ACM**, **IEEE Computer Society** y **USENIX**.
+
+---
+
+## 1.10 Estructura del Resto del Libro
+
+El libro está organizado partiendo de los conceptos introducidos en este capítulo:
+
+| Capítulo | Tema |
+|----------|------|
+| **2** | Procesos e hilos: propiedades, comunicación, sincronización, interbloqueos |
+| **3** | Gestión de memoria: memoria virtual, paginación, segmentación |
+| **4** | Sistemas de archivos: interfaz e implementación |
+| **5** | Entrada/Salida: dispositivos, drivers, discos, teclados, pantallas |
+| **6** | Interbloqueos: prevención, detección, recuperación |
+| **7** | Virtualización: hipervisores, clouds |
+| **8** | Sistemas multiprocesador: multicores, paralelos, distribuidos |
+| **9** | Seguridad del SO: amenazas, mecanismos de protección, modelos |
+| **10** | Caso de estudio: UNIX / Linux |
+| **11** | Caso de estudio: Windows 8 |
+| **12** | Diseño y perspectivas de SO |
+
+---
+
+## 1.11 Unidades Métricas
+
+En informática se usan prefijos del **Sistema Internacional** (SI) en lugar de unidades inglesas:
+
+| Exp. | Prefijo | Exp. | Prefijo |
+|------|---------|------|---------|
+| 10⁻³ | milli   | 10³  | Kilo    |
+| 10⁻⁶ | micro   | 10⁶  | Mega    |
+| 10⁻⁹ | nano    | 10⁹  | Giga    |
+| 10⁻¹² | pico   | 10¹² | Tera    |
+| 10⁻¹⁵ | femto  | 10¹⁵ | Peta    |
+| 10⁻¹⁸ | atto   | 10¹⁸ | Exa     |
+| 10⁻²¹ | zepto  | 10²¹ | Zetta   |
+| 10⁻²⁴ | yocto  | 10²⁴ | Yotta   |
+
+> **Nota importante:** en memoria, "Kilo" significa 2¹⁰ = 1024 (potencia de 2), no 10³ = 1000. En cambio, en velocidades de red 1 Kbps = 1000 bps. Para evitar ambigüedad, el libro usa **KB, MB, GB** para potencias de 2 y **Kbps, Mbps, Gbps** para potencias de 10.
+
+---
+
+## 1.12 Resumen del Capítulo
+
+Los SO pueden verse desde dos perspectivas complementarias:
+
+1. **Máquina extendida:** proporciona abstracciones limpias (procesos, archivos, sockets) que ocultan la complejidad del hardware.
+2. **Gestor de recursos:** administra CPU, memoria, dispositivos E/S y otros recursos de forma eficiente y equitativa.
+
+### Puntos clave del capítulo
+
+- Los SO tienen una larga historia: de simples monitores batch a sistemas multiprogramados de millones de líneas.
+- El hardware (CPU, memoria, discos, E/S, buses) dicta en gran medida cómo se diseña el SO.
+- Las abstracciones fundamentales son: **procesos**, **espacios de direcciones** y **archivos**.
+- Las **llamadas al sistema** son la interfaz controlada entre programas de usuario y el kernel.
+- Los SO pueden estructurarse como: **monolíticos**, **en capas**, **microkernels**, **cliente-servidor**, **máquinas virtuales** o **exokernels**.
+
+---
+
 ## Resumen
 
 | Sección | Tema | Conceptos clave |
@@ -447,6 +1222,30 @@ Interfaz de usuario  (login / GUI)
 | **1.3.4** | Dispositivos E/S | Controladores, drivers, interrupciones, DMA |
 | **1.3.5** | Buses | PCIe, USB, SATA, DMI; paralelo vs. serie punto a punto |
 | **1.3.6** | Arranque | BIOS/UEFI → Bootloader → Kernel → init/systemd |
+| **1.4** | Zoológico de SO | Mainframes, servidores, PCs, móviles, embebidos, sensores, tiempo real, smart cards |
+| **1.5.1** | Procesos | Programa en ejecución, espacio de direcciones, fork/exec/waitpid/exit, UID/GID, señales |
+| **1.5.2** | Espacios de dir. | Memoria virtual, MMU, 2³² / 2⁶⁴ bytes, paginación al disco |
+| **1.5.3** | Archivos | Directorios, rutas, descriptores, archivos especiales, pipes, mount |
+| **1.5.4** | E/S | Drivers, software independiente, operaciones síncronas/asíncronas |
+| **1.5.5** | Protección | Bits rwx, 9 bits (propietario/grupo/otros), chmod |
+| **1.5.6** | Shell | bash/sh/csh/ksh, redirección, pipes, background, variables de entorno |
+| **1.5.7** | Ontogenia | "Rueda de la reencarnación": cada nueva plataforma repite la evolución histórica |
+| **1.6.1** | Syscalls procesos | fork, waitpid, execve, exit; PID; shell simplificado |
+| **1.6.2** | Syscalls archivos | open, close, read, write, lseek, stat; flags O_RDONLY/O_CREAT |
+| **1.6.3** | Syscalls directorios | mkdir, rmdir, link, unlink, mount, umount; i-nodos, i-numbers |
+| **1.6.4** | Syscalls misc. | chdir, chmod, kill, time |
+| **1.6.5** | API Win32 | Orientado a eventos; CreateProcess, CreateFile, WaitForSingleObject; tabla UNIX↔Win32 |
+| **1.7.1** | Monolítico | Todo en kernel; 3 capas; DLL/shared libs; eficiente pero frágil |
+| **1.7.2** | En capas | THE (Dijkstra 1968), MULTICS con anillos; modular pero con overhead |
+| **1.7.3** | Microkernel | Mínimo en kernel; drivers como procesos de usuario; MINIX 3, QNX; mecanismo vs. política |
+| **1.7.4** | Cliente-Servidor | Servidores proveen servicios; clientes solicitan por mensajes; funciona en red |
+| **1.7.5** | Máquinas virtuales | VM/370, hipervisores tipo 1 y 2, paravirtualización, JVM, binary translation |
+| **1.7.6** | Exokernel | Partición directa de recursos; sin capa de indirección; menor overhead |
+| **1.8** | El mundo según C | Punteros, gestión manual de memoria, cabeceras, make, preprocesador, linker |
+| **1.9** | Investigación | Bugs, energía, virtualización, seguridad, multinúcleo; ACM/IEEE/USENIX |
+| **1.10** | Estructura libro | Cap. 2–12: procesos, mem., archivos, E/S, deadlocks, virtualización, seguridad, casos |
+| **1.11** | Unidades métricas | SI prefijos; KB=2¹⁰, MB=2²⁰, GB=2³⁰; Kbps=10³ bits/s |
+| **1.12** | Resumen | Dos perspectivas del SO; abstracciones; syscalls; estructuras de SO |
 
 ---
 
