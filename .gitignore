@@ -1,1 +1,5 @@
+# Directorios
 books/
+
+# Archivos
+*.DS_Store
