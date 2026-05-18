@@ -10,3 +10,6 @@ has_mermaid: true
 
 **[1. Introduccion ](./introSO.md)**
 Una introducción a los sistemas operativos, su historia, evolución y su papel fundamental en la informática moderna.
+
+**[2. Procesos](./procesos.md)**
+Definición, estados, descripción y control de procesos. Basado en el Capítulo 2 de *Modern Operating Systems* (Tanenbaum & Bos) y el Capítulo 3 de *Operating Systems: Internals and Design Principles* (Stallings).
