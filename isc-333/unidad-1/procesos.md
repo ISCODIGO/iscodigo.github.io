@@ -94,54 +94,12 @@ El modelo más simple. Un proceso puede estar en uno de dos estados:
 | **Running** (Ejecutando) | El proceso está usando la CPU actualmente |
 | **Not Running** (No ejecutando) | El proceso espera su turno en una cola |
 
-```
-         despacho
-Not Running ──────────────▶ Running
-    ▲                           │
-    └───────────────────────────┘
-           pausa / espera
-```
+![Modelo de 2 Estados](imagenes/2_estados.png)
 
 **Limitación:** este modelo no distingue entre procesos que esperan E/S (bloqueados, *no pueden* ejecutar) y procesos listos para ejecutar (*pueden* ejecutar). Esto lleva al modelo de cinco estados.
 
 ---
 
-### 2.3.2 Modelo de Tres Estados
-
-Tanenbaum presenta tres estados principales que capturan las situaciones fundamentales de un proceso:
-
-| Estado | Descripción |
-|--------|-------------|
-| **Running** (Ejecutando) | Usando la CPU en este instante |
-| **Ready** (Listo) | Ejecutable, detenido temporalmente mientras otro proceso usa la CPU |
-| **Blocked** (Bloqueado) | Incapaz de ejecutar hasta que ocurra un evento externo (E/S completada, señal, etc.) |
-
-```
-              ┌────────────────────┐
-              │                    │ 1. El proceso se bloquea
-              ▼                    │    esperando entrada/evento
-          [Blocked] ─────────── [Running]
-              │                    │
-              │ 4. El evento    2. │ El scheduler selecciona
-              │    ocurre          │ otro proceso (preempción)
-              ▼                    ▼
-           [Ready] ──────────▶ [Running]
-                    3. El scheduler
-                       selecciona este proceso
-```
-
-**Transiciones:**
-
-| # | Transición | Causa |
-|---|-----------|-------|
-| 1 | Running → Blocked | El proceso solicita E/S o espera un evento |
-| 2 | Running → Ready | El planificador desaloja el proceso (preempción por tiempo) |
-| 3 | Ready → Running | El planificador selecciona este proceso |
-| 4 | Blocked → Ready | El evento esperado ocurre (E/S completa, señal recibida) |
-
-> La transición 2 es causada por el **planificador** (decisión del SO). Las transiciones 1 y 4 son causadas por el **proceso mismo** o por eventos externos.
-
----
 
 ### 2.3.3 Modelo de Cinco Estados
 
@@ -155,26 +113,11 @@ Stallings amplía el modelo para incluir la **creación** y **terminación** exp
 | **Blocked/Waiting** (Bloqueado) | No puede continuar hasta que ocurra algún evento (E/S, señal) |
 | **Exit** (Terminado) | Ha terminado o fue abortado; liberado del conjunto de procesos ejecutables |
 
-```
-                    ┌──────────────────────────────────┐
-                    │          admisión                 │
-  [New] ─────────▶ [Ready] ──────────────▶ [Running] ──┤
-                     ▲                        │  │      │
-                     │     tiempo agotado     │  │      │
-                     └────────────────────────┘  │      ▼
-                                                 │   [Exit]
-                     ┌───────────────────────────┘
-                     │  solicita evento / E/S
-                     ▼
-                  [Blocked]
-                     │
-                     │  evento ocurre
-                     └──────────────▶ [Ready]
-```
+![Modelo de 5 estados](imagenes/5_estados.png)
 
 ---
 
-### 2.3.4 Procesos Suspendidos — Modelo de Siete Estados
+### 2.3.4 Procesos Suspendidos
 
 **Problema:** con solo cinco estados, si todos los procesos están bloqueados esperando E/S, la CPU queda ociosa aunque podría estar haciendo trabajo útil.
 
@@ -187,15 +130,7 @@ Esto introduce dos nuevos estados:
 | **Ready/Suspend** | El proceso está en disco pero listo para ejecutar cuando sea cargado a memoria |
 | **Blocked/Suspend** | El proceso está en disco *y además* espera un evento |
 
-```
-                        swap out
-         [Ready] ─────────────────────▶ [Ready/Suspend]
-            ▲                                  │
-            │ swap in                          │ evento
-            │                                 ▼
-         [Blocked] ───────────────▶ [Blocked/Suspend]
-                     swap out
-```
+![Modelo con suspensiones](imagenes/5_estados_con_suspension.png)
 
 **Razones para suspender un proceso:**
 
