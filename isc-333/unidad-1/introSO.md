@@ -1,3 +1,12 @@
+---
+layout: default
+title: "1. Introducción a los Sistemas Operativos"
+parent: "Unidad I: Introducción a SO y Control de Procesos"
+grand_parent: "ISC-333 Sistemas Operativos I"
+nav_order: 1
+has_mermaid: true
+---
+
 # Sistemas Operativos Modernos — Capítulo 1
 
 **Andrew S. Tanenbaum · Herbert Bos · 4ª Edición**  

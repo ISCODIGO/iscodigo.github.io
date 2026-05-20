@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "ISC-333 Sistemas Operativos I"
-nav_order: 1
+nav_order: 2
 has_children: true
 ---
 
