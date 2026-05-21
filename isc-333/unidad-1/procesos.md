@@ -73,13 +73,39 @@ El **dispatcher** es el pequeño módulo del SO encargado de alternar el procesa
 
 En un sistema con una sola CPU, en cualquier instante **solo un proceso ejecuta físicamente**. Sin embargo, la conmutación rápida entre procesos crea la **ilusión de paralelismo** — llamada **pseudoparalelismo**. El paralelismo real (hardware) requiere múltiples CPUs o núcleos.
 
-```
-Proceso A  ███░░░░░░███░░░░░░███
-Proceso B  ░░░███░░░░░░███░░░░░░
-Proceso C  ░░░░░░███░░░░░░███░░░
+```mermaid
+sequenceDiagram
+    participant A as Proceso A
+    participant B as Proceso B
+    participant C as Proceso C
 
-           ──────────────────────▶ Tiempo
-           (la CPU alterna entre procesos)
+    activate A
+    Note over A: CPU
+    deactivate A
+
+    activate B
+    Note over B: CPU
+    deactivate B
+
+    activate C
+    Note over C: CPU
+    deactivate C
+
+    activate A
+    Note over A: CPU
+    deactivate A
+
+    activate B
+    Note over B: CPU
+    deactivate B
+
+    activate C
+    Note over C: CPU
+    deactivate C
+
+    activate A
+    Note over A: CPU
+    deactivate A
 ```
 
 Cada proceso tiene su propia **CPU virtual** con:
@@ -260,16 +286,14 @@ El modo actual se indica mediante un bit en el **PSW** (Program Status Word).
 
 El modo cambia en las siguientes situaciones:
 
-```
-Modo usuario                    Modo kernel
-─────────────                   ────────────────────
-                 TRAP/syscall
-Programa ──────────────────────▶ Rutina del SO
-                                     │
-                                     │ (ejecuta servicio)
-                                     │
-                 retorno
-Programa ◀────────────────────── Restaura modo usuario
+```mermaid
+sequenceDiagram
+    participant U as Programa<br/>(Modo usuario)
+    participant K as Rutina del SO<br/>(Modo kernel)
+
+    U->>K: TRAP / syscall
+    Note over K: ejecuta servicio
+    K->>U: retorno — Restaura modo usuario
 ```
 
 | Evento | Dirección |
@@ -370,15 +394,16 @@ Un proceso puede terminar por cuatro razones:
 
 En UNIX los procesos forman una **jerarquía estricta** (árbol) con `init` (PID 1) como raíz. La relación padre-hijo es permanente. Un proceso y todos sus descendientes forman un **grupo de procesos**.
 
-```
-init (PID 1)
-├── sshd
-│   └── bash
-│       └── vim
-├── cron
-└── httpd
-    ├── worker_1
-    └── worker_2
+```mermaid
+graph TD
+    A["init (PID 1)"]
+    A --> B[sshd]
+    B --> C[bash]
+    C --> D[vim]
+    A --> E[cron]
+    A --> F[httpd]
+    F --> G[worker_1]
+    F --> H[worker_2]
 ```
 
 Al arrancar, el SO crea el **proceso 0** (swapper), que a su vez crea el **proceso 1** (`init`). El `init` es el ancestro de todos los procesos de usuario.
@@ -416,19 +441,13 @@ El SO recupera el control del procesador a través de tres mecanismos:
 
 Un **cambio de modo** (*mode switch*) NO necesariamente implica un **cambio de proceso** (*process switch*):
 
-```
-Proceso A ejecuta          Interrupción ocurre
-(modo usuario)      ────────────────────────────▶
-                                                    Modo kernel
-                                                    Handler ejecuta
-                           ¿Proceso A puede continuar?
-                                     │
-                    SÍ ──────────────┤──────────── NO
-                    │                              │
-                    ▼                              ▼
-              Restaura contexto           Cambio de proceso completo
-              Retorna a A                (selecciona proceso B)
-              (solo cambio de modo)
+```mermaid
+flowchart TD
+    A["Proceso A ejecuta<br/>(modo usuario)"]
+    A -->|"Interrupción ocurre"| B["Modo kernel<br/>Handler ejecuta"]
+    B --> C{"¿Proceso A puede continuar?"}
+    C -->|SÍ| D["Restaura contexto<br/>Retorna a A<br/><i>(solo cambio de modo)</i>"]
+    C -->|NO| E["Cambio de proceso completo<br/>(selecciona proceso B)"]
 ```
 
 El mecanismo de interrupción en Tanenbaum:
@@ -447,35 +466,16 @@ El mecanismo de interrupción en Tanenbaum:
 
 Cuando el SO decide cambiar de proceso, ejecuta los siguientes siete pasos (Stallings):
 
-```
-1. Guardar el contexto del procesador
-   (PC y todos los registros del proceso actual)
-          │
-          ▼
-2. Actualizar el PCB del proceso actual
-   (cambiar su estado: Ready/Blocked/Exit;
-    actualizar campos de contabilidad)
-          │
-          ▼
-3. Mover el PCB a la cola apropiada
-   (cola de Ready, cola de Blocked en evento i,
-    o Ready/Suspend)
-          │
-          ▼
-4. Seleccionar otro proceso para ejecución
-   (función del planificador — scheduler)
-          │
-          ▼
-5. Actualizar el PCB del proceso seleccionado
-   (cambiar su estado a Running)
-          │
-          ▼
-6. Actualizar estructuras de gestión de memoria
-   (tablas de páginas/segmentos del nuevo proceso)
-          │
-          ▼
-7. Restaurar el contexto del proceso seleccionado
-   (cargar los valores previos del PC y registros)
+```mermaid
+flowchart TD
+    S1["1. Guardar el contexto del procesador<br/>(PC y todos los registros del proceso actual)"]
+    S2["2. Actualizar el PCB del proceso actual<br/>(estado: Ready/Blocked/Exit; campos de contabilidad)"]
+    S3["3. Mover el PCB a la cola apropiada<br/>(Ready, Blocked en evento i, o Ready/Suspend)"]
+    S4["4. Seleccionar otro proceso para ejecución<br/>(función del planificador — scheduler)"]
+    S5["5. Actualizar el PCB del proceso seleccionado<br/>(cambiar su estado a Running)"]
+    S6["6. Actualizar estructuras de gestión de memoria<br/>(tablas de páginas/segmentos del nuevo proceso)"]
+    S7["7. Restaurar el contexto del proceso seleccionado<br/>(cargar los valores previos del PC y registros)"]
+    S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7
 ```
 
 > La conmutación de contexto tiene un **costo real en tiempo de CPU**: el tiempo invertido en guardar y restaurar el contexto no realiza trabajo útil. Por eso se busca minimizar el número de conmutaciones.
@@ -499,20 +499,15 @@ Un **thread** (hilo) es una unidad de ejecución dentro de un proceso. Múltiple
 
 **Ejemplo — Servidor web con modelo dispatcher/worker:**
 
-```
-Petición HTTP llega
-        │
-        ▼
-[Thread Dispatcher] ──── despierta ────▶ [Thread Worker]
-                                               │
-                                               │ ¿Página en caché?
-                                    SÍ ────────┤──────── NO
-                                    │                    │
-                                    ▼                    ▼
-                              Responde           Hace syscall de disco
-                              al cliente         (se bloquea)
-                                                         │
-                                         Otro worker ejecuta mientras tanto
+```mermaid
+flowchart TD
+    A["Petición HTTP llega"]
+    A --> B["Thread Dispatcher"]
+    B -->|despierta| C["Thread Worker"]
+    C --> D{"¿Página en caché?"}
+    D -->|SÍ| E["Responde al cliente"]
+    D -->|NO| F["Hace syscall de disco<br/>(se bloquea)"]
+    F --> G["Otro worker ejecuta<br/>mientras tanto"]
 ```
 
 **Ejemplo — Procesador de texto con tres threads:**
@@ -555,14 +550,15 @@ pthread_yield();                                // ceder CPU voluntariamente
 
 Los threads se implementan mediante una **biblioteca de threads en espacio de usuario**, sin que el kernel los conozca. El kernel solo ve procesos de un único thread.
 
-```
-Proceso (vista del kernel)
-┌─────────────────────────────┐
-│ Biblioteca de threads        │
-│  Thread A  Thread B  Thread C│  ← Todos en espacio de usuario
-│  [Ready]   [Running] [Blocked]│
-└─────────────────────────────┘
-           Un solo proceso
+```mermaid
+graph LR
+    subgraph Proceso["Proceso — vista del kernel (un solo proceso)"]
+        subgraph ULT["Biblioteca de threads — espacio de usuario"]
+            TA["Thread A<br/>[Ready]"]
+            TB["Thread B<br/>[Running]"]
+            TC["Thread C<br/>[Blocked]"]
+        end
+    end
 ```
 
 | Ventajas | Desventajas |
@@ -577,12 +573,15 @@ Proceso (vista del kernel)
 
 El kernel **conoce y gestiona** los threads directamente. La tabla de threads está en el kernel.
 
-```
-Kernel
-┌──────────────────────────────────┐
-│ Tabla de threads                  │
-│  Thread A  Thread B  Thread C    │
-└──────────────────────────────────┘
+```mermaid
+graph LR
+    subgraph K["Kernel"]
+        subgraph TT["Tabla de threads"]
+            TA[Thread A]
+            TB[Thread B]
+            TC[Thread C]
+        end
+    end
 ```
 
 | Ventajas | Desventajas |
