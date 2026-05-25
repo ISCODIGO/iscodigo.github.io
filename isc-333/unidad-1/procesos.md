@@ -14,6 +14,10 @@ has_mermaid: true
 
 ---
 
+<a href="procesos-slides.html" style="display:inline-block; background:#BB86FC; color:#000; font-weight:bold; padding:0.5em 1.2em; border-radius:6px; text-decoration:none; margin-bottom:1.5em;">&#9654; Ver como presentación</a>
+
+---
+
 ## Contenido
 
 - [2.1 ¿Qué es un Proceso?](#21-qué-es-un-proceso)

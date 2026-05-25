@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Procesos en SO — ISC-333</title>
+
+  <!-- Reveal.js CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css" />
+
+  <!-- Mermaid CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <style>
+    :root {
+      --accent:   #BB86FC;
+      --accent2:  #03DAC6;
+      --bg:       #1a1a2e;
+      --surface:  #252542;
+      --text:     #e0e0e0;
+    }
+
+    .reveal-viewport { background: var(--bg); }
+
+    .reveal .slides section {
+      text-align: left;
+      padding: 0 1.5em;
+    }
+
+    /* Slide de título */
+    .reveal .slides section.title-slide {
+      text-align: center;
+    }
+
+    /* Headings */
+    .reveal h1, .reveal h2 {
+      color: var(--accent);
+      font-size: 1.6em;
+      text-transform: none;
+      letter-spacing: 0;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.2em;
+      margin-bottom: 0.6em;
+    }
+    .reveal h3 {
+      color: var(--accent2);
+      font-size: 1.15em;
+      text-transform: none;
+    }
+
+    /* Tables */
+    .reveal table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.72em;
+      margin: 0.6em 0;
+    }
+    .reveal table th {
+      background: var(--accent);
+      color: #000;
+      padding: 0.4em 0.6em;
+    }
+    .reveal table td {
+      border: 1px solid #444;
+      padding: 0.35em 0.6em;
+      background: var(--surface);
+      color: var(--text);
+    }
+    .reveal table tr:nth-child(even) td { background: #2a2a4a; }
+
+    /* Code */
+    .reveal pre {
+      width: 100%;
+      font-size: 0.65em;
+      background: #0d0d1a;
+      border: 1px solid #333;
+      border-radius: 6px;
+    }
+    .reveal code { color: var(--accent2); }
+
+    /* Bullets */
+    .reveal ul { margin-left: 1.2em; }
+    .reveal li { margin-bottom: 0.35em; font-size: 0.82em; color: var(--text); }
+
+    /* Quote */
+    .reveal blockquote {
+      background: var(--surface);
+      border-left: 4px solid var(--accent);
+      padding: 0.6em 1em;
+      font-size: 0.78em;
+      color: #bbb;
+      border-radius: 0 6px 6px 0;
+      width: 95%;
+    }
+
+    /* Pills para estados */
+    .pill {
+      display: inline-block;
+      padding: 0.2em 0.7em;
+      border-radius: 20px;
+      font-size: 0.72em;
+      font-weight: bold;
+      margin: 0.15em;
+    }
+    .pill-run  { background: #03DAC6; color: #000; }
+    .pill-ready{ background: #BB86FC; color: #000; }
+    .pill-block{ background: #CF6679; color: #fff; }
+    .pill-new  { background: #5C5CAA; color: #fff; }
+    .pill-exit { background: #555;    color: #fff; }
+    .pill-susp { background: #7a5c2e; color: #fff; }
+
+    /* Diagrams Mermaid */
+    .mermaid { font-size: 0.65em; }
+
+    /* Mapa de contenido */
+    .toc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4em;
+      font-size: 0.72em;
+    }
+    .toc-item {
+      background: var(--surface);
+      border-left: 3px solid var(--accent);
+      padding: 0.4em 0.7em;
+      border-radius: 0 4px 4px 0;
+      color: var(--text);
+    }
+
+    /* Subtítulo del slide de título */
+    .slide-sub {
+      color: var(--accent2);
+      font-size: 0.8em;
+      margin-top: 0.4em;
+    }
+    .slide-ref {
+      color: #888;
+      font-size: 0.6em;
+      margin-top: 1.5em;
+    }
+
+    /* Botón volver */
+    #back-btn {
+      position: fixed;
+      bottom: 18px;
+      left: 18px;
+      z-index: 9999;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 20px;
+      padding: 0.4em 1em;
+      font-size: 0.75em;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
+    }
+    #back-btn:hover { background: var(--accent2); }
+
+    /* Two-column layout */
+    .cols { display: flex; gap: 1.5em; align-items: flex-start; }
+    .col  { flex: 1; }
+    .col-img { flex: 0 0 42%; }
+    .col-img img { width: 100%; border-radius: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+
+    .reveal img {
+      border-radius: 6px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      max-height: 380px;
+    }
+
+    /* step numbers */
+    .steps ol { font-size: 0.78em; }
+    .steps li { margin-bottom: 0.4em; }
+
+    .tag {
+      display: inline-block;
+      background: var(--accent);
+      color: #000;
+      font-size: 0.6em;
+      padding: 0.1em 0.5em;
+      border-radius: 4px;
+      font-weight: bold;
+      vertical-align: middle;
+      margin-right: 0.3em;
+    }
+  </style>
+</head>
+<body>
+
+<a id="back-btn" href="procesos.html">&#8592; Volver a la página</a>
+
+<div class="reveal">
+  <div class="slides">
+
+    <!-- ─── PORTADA ─── -->
+    <section class="title-slide">
+      <h1 style="border:none; font-size:1.8em; margin-bottom:0.3em;">Procesos en<br>Sistemas Operativos</h1>
+      <p class="slide-sub">ISC-333 — Unidad I</p>
+      <p class="slide-ref">
+        Tanenbaum &amp; Bos · Modern Operating Systems, Cap. 2<br>
+        Stallings · Operating Systems, 9ª Ed., Cap. 3
+      </p>
+    </section>
+
+    <!-- ─── CONTENIDO ─── -->
+    <section>
+      <h2>Contenido</h2>
+      <div class="toc-grid">
+        <div class="toc-item">2.1 ¿Qué es un Proceso?</div>
+        <div class="toc-item">2.2 El Modelo de Proceso</div>
+        <div class="toc-item">2.3 Estados de un Proceso</div>
+        <div class="toc-item">2.4 Descripción de Procesos</div>
+        <div class="toc-item">2.5 Modos de Ejecución</div>
+        <div class="toc-item">2.6 Creación de Procesos</div>
+        <div class="toc-item">2.7 Terminación de Procesos</div>
+        <div class="toc-item">2.8 Jerarquías de Procesos</div>
+        <div class="toc-item">2.9 Conmutación de Contexto</div>
+        <div class="toc-item">2.10 Threads</div>
+        <div class="toc-item">2.11 Procesos en UNIX SVR4</div>
+        <div class="toc-item">2.12 Resumen</div>
+      </div>
+    </section>
+
+    <!-- ─── 2.1 ─── -->
+    <section>
+      <h2>2.1 ¿Qué es un Proceso?</h2>
+      <blockquote>
+        "Conceptualmente, cada proceso tiene su propia CPU virtual. En la realidad, la CPU física alterna entre procesos — esto se denomina <strong>multiprogramación</strong>."
+        <br><em>— Tanenbaum &amp; Bos</em>
+      </blockquote>
+      <table style="margin-top:0.8em">
+        <tr><th>Concepto</th><th>Naturaleza</th><th>Analogía</th></tr>
+        <tr><td><strong>Programa</strong></td><td>Entidad estática (código en disco)</td><td>La receta de cocina</td></tr>
+        <tr><td><strong>Proceso</strong></td><td>Entidad dinámica (programa + estado)</td><td>La actividad de cocinar</td></tr>
+      </table>
+      <ul style="margin-top:0.8em">
+        <li>Un mismo programa puede dar lugar a <strong>múltiples procesos</strong> simultáneamente.</li>
+        <li>La <strong>traza</strong> de un proceso es la secuencia de instrucciones ejecutadas.</li>
+        <li>El <strong>dispatcher</strong> es el módulo del SO que alterna el procesador entre procesos.</li>
+      </ul>
+    </section>
+
+    <!-- ─── 2.2 ─── -->
+    <section>
+      <h2>2.2 El Modelo de Proceso</h2>
+      <p style="font-size:0.8em">En un sistema con una sola CPU, en cualquier instante <strong>solo un proceso ejecuta físicamente</strong>. La conmutación rápida crea la <strong>ilusión de paralelismo</strong> — <em>pseudoparalelismo</em>.</p>
+      <div class="cols" style="margin-top:0.6em">
+        <div class="col">
+          <h3>Cada proceso tiene:</h3>
+          <ul>
+            <li><strong>Contador de programa (PC)</strong> privado</li>
+            <li><strong>Registros</strong> propios</li>
+            <li><strong>Pila</strong> (stack) propia</li>
+            <li><strong>Espacio de memoria</strong> propio</li>
+          </ul>
+        </div>
+        <div class="col">
+          <div class="mermaid">
+sequenceDiagram
+    participant A as Proceso A
+    participant B as Proceso B
+    participant C as Proceso C
+    activate A
+    Note over A: CPU
+    deactivate A
+    activate B
+    Note over B: CPU
+    deactivate B
+    activate C
+    Note over C: CPU
+    deactivate C
+    activate A
+    Note over A: CPU
+    deactivate A
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 2.3 Modelo 2 estados ─── -->
+    <section>
+      <h2>2.3.1 Modelo de Dos Estados</h2>
+      <div class="cols">
+        <div class="col">
+          <table>
+            <tr><th>Estado</th><th>Descripción</th></tr>
+            <tr><td><span class="pill pill-run">Running</span></td><td>Usando la CPU ahora</td></tr>
+            <tr><td><span class="pill pill-block">Not Running</span></td><td>Espera su turno en una cola</td></tr>
+          </table>
+          <p style="margin-top:0.8em; font-size:0.78em; color:#aaa;">
+            <strong>Limitación:</strong> no distingue entre procesos que <em>esperan E/S</em> (bloqueados, no pueden ejecutar) y procesos <em>listos</em> (pueden ejecutar). Esto lleva al modelo de cinco estados.
+          </p>
+        </div>
+        <div class="col-img">
+          <img src="imagenes/2_estados.png" alt="Modelo 2 estados" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 2.3 Modelo 5 estados ─── -->
+    <section>
+      <h2>2.3.3 Modelo de Cinco Estados</h2>
+      <div class="cols">
+        <div class="col">
+          <table style="font-size:0.65em">
+            <tr><th>Estado</th><th>Descripción</th></tr>
+            <tr><td><span class="pill pill-new">New</span></td><td>Recién creado; aún no listo</td></tr>
+            <tr><td><span class="pill pill-ready">Ready</span></td><td>Listo; esperando CPU</td></tr>
+            <tr><td><span class="pill pill-run">Running</span></td><td>Ejecutando en CPU</td></tr>
+            <tr><td><span class="pill pill-block">Blocked</span></td><td>Esperando E/S o evento</td></tr>
+            <tr><td><span class="pill pill-exit">Exit</span></td><td>Terminado o abortado</td></tr>
+          </table>
+        </div>
+        <div class="col-img">
+          <img src="imagenes/5_estados.png" alt="Modelo 5 estados" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 2.3 Procesos Suspendidos ─── -->
+    <section>
+      <h2>2.3.4 Procesos Suspendidos</h2>
+      <p style="font-size:0.78em"><strong>Problema:</strong> si todos los procesos están bloqueados, la CPU queda ociosa.<br>
+      <strong>Solución — Swapping:</strong> mover procesos al disco para liberar memoria.</p>
+      <div class="cols" style="margin-top:0.5em">
+        <div class="col">
+          <table style="font-size:0.68em">
+            <tr><th>Estado</th><th>Descripción</th></tr>
+            <tr><td><span class="pill pill-susp">Ready/Suspend</span></td><td>En disco, listo para ejecutar</td></tr>
+            <tr><td><span class="pill pill-susp">Blocked/Suspend</span></td><td>En disco y esperando evento</td></tr>
+          </table>
+          <h3 style="margin-top:0.7em">Razones para suspender</h3>
+          <ul style="font-size:0.7em">
+            <li>Swapping — liberar memoria</li>
+            <li>Solicitud del usuario (depuración)</li>
+            <li>Temporización periódica</li>
+            <li>Solicitud del proceso padre</li>
+          </ul>
+        </div>
+        <div class="col-img">
+          <img src="imagenes/5_estados_con_suspension.png" alt="Estados con suspensión" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 2.4.1 Tablas del SO ─── -->
+    <section>
+      <h2>2.4.1 Tablas del Sistema Operativo</h2>
+      <p style="font-size:0.78em">Para gestionar recursos, el SO mantiene <strong>cuatro categorías de tablas</strong>:</p>
+      <table>
+        <tr><th>Tabla</th><th>Contenido</th></tr>
+        <tr><td><strong>Memory</strong></td><td>Asignación de memoria principal/secundaria; protección; memoria virtual</td></tr>
+        <tr><td><strong>I/O</strong></td><td>Estado de dispositivos; operaciones E/S en curso</td></tr>
+        <tr><td><strong>File</strong></td><td>Existencia y ubicación de archivos; permisos de acceso</td></tr>
+        <tr><td><strong>Process</strong></td><td>Una entrada por proceso; apunta a la imagen del proceso</td></tr>
+      </table>
+    </section>
+
+    <!-- ─── 2.4.2 Imagen del proceso ─── -->
+    <section>
+      <h2>2.4.2 La Imagen del Proceso</h2>
+      <p style="font-size:0.78em">La <strong>imagen del proceso</strong> es la colección completa de información que define a un proceso:</p>
+      <table>
+        <tr><th>Elemento</th><th>Descripción</th></tr>
+        <tr><td><strong>User Program</strong></td><td>El código ejecutable del programa</td></tr>
+        <tr><td><strong>User Data</strong></td><td>Datos del programa, variables globales, pila de usuario</td></tr>
+        <tr><td><strong>Stack</strong></td><td>Pila LIFO para llamadas a procedimientos</td></tr>
+        <tr><td><strong>PCB</strong></td><td>Datos que el SO necesita para controlar el proceso</td></tr>
+      </table>
+    </section>
+
+    <!-- ─── 2.4.3 PCB ─── -->
+    <section>
+      <h2>2.4.3 Bloque de Control del Proceso (PCB)</h2>
+      <blockquote>
+        "El PCB define el estado del SO. Un error en un módulo podría corromper los PCBs de múltiples procesos."
+        <em>— Stallings</em>
+      </blockquote>
+      <div class="cols" style="margin-top:0.5em">
+        <div class="col">
+          <h3>Identificación</h3>
+          <ul>
+            <li><strong>PID</strong> — ID único del proceso</li>
+            <li><strong>PPID</strong> — ID del proceso padre</li>
+            <li><strong>UID / GID</strong> — Usuario y grupo</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3>Estado del Procesador</h3>
+          <ul>
+            <li>Registros de propósito general</li>
+            <li>Contador de programa (PC)</li>
+            <li>Punteros de pila (SP)</li>
+            <li>PSW / EFLAGS</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3>Control del Proceso</h3>
+          <ul>
+            <li>Estado actual</li>
+            <li>Prioridad</li>
+            <li>Gestión de memoria</li>
+            <li>Archivos abiertos</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 2.5 Modos ─── -->
+    <section>
+      <h2>2.5 Modos de Ejecución</h2>
+      <table>
+        <tr><th>Modo</th><th>Privilegio</th><th>Quién</th><th>Capacidades</th></tr>
+        <tr><td><strong>Kernel</strong></td><td>Alto</td><td>Núcleo del SO</td><td>Control total: cualquier instrucción y dirección</td></tr>
+        <tr><td><strong>Usuario</strong></td><td>Bajo</td><td>Programas</td><td>Sin instrucciones privilegiadas ni memoria protegida</td></tr>
+      </table>
+      <p style="font-size:0.78em; margin-top:0.7em">El modo se indica con un bit en el <strong>PSW</strong>.</p>
+      <table style="margin-top:0.5em">
+        <tr><th>Evento</th><th>Dirección</th></tr>
+        <tr><td>Llamada al sistema (syscall)</td><td>Usuario → Kernel</td></tr>
+        <tr><td>Interrupción / Trap</td><td>Usuario → Kernel</td></tr>
+        <tr><td>Retorno de rutina del SO</td><td>Kernel → Usuario</td></tr>
+      </table>
+    </section>
+
+    <!-- ─── 2.6 Creación ─── -->
+    <section>
+      <h2>2.6 Creación de Procesos</h2>
+      <h3>Eventos que originan un proceso</h3>
+      <table style="margin-bottom:0.7em">
+        <tr><th>Evento</th><th>Descripción</th></tr>
+        <tr><td>Inicialización del sistema</td><td>SO crea procesos y daemons al arrancar</td></tr>
+        <tr><td>Llamada al sistema</td><td>Un proceso crea un hijo</td></tr>
+        <tr><td>Petición del usuario</td><td>Doble clic o comando en terminal</td></tr>
+        <tr><td>Trabajo batch</td><td>SO lanza trabajo de la cola batch</td></tr>
+      </table>
+      <div class="cols">
+        <div class="col">
+          <h3>UNIX — <code>fork()</code></h3>
+          <ul style="font-size:0.72em">
+            <li>Crea un clon del proceso padre</li>
+            <li>Padre recibe PID del hijo; hijo recibe <code>0</code></li>
+            <li>Uso de <code>execve()</code> para cambiar la imagen</li>
+            <li><strong>Copy-on-write:</strong> memoria compartida hasta que alguno escribe</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3>Windows — <code>CreateProcess()</code></h3>
+          <ul style="font-size:0.72em">
+            <li>Fusiona creación e imagen en una sola llamada</li>
+            <li>Sin herencia de jerarquía explícita</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 2.7 Terminación ─── -->
+    <section>
+      <h2>2.7 Terminación de Procesos</h2>
+      <table>
+        <tr><th>Tipo</th><th>Voluntario</th><th>Causa</th></tr>
+        <tr><td><strong>Salida normal</strong></td><td>Sí</td><td>Terminó su trabajo → <code>exit()</code></td></tr>
+        <tr><td><strong>Salida por error</strong></td><td>Sí</td><td>Detecta error fatal y se termina</td></tr>
+        <tr><td><strong>Error fatal</strong></td><td>No</td><td>División por cero, segfault, instrucción ilegal</td></tr>
+        <tr><td><strong>Eliminado</strong></td><td>No</td><td>Otro proceso ejecuta <code>kill()</code> o <code>TerminateProcess()</code></td></tr>
+      </table>
+      <p style="margin-top:0.8em; font-size:0.78em; color:#aaa;">En la mayoría de los sistemas, solo el <strong>proceso padre</strong> puede matar a sus hijos.</p>
+    </section>
+
+    <!-- ─── 2.8 Jerarquías ─── -->
+    <section>
+      <h2>2.8 Jerarquías de Procesos</h2>
+      <div class="cols">
+        <div class="col">
+          <h3>UNIX — Árbol estricto</h3>
+          <ul style="font-size:0.75em">
+            <li><code>init</code> (PID 1) es la raíz</li>
+            <li>Relación padre-hijo permanente</li>
+            <li>Grupos de procesos</li>
+          </ul>
+          <div class="mermaid" style="margin-top:0.5em">
+graph TD
+    A["init (PID 1)"]
+    A --> B[sshd]
+    B --> C[bash]
+    C --> D[vim]
+    A --> E[cron]
+    A --> F[httpd]
+    F --> G[worker_1]
+    F --> H[worker_2]
+          </div>
+        </div>
+        <div class="col">
+          <h3>Windows — Sin jerarquía</h3>
+          <ul style="font-size:0.75em">
+            <li>Todos los procesos son iguales</li>
+            <li>El padre recibe un <em>handle</em> del hijo</li>
+            <li>El handle puede transferirse — rompe cualquier jerarquía</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 2.9.1 Mecanismos ─── -->
+    <section>
+      <h2>2.9 Control — Mecanismos al SO</h2>
+      <table>
+        <tr><th>Mecanismo</th><th>Asociado a</th><th>Uso típico</th></tr>
+        <tr><td><strong>Interrupción</strong></td><td>Externa; asíncrona</td><td>E/S completa, reloj</td></tr>
+        <tr><td><strong>Trap</strong></td><td>Instrucción actual; error</td><td>División por cero, acceso inválido</td></tr>
+        <tr><td><strong>Syscall</strong></td><td>Solicitud explícita</td><td>El proceso pide un servicio al SO</td></tr>
+      </table>
+      <table style="margin-top:0.6em">
+        <tr><th>Tipo de interrupción</th><th>Acción del SO</th></tr>
+        <tr><td>Clock interrupt</td><td>Proceso agotó cuanto → Ready; dispatcher asigna otro</td></tr>
+        <tr><td>I/O interrupt</td><td>E/S completa → procesos bloqueados pasan a Ready</td></tr>
+        <tr><td>Memory fault</td><td>Page fault → bloquea proceso, carga página, luego Ready</td></tr>
+      </table>
+    </section>
+
+    <!-- ─── 2.9.3 Pasos conmutación ─── -->
+    <section>
+      <h2>2.9.3 Pasos de una Conmutación</h2>
+      <div class="steps">
+        <ol>
+          <li>Guardar el contexto del procesador (PC + registros del proceso actual)</li>
+          <li>Actualizar el PCB del proceso actual (estado: Ready/Blocked/Exit)</li>
+          <li>Mover el PCB a la cola apropiada</li>
+          <li>Seleccionar otro proceso — función del <strong>scheduler</strong></li>
+          <li>Actualizar el PCB del proceso seleccionado (estado → Running)</li>
+          <li>Actualizar estructuras de gestión de memoria (tablas de páginas)</li>
+          <li>Restaurar el contexto del proceso seleccionado</li>
+        </ol>
+      </div>
+      <blockquote style="margin-top:0.5em">
+        La conmutación tiene un <strong>costo real en tiempo de CPU</strong>: el tiempo invertido no realiza trabajo útil.
+      </blockquote>
+    </section>
+
+    <!-- ─── 2.10 Threads por qué ─── -->
+    <section>
+      <h2>2.10 Threads — ¿Por qué usarlos?</h2>
+      <p style="font-size:0.8em">Un <strong>thread</strong> (hilo) es una unidad de ejecución dentro de un proceso. Comparte memoria y recursos con otros threads del mismo proceso.</p>
+      <table style="margin-top:0.6em">
+        <tr><th>Razón</th><th>Explicación</th></tr>
+        <tr><td><strong>Paralelismo</strong></td><td>Actividades paralelas en una aplicación</td></tr>
+        <tr><td><strong>Eficiencia</strong></td><td>100× más rápidos de crear que procesos</td></tr>
+        <tr><td><strong>E/S + CPU</strong></td><td>Un thread espera E/S; otro sigue con la CPU</td></tr>
+        <tr><td><strong>Multicore</strong></td><td>Aprovechan paralelismo real</td></tr>
+      </table>
+    </section>
+
+    <!-- ─── 2.10.2 Modelo clásico ─── -->
+    <section>
+      <h2>2.10.2 Modelo Clásico de Threads</h2>
+      <div class="cols">
+        <div class="col">
+          <h3>Compartido (por proceso)</h3>
+          <ul>
+            <li>Espacio de direcciones</li>
+            <li>Variables globales</li>
+            <li>Archivos abiertos</li>
+            <li>Procesos hijos</li>
+            <li>Señales y manejadores</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3>Privado (por thread)</h3>
+          <ul>
+            <li>Contador de programa (PC)</li>
+            <li>Registros</li>
+            <li>Pila (stack)</li>
+            <li>Estado (Running/Ready/Blocked)</li>
+          </ul>
+        </div>
+      </div>
+      <blockquote style="margin-top:0.6em; font-size:0.72em">
+        Los threads <strong>no tienen estado Suspended</strong> porque la memoria es compartida — no aplica swapping individual por thread.
+      </blockquote>
+    </section>
+
+    <!-- ─── 2.10.3/4 ULT vs KLT ─── -->
+    <section>
+      <h2>2.10.3 / 2.10.4 — ULT vs. KLT</h2>
+      <div class="cols">
+        <div class="col">
+          <h3>ULT — Espacio de usuario</h3>
+          <p style="font-size:0.72em">El kernel solo ve procesos de un solo thread. Los threads los gestiona una biblioteca.</p>
+          <table style="font-size:0.65em">
+            <tr><th>Ventajas</th><th>Desventajas</th></tr>
+            <tr><td>Conmutación sin syscall (rápido)</td><td>Syscall bloqueante bloquea todo el proceso</td></tr>
+            <tr><td>Algoritmo de planificación propio</td><td>No libera CPU sin llamar a la biblioteca</td></tr>
+          </table>
+        </div>
+        <div class="col">
+          <h3>KLT — Kernel</h3>
+          <p style="font-size:0.72em">El kernel conoce y gestiona los threads directamente.</p>
+          <table style="font-size:0.65em">
+            <tr><th>Ventajas</th><th>Desventajas</th></tr>
+            <tr><td>Thread bloqueado → kernel planifica otro del mismo proceso</td><td>Mayor overhead por syscalls</td></tr>
+            <tr><td>Paralelismo real en multicore</td><td></td></tr>
+          </table>
+        </div>
+      </div>
+      <p style="font-size:0.72em; margin-top:0.6em; color:var(--accent2)"><strong>Híbrido:</strong> múltiples threads de usuario por thread de kernel.</p>
+    </section>
+
+    <!-- ─── 2.11 UNIX SVR4 ─── -->
+    <section>
+      <h2>2.11 Procesos en UNIX SVR4</h2>
+      <p style="font-size:0.75em">UNIX SVR4 define <strong>9 estados</strong> de proceso:</p>
+      <table style="font-size:0.62em">
+        <tr><th>Estado</th><th>Descripción</th></tr>
+        <tr><td>User Running</td><td>Ejecutando en modo usuario</td></tr>
+        <tr><td>Kernel Running</td><td>Ejecutando en modo kernel</td></tr>
+        <tr><td>Ready to Run, in Memory</td><td>Listo; en memoria principal</td></tr>
+        <tr><td>Asleep in Memory</td><td>Bloqueado; en memoria principal</td></tr>
+        <tr><td>Ready to Run, Swapped</td><td>Listo; en disco</td></tr>
+        <tr><td>Sleeping, Swapped</td><td>Bloqueado; en disco</td></tr>
+        <tr><td>Preempted</td><td>Desalojado al volver de kernel a usuario</td></tr>
+        <tr><td>Created</td><td>Recién creado por <code>fork()</code></td></tr>
+        <tr><td>Zombie</td><td>Terminado; espera que el padre lo recoja</td></tr>
+      </table>
+      <blockquote style="font-size:0.68em; margin-top:0.5em">
+        Un proceso en <strong>modo kernel NO puede ser desalojado</strong> — esto hace a UNIX tradicional inadecuado para tiempo real estricto.
+      </blockquote>
+    </section>
+
+    <!-- ─── 2.12 Resumen ─── -->
+    <section>
+      <h2>2.12 Resumen</h2>
+      <table style="font-size:0.62em">
+        <tr><th>Concepto</th><th>Esencia</th></tr>
+        <tr><td><strong>Proceso</strong></td><td>Instancia dinámica: PC, registros, pila y memoria propios</td></tr>
+        <tr><td><strong>Pseudoparalelismo</strong></td><td>CPU alterna entre procesos creando ilusión de simultaneidad</td></tr>
+        <tr><td><strong>Estados</strong></td><td>New → Ready → Running → Blocked → Exit; +Suspend con swapping</td></tr>
+        <tr><td><strong>PCB</strong></td><td>Estructura central del SO: identificación, estado del procesador, control</td></tr>
+        <tr><td><strong>Modos</strong></td><td>Kernel (privilegiado) vs. Usuario (restringido); separados por bit del PSW</td></tr>
+        <tr><td><strong>Conmutación</strong></td><td>7 pasos: guardar contexto actual → scheduler → restaurar contexto nuevo</td></tr>
+        <tr><td><strong>Thread</strong></td><td>Unidad de ejecución; comparte memoria del proceso; privado: PC, pila</td></tr>
+        <tr><td><strong>fork()</strong></td><td>Clon del padre; hijo usa execve() para nueva imagen; copy-on-write</td></tr>
+      </table>
+    </section>
+
+    <!-- ─── Tanenbaum vs Stallings ─── -->
+    <section>
+      <h2>Tanenbaum vs. Stallings</h2>
+      <table style="font-size:0.6em">
+        <tr><th>Aspecto</th><th>Tanenbaum (Cap. 2)</th><th>Stallings (Cap. 3)</th></tr>
+        <tr><td>Modelo de estados</td><td>3 principales</td><td>5 estados + 2 suspendidos (7 total)</td></tr>
+        <tr><td>PCB</td><td>3 grupos funcionales</td><td>3 categorías: ID, procesador, control</td></tr>
+        <tr><td>Creación UNIX</td><td>fork() + execve(); copy-on-write</td><td>fork(): 6 pasos detallados</td></tr>
+        <tr><td>Jerarquía</td><td>Árbol UNIX; sin jerarquía en Windows</td><td>Padre/hijo; proceso 0 y proceso 1</td></tr>
+        <tr><td>Threads</td><td>Cap. 2: ULT, KLT, híbridos</td><td>Cap. 4 separado: ULT/KLT/multicore</td></tr>
+        <tr><td>Swapping</td><td>No elabora</td><td>Detallado: razones, estados suspend</td></tr>
+        <tr><td>UNIX SVR4</td><td>fork()/execve() generales</td><td>9 estados, imagen completa</td></tr>
+      </table>
+    </section>
+
+    <!-- ─── FIN ─── -->
+    <section class="title-slide">
+      <h2 style="border:none; font-size:1.5em;">Fin de la presentación</h2>
+      <p class="slide-sub">ISC-333 — Unidad I: Procesos</p>
+      <a href="procesos.html" style="color: var(--accent2); font-size:0.8em;">← Volver al capítulo completo</a>
+    </section>
+
+  </div>
+</div>
+
+<!-- Reveal.js core -->
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+
+<script>
+  // Inicializar Mermaid antes de Reveal
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#BB86FC',
+      primaryTextColor: '#e0e0e0',
+      primaryBorderColor: '#BB86FC',
+      lineColor: '#03DAC6',
+      background: '#1a1a2e',
+      mainBkg: '#252542',
+      nodeBorder: '#BB86FC',
+      clusterBkg: '#1a1a2e',
+      edgeLabelBackground: '#252542',
+    }
+  });
+
+  Reveal.initialize({
+    hash: true,
+    transition: 'slide',
+    transitionSpeed: 'fast',
+    controls: true,
+    progress: true,
+    center: false,
+    width: 1100,
+    height: 680,
+    margin: 0.06,
+    plugins: [],
+  });
+
+  // Renderizar diagramas Mermaid después de que Reveal esté listo
+  Reveal.on('ready', async () => {
+    const elements = document.querySelectorAll('.mermaid');
+    for (let i = 0; i < elements.length; i++) {
+      const el = elements[i];
+      const code = el.textContent.trim();
+      try {
+        const { svg } = await mermaid.render('mermaid-svg-' + i, code);
+        el.innerHTML = svg;
+      } catch (e) {
+        el.innerHTML = '<pre style="color:red; font-size:0.6em">' + e.message + '</pre>';
+      }
+    }
+  });
+</script>
+</body>
+</html>
