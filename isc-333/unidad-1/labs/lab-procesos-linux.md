@@ -689,23 +689,6 @@ cat /proc/$HIJO/status | grep State
 
 ---
 
-## Respuestas
-
-Las respuestas a todas las preguntas de análisis están disponibles en [lab-procesos-linux-respuestas.md](lab-procesos-linux-respuestas.md).
-
----
-
-## Resumen del laboratorio
-
-| Ejercicio | Concepto demostrado | Herramienta Linux |
-|-----------|--------------------|--------------------|
-| 1 — Identidad | PID, PPID, UID del PCB | `/proc/self/status` |
-| 2 — `fork()` | Creación y clonación del proceso | `strace` |
-| 3 — Jerarquía | Árbol padre–hijo–nieto | `pstree`, `htop` |
-| 4 — `wait()` / zombie | Estado Exit; zombie | `/proc/<PID>/status` |
-| 5 — `execv()` | Reemplazo de imagen | `strace -e execve` |
-| 6 — `pipe()` | IPC; Running → Blocked → Ready | `/proc/<PID>/status` |
-
 ### Llamadas al sistema utilizadas
 
 | Syscall | Propósito |
