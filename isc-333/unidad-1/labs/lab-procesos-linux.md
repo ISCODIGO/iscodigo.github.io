@@ -44,17 +44,37 @@ Observar en Linux los conceptos teóricos del Capítulo 2:
 
 ## Preparación del entorno
 
-### Verificar que GCC está disponible
+### Instalar herramientas necesarias
 
 ```bash
-gcc --version
+sudo apt update && sudo apt install -y gcc strace psmisc htop
 ```
 
-Si no está instalado:
+| Paquete | Herramienta | Uso en el laboratorio |
+|---------|-------------|----------------------|
+| `gcc` | compilador C | compilar todos los ejercicios |
+| `strace` | `strace` | trazar syscalls (ejercicios 2 y 5) |
+| `psmisc` | `pstree` | visualizar árbol de procesos (ejercicio 3) |
+| `htop` | `htop` | monitor interactivo de procesos |
+
+Verifica que quedaron instaladas:
 
 ```bash
-sudo apt update && sudo apt install gcc
+gcc --version && strace --version && pstree --version && htop --version
 ```
+
+### Nota WSL — una sola terminal
+
+En WSL no es necesario abrir múltiples ventanas. Ejecuta el programa en **segundo plano** con `&` y observa desde la misma terminal:
+
+```bash
+./programa &          # lanza en background, imprime el PID del job
+PID=$!                # $! guarda el PID del último proceso en background
+sleep 0.5             # espera a que el proceso arranque
+cat /proc/$PID/status | grep State
+```
+
+Cada ejercicio que antes decía "en otra terminal" usará este patrón.
 
 ### Directorio de trabajo
 
@@ -272,13 +292,34 @@ gcc -Wall -o p3_jerarquia p3_jerarquia.c
 ./p3_jerarquia
 ```
 
-### Visualización con `pstree`
+### Visualización con `pstree` y `htop`
 
-En otra terminal, mientras el programa ejecuta:
+`p3_jerarquia` termina en milisegundos. Agrega `sleep(3)` en cada rama antes del `return 0` para tener una ventana de observación:
+
+```c
+/* al final del bloque del nieto */
+sleep(3);  return 0;
+/* al final del bloque del hijo 2 */
+sleep(3);  return 0;
+/* al final del bloque del padre */
+sleep(3);  return 0;
+```
+
+Recompila, lanza en background y observa desde la misma terminal:
 
 ```bash
-pstree -p $(pgrep p3_jerarquia) 2>/dev/null
+./p3_jerarquia &
+sleep 0.3
+pstree -p $!
 ```
+
+Para la vista interactiva con `htop` (el programa sigue corriendo en background):
+
+```bash
+htop
+```
+
+Presiona `F5` para árbol y `F3` para buscar `p3_jerarquia`. Al salir con `q`, el proceso de background termina solo cuando se cumple el `sleep(3)`.
 
 ### Preguntas de análisis
 
@@ -353,18 +394,45 @@ gcc -Wall -o p4_wait p4_wait.c
 ./p4_wait
 ```
 
-### Observar el estado zombie en `/proc`
+### Observar el estado `S (sleeping)` en `/proc`
 
-Mientras el hijo duerme (en otra terminal):
+Lanza en background y captura el PID del hijo:
 
 ```bash
-cat /proc/<PID_hijo>/status | grep State
+./p4_wait &
+PADRE=$!
+sleep 0.2
+HIJO=$(pgrep -P $PADRE)
+cat /proc/$HIJO/status | grep State
+# State: S (sleeping)
 ```
 
-Verás: `State: S (sleeping)`. Para ver un zombie real, comenta la llamada a `wait()` y observa:
+### Observar un proceso zombie
+
+Para crear un zombie real el padre debe mantenerse **vivo** después de que el hijo ya haya terminado, sin llamar a `wait()`. Si solo se comenta `wait()`, el padre termina primero y el hijo queda huérfano, no zombie.
+
+Usa esta variante que invierte los tiempos:
+
+```c
+if (pid == 0) {
+    printf("[HIJO]  PID=%d terminando\n", getpid());
+    exit(42);          /* hijo termina de inmediato */
+}
+
+/* padre: NO llama wait(); se queda vivo 8 segundos */
+printf("[PADRE] PID=%d sin llamar wait()...\n", getpid());
+sleep(8);              /* ventana de observación del zombie */
+return 0;
+```
+
+Recompila, lanza en background y observa:
 
 ```bash
-cat /proc/<PID_hijo>/status | grep State
+./p4_wait &
+PADRE=$!
+sleep 0.5
+HIJO=$(pgrep -P $PADRE)
+cat /proc/$HIJO/status | grep State
 # State: Z (zombie)
 ```
 
@@ -524,10 +592,22 @@ gcc -Wall -o p6_pipe p6_pipe.c
 
 ### Observación con `/proc`
 
-Mientras el hijo espera datos en la tubería:
+El padre escribe en el pipe casi de inmediato. Agrega un `sleep(3)` en el padre **antes** del `write()` para garantizar que el hijo ya esté bloqueado en `read()`:
+
+```c
+close(fd[0]);
+sleep(3);                              /* ventana de observación */
+write(fd[1], mensaje, strlen(mensaje));
+```
+
+Recompila, lanza en background y observa desde la misma terminal:
 
 ```bash
-cat /proc/<PID_hijo>/status | grep State
+./p6_pipe &
+PADRE=$!
+sleep 0.5
+HIJO=$(pgrep -P $PADRE)
+cat /proc/$HIJO/status | grep State
 # State: S (sleeping)  ← proceso bloqueado en read()
 ```
 
@@ -539,13 +619,19 @@ cat /proc/<PID_hijo>/status | grep State
 
 ---
 
+## Respuestas
+
+Las respuestas a todas las preguntas de análisis están disponibles en [lab-procesos-linux-respuestas.md](lab-procesos-linux-respuestas.md).
+
+---
+
 ## Resumen del laboratorio
 
 | Ejercicio | Concepto demostrado | Herramienta Linux |
 |-----------|--------------------|--------------------|
 | 1 — Identidad | PID, PPID, UID del PCB | `/proc/self/status` |
 | 2 — `fork()` | Creación y clonación del proceso | `strace` |
-| 3 — Jerarquía | Árbol padre–hijo–nieto | `pstree` |
+| 3 — Jerarquía | Árbol padre–hijo–nieto | `pstree`, `htop` |
 | 4 — `wait()` / zombie | Estado Exit; zombie | `/proc/<PID>/status` |
 | 5 — `execv()` | Reemplazo de imagen | `strace -e execve` |
 | 6 — `pipe()` | IPC; Running → Blocked → Ready | `/proc/<PID>/status` |
