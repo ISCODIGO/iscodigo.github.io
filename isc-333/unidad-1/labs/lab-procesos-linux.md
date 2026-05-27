@@ -19,6 +19,7 @@ has_mermaid: true
 
 - [Objetivo](#objetivo)
 - [Preparación del entorno](#preparación-del-entorno)
+  - [Referencia rápida de comandos](#referencia-rápida-de-comandos)
 - [Ejercicio 1 — Identificación de un proceso](#ejercicio-1--identificación-de-un-proceso)
 - [Ejercicio 2 — Creación de procesos con `fork()`](#ejercicio-2--creación-de-procesos-con-fork)
 - [Ejercicio 3 — Jerarquía de procesos](#ejercicio-3--jerarquía-de-procesos)
@@ -75,6 +76,53 @@ cat /proc/$PID/status | grep State
 ```
 
 Cada ejercicio que antes decía "en otra terminal" usará este patrón.
+
+### Referencia rápida de comandos
+
+#### Compilación con GCC
+
+| Comando | Descripción |
+|---------|-------------|
+| `gcc -Wall -o salida fuente.c` | Compila `fuente.c`, activa todos los avisos (`-Wall`) y nombra el ejecutable con `-o` |
+| `./programa` | Ejecuta el binario en el directorio actual |
+
+#### Ejecución en segundo plano (background)
+
+| Comando | Descripción |
+|---------|-------------|
+| `./programa &` | Lanza el proceso en background; la terminal queda libre de inmediato |
+| `$!` | Variable de shell que guarda el **PID del último proceso lanzado en background** |
+| `PADRE=$!` | Asigna ese PID a una variable para usarla después |
+| `sleep N` | Pausa la shell N segundos; útil para dar tiempo a que un proceso arranque |
+
+#### Inspección de procesos
+
+| Comando | Descripción |
+|---------|-------------|
+| `ps -p <PID> -o comm=` | Muestra solo el nombre del proceso con ese PID |
+| `pgrep -P <PPID>` | Lista los PIDs de todos los procesos hijo cuyo padre es `<PPID>` |
+| `cat /proc/<PID>/status` | Muestra el PCB del proceso: nombre, PID, PPID, UID, estado, memoria… |
+| `cat /proc/<PID>/status \| grep State` | Filtra solo la línea del estado (`R`, `S`, `Z`, etc.) |
+| `cat /proc/self/status` | Lee el PCB del **proceso que ejecuta el comando** (la shell o el programa) |
+
+#### Herramientas de monitoreo
+
+| Comando | Descripción |
+|---------|-------------|
+| `pstree -p <PID>` | Muestra el árbol de procesos a partir de ese PID con los números visibles |
+| `strace -e trace=<syscall> ./prog` | Ejecuta `prog` y muestra solo las llamadas al sistema indicadas |
+| `htop` | Monitor interactivo; `F5` activa vista de árbol, `F3` busca por nombre, `q` sale |
+
+#### Estados de proceso en `/proc`
+
+| Letra | Estado | Significado |
+|-------|--------|-------------|
+| `R` | Running / Runnable | En CPU o listo en la cola |
+| `S` | Sleeping | Bloqueado esperando un evento (E/S, señal, `sleep`) |
+| `Z` | Zombie | Terminó pero su padre aún no llamó `wait()` |
+| `T` | Stopped | Suspendido por señal (`SIGSTOP`) |
+
+---
 
 ### Directorio de trabajo
 
@@ -411,24 +459,46 @@ cat /proc/$HIJO/status | grep State
 
 Para crear un zombie real el padre debe mantenerse **vivo** después de que el hijo ya haya terminado, sin llamar a `wait()`. Si solo se comenta `wait()`, el padre termina primero y el hijo queda huérfano, no zombie.
 
-Usa esta variante que invierte los tiempos:
+Usa esta variante completa (`p4_zombie.c`) que invierte los tiempos:
 
 ```c
-if (pid == 0) {
-    printf("[HIJO]  PID=%d terminando\n", getpid());
-    exit(42);          /* hijo termina de inmediato */
-}
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
-/* padre: NO llama wait(); se queda vivo 8 segundos */
-printf("[PADRE] PID=%d sin llamar wait()...\n", getpid());
-sleep(8);              /* ventana de observación del zombie */
-return 0;
+int main(void) {
+    pid_t pid;
+
+    pid = fork();
+
+    if (pid < 0) {
+        perror("fork");
+        return 1;
+    }
+
+    if (pid == 0) {
+        printf("[HIJO]  PID=%d terminando con exit(42)\n", getpid());
+        exit(42);          /* hijo termina de inmediato */
+    }
+
+    /* padre: NO llama wait(); se queda vivo 8 segundos */
+    printf("[PADRE] PID=%d hijo=%d — sin llamar wait()...\n", getpid(), pid);
+    sleep(8);              /* ventana de observación del zombie */
+    printf("[PADRE] PID=%d terminando\n", getpid());
+    return 0;
+}
 ```
 
-Recompila, lanza en background y observa:
+```bash
+gcc -Wall -o p4_zombie p4_zombie.c
+```
+
+Lanza en background y observa desde la misma terminal:
 
 ```bash
-./p4_wait &
+./p4_zombie &
 PADRE=$!
 sleep 0.5
 HIJO=$(pgrep -P $PADRE)
