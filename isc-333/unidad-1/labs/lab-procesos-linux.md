@@ -199,8 +199,7 @@ UID  (usuario)      : 1000
 ### Preguntas de análisis
 
 1. Verifica el PPID con `ps -p <PPID> -o comm=`. ¿Qué proceso es?
-2. Ejecuta el programa dos veces seguidas. ¿El PID cambia? ¿Por qué?
-3. ¿Qué diferencia hay entre UID `0` y UID `1000`?
+2. Ejecuta el programa dos veces seguidas. ¿Son los PIDs consecutivos? ¿Qué dice eso sobre cómo el kernel asigna PIDs?
 
 ---
 
@@ -364,9 +363,8 @@ Presiona `F5` para árbol y `F3` para buscar `p3_jerarquia`. Al salir con `q`, e
 
 ### Preguntas de análisis
 
-1. ¿Cuántos procesos en total crea este programa?
-2. Dibuja el árbol de procesos con los PIDs obtenidos.
-3. Si el hijo 1 termina antes que el nieto, ¿quién adopta al nieto? Usa `cat /proc/<PID_nieto>/status | grep PPid` para verificar.
+1. Dibuja el árbol de procesos con los PIDs obtenidos.
+2. Si el hijo 1 termina antes que el nieto, ¿quién adopta al nieto? Usa `cat /proc/<PID_nieto>/status | grep PPid` para verificar.
 
 ---
 
@@ -510,7 +508,7 @@ cat /proc/$HIJO/status | grep State
 
 ### Preguntas de análisis
 
-1. Comenta `wait()` y verifica con `/proc/<PID>/status` que el hijo queda en estado `Z`.
+1. En `p4_zombie.c` el hijo termina de inmediato pero el padre vive 8 segundos. ¿Por qué ese intervalo genera un zombie y no un huérfano?
 2. ¿Qué ocurre si el padre también termina sin recoger al hijo? ¿Quién lo adopta?
 3. ¿Cuál es la diferencia entre proceso zombie y proceso huérfano?
 
@@ -583,9 +581,8 @@ gcc -Wall -o p5_exec p5_exec.c
 
 ### Preguntas de análisis
 
-1. ¿Por qué `perror("execv fallido")` solo se ejecuta si hay un error?
-2. Verifica con `strace -e trace=execve ./p5_exec` que se invoca la syscall `execve`.
-3. ¿Qué diferencia hay entre `execv`, `execve` y `execvp`?
+1. Verifica con `strace -e trace=execve ./p5_exec` que se invoca la syscall `execve`.
+2. ¿Qué diferencia hay entre `execv`, `execve` y `execvp`?
 
 ---
 
@@ -637,6 +634,7 @@ int main(void) {
     }
 
     close(fd[0]);
+    sleep(3);
     write(fd[1], mensaje, strlen(mensaje));
     printf("[PADRE] envió: \"%s\"\n", mensaje);
     close(fd[1]);
@@ -676,9 +674,8 @@ cat /proc/$HIJO/status | grep State
 
 ### Preguntas de análisis
 
-1. ¿En qué estado queda el hijo mientras el padre no ha escrito todavía?
-2. ¿Qué pasa si el padre no cierra `fd[0]` antes de que el hijo llame a `read()`?
-3. Modifica el programa para enviar un número entero en lugar de una cadena.
+1. ¿Qué ocurre si el padre no cierra `fd[1]` (el extremo de escritura) después de llamar a `write()`? ¿Por qué el hijo quedaría bloqueado para siempre en `read()`?
+2. Modifica el programa para enviar un número entero en lugar de una cadena.
 
 ---
 
