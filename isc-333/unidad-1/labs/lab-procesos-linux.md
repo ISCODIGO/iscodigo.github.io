@@ -313,9 +313,11 @@ int main(void) {
         nieto = fork();
         if (nieto == 0) {
             printf("[NIETO]  PID=%d  PPID=%d\n", getpid(), getppid());
+            sleep(3);
         } else {
             printf("[HIJO 1] PID=%d  PPID=%d  PID_nieto=%d\n",
                    getpid(), getppid(), nieto);
+            sleep(3);
         }
         return 0;
     }
@@ -324,11 +326,13 @@ int main(void) {
 
     if (hijo2 == 0) {
         printf("[HIJO 2] PID=%d  PPID=%d\n", getpid(), getppid());
+        sleep(3);
         return 0;
     }
 
     printf("[PADRE]  PID=%d  hijo1=%d  hijo2=%d\n",
            getpid(), hijo1, hijo2);
+    sleep(3);
     return 0;
 }
 ```
@@ -342,18 +346,7 @@ gcc -Wall -o p3_jerarquia p3_jerarquia.c
 
 ### Visualización con `pstree` y `htop`
 
-`p3_jerarquia` termina en milisegundos. Agrega `sleep(3)` en cada rama antes del `return 0` para tener una ventana de observación:
-
-```c
-/* al final del bloque del nieto */
-sleep(3);  return 0;
-/* al final del bloque del hijo 2 */
-sleep(3);  return 0;
-/* al final del bloque del padre */
-sleep(3);  return 0;
-```
-
-Recompila, lanza en background y observa desde la misma terminal:
+El programa ya incluye `sleep(3)` en cada rama. Lanza en background y observa desde la misma terminal:
 
 ```bash
 ./p3_jerarquia &

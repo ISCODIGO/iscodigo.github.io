@@ -18,8 +18,3 @@ Definición, estados, descripción y control de procesos. Basado en el Capítulo
 **[3. Hilos (Threads)](./hilos.md)**
 Conceptos fundamentales de hilos, diferencias con procesos, uso de `pthreads`, memoria compartida y condiciones de carrera, basado en los temas del laboratorio de threads.
 
-**[4. Lab: Procesos en Linux con GCC](./lab-procesos-linux.md)**
-Laboratorio práctico en GNU/Linux con GCC: identificación de procesos (PID, PPID, UID), `fork()`, jerarquías, estados y zombies con `wait()`, `execv()`, y `pipe()`. Incluye herramientas Linux: `/proc`, `strace` y `pstree`.
-
-**[5. Lab: Procesos en Minix3 con Clang](./lab-procesos-minix3.md)**
-Laboratorio práctico en Minix 3.3 con Clang: identificación de procesos (PID, PPID, UID), creación con `fork()`, jerarquías, estados y zombies con `wait()`, reemplazo de imagen con `execv()`, y comunicación entre procesos con `pipe()`.
