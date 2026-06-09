@@ -772,3 +772,17 @@ mindmap
                 4 componentes de app
                 Jerarquía de procesos
 ```
+
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+mermaid.initialize({ startOnLoad: false, theme: 'base' });
+document.querySelectorAll('pre[is="marp-pre"] code.language-mermaid').forEach(async el => {
+  try {
+    const { svg } = await mermaid.render('mmd' + Math.random().toString(36).slice(2), el.textContent.trim());
+    const div = document.createElement('div');
+    div.style.cssText = 'width:100%;text-align:center';
+    div.innerHTML = svg;
+    el.closest('pre').replaceWith(div);
+  } catch(e) { console.warn('Mermaid render error:', e); }
+});
+</script>
