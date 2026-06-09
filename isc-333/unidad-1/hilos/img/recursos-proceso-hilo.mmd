@@ -1,0 +1,22 @@
+graph TD
+    subgraph PROCESO["Proceso"]
+        subgraph COMPARTIDO["Compartidos por todos los hilos"]
+            ADDR["Espacio de direcciones"]
+            GLOB["Variables globales"]
+            FILES["Archivos abiertos"]
+            HIJOS["Procesos hijo"]
+            SIGS["Señales / handlers"]
+        end
+        subgraph H1["Hilo 1"]
+            PC1["Contador de programa"]
+            REG1["Registros"]
+            STACK1["Pila"]
+            STATE1["Estado"]
+        end
+        subgraph H2["Hilo 2"]
+            PC2["Contador de programa"]
+            REG2["Registros"]
+            STACK2["Pila"]
+            STATE2["Estado"]
+        end
+    end

@@ -166,16 +166,7 @@ Valve reprogramó el motor Source para explotar chips multinúcleo (Intel/AMD).
 
 Estructura jerárquica de hilos para el módulo de renderizado:
 
-```mermaid
-graph TD
-    R["Módulo de Renderizado"]
-    R --> S["Hilo Skybox"]
-    R --> V["Hilo Vista Principal"]
-    R --> M["Hilo Monitor"]
-    V --> P["Partículas: sim y dibujo"]
-    V --> H["Config. huesos del personaje"]
-    V --> D["Llamadas de dibujo (paralelas)"]
-```
+![renderizado-modulo](img/renderizado-modulo.png)
 
 ### Modelo de concurrencia clave:
 - Bloqueo **un escritor / múltiples lectores**
@@ -216,19 +207,7 @@ graph TD
 
 # 4.4 Estados de Hilo en Windows
 
-```mermaid
-stateDiagram-v2
-    [*] --> Listo : crear hilo
-    Listo --> En_Espera : seleccionado por dispatcher
-    En_Espera --> Ejecutando : cambio de contexto
-    Ejecutando --> Listo : tiempo agotado / apropiación
-    Ejecutando --> Esperando : bloqueo / suspensión
-    Esperando --> Transicion : recurso no disponible
-    Transicion --> Listo : recurso disponible
-    Esperando --> Listo : evento completado
-    Ejecutando --> Terminado : exit
-    Terminado --> [*]
-```
+![windows-estados-hilo](img/windows-estados-hilo.png)
 
 1. **Listo** – puede ser planificado
 2. **En Espera** – seleccionado para ejecutar en un procesador
@@ -257,12 +236,7 @@ stateDiagram-v2
 
 ### Modelo de hilos de cuatro niveles:
 
-```mermaid
-graph TD
-    ULT["Hilos a Nivel de Usuario (ULT)"] -->|"muchos-a-uno (Sol. 8) / uno-a-uno (Sol. 9+)"| LWP["Procesos Ligeros (LWP)"]
-    LWP -->|uno-a-uno| KT["Hilos del Núcleo"]
-    KT --> CPU["Procesadores de Hardware"]
-```
+![solaris-4-niveles](img/solaris-4-niveles.png)
 
 - **ULT** – creados por el usuario, invisibles al SO
 - **LWP** – visible dentro del proceso; se mapea a un hilo del núcleo
@@ -272,19 +246,7 @@ graph TD
 
 # 4.5 Estados de Ejecución de Hilos en Solaris
 
-```mermaid
-stateDiagram-v2
-    [*] --> IDL
-    IDL --> RUN
-    RUN --> ONPROC : planificado
-    ONPROC --> RUN : preempt
-    ONPROC --> SLEEP : evento
-    SLEEP --> RUN : wakeup
-    ONPROC --> STOP : suspender
-    STOP --> ZOMBIE : terminar
-    ZOMBIE --> FREE : limpiar recursos
-    FREE --> [*]
-```
+![solaris-estados-hilo](img/solaris-estados-hilo.png)
 
 | Estado | Significado |
 |---|---|
@@ -330,18 +292,7 @@ stateDiagram-v2
 
 # 4.6 Estados de Proceso en Linux
 
-```mermaid
-stateDiagram-v2
-    [*] --> Ejecutando : creación
-    Ejecutando --> Zombie : exit / señal
-    Zombie --> [*]
-    Ejecutando --> Interrumpible : evento E/S
-    Ejecutando --> No_Interrumpible : espera hardware
-    Interrumpible --> Ejecutando : wakeup / señal
-    No_Interrumpible --> Ejecutando : wakeup
-    Ejecutando --> Detenido : SIGSTOP
-    Detenido --> Ejecutando : SIGCONT
-```
+![linux-estados-proceso](img/linux-estados-proceso.png)
 
 | Estado | Descripción |
 |---|---|
@@ -405,16 +356,7 @@ stateDiagram-v2
 
 # 4.7 Estados de una Activity en Android
 
-```mermaid
-stateDiagram-v2
-    [*] --> Reanudada : onCreate / onStart / onResume
-    Reanudada --> Pausada : onPause
-    Pausada --> Reanudada : onResume
-    Pausada --> Detenida : onStop
-    Detenida --> Reanudada : onRestart / onStart / onResume
-    Detenida --> Destruida : onDestroy
-    Destruida --> [*]
-```
+![android-estados-activity](img/android-estados-activity.png)
 
 ---
 
@@ -515,14 +457,7 @@ dispatch_async(dispatch_get_global_queue(0, 0), ^{
 
 # 4.3 Diagrama: Ley de Amdahl Explicada
 
-```mermaid
-xychart-beta
-    title "Ley de Amdahl (f = 90% paralelizable)"
-    x-axis "Procesadores (N)" [1, 2, 4, 8, 16]
-    y-axis "Aceleración" 0 --> 10
-    bar [1.0, 1.82, 3.08, 4.71, 6.4]
-    line [1.0, 1.82, 3.08, 4.71, 6.4]
-```
+![amdahl-ley](img/amdahl-ley.png)
 
 ### ¿Por qué no escala perfectamente?
 - La parte **serial siempre tarda lo mismo** sin importar cuántos núcleos haya
@@ -533,22 +468,7 @@ xychart-beta
 
 # 4.3 Diagrama: Estrategias de Enhebrado en Valve
 
-```mermaid
-graph TB
-    subgraph GRUESA["Granularidad GRUESA — un sistema por CPU"]
-        direction LR
-        IA["IA\nCPU 1"] ~~~ REN["Renderizado\nCPU 2"] ~~~ FIS["Física\nCPU 3"] ~~~ AUD["Audio\nCPU 4"]
-    end
-    subgraph HIBRIDA["Híbrida (elegida) — mezcla de ambas"]
-        direction TB
-        MOD["Módulo de Renderizado"]
-        MOD --> SKY["Hilo: Skybox"]
-        MOD --> MAIN["Hilo: Vista Principal"]
-        MAIN --> OBJ["obj1 / obj2 / obj3 / obj4 (paralelos)"]
-        AUD2["Audio (fijo, 1 CPU)"]
-        IA2["IA y Física (un CPU c/u)"]
-    end
-```
+![valve-estrategias](img/valve-estrategias.png)
 
 > La clave: fijar lo predecible, paralelizar lo costoso
 
@@ -556,19 +476,7 @@ graph TB
 
 # 4.4 Diagrama: Jerarquía de Objetos en Windows
 
-```mermaid
-graph TD
-    PROC["PROCESO\n(no ejecuta código directamente)"]
-    PROC --> TOKEN["Token de Seguridad"]
-    PROC --> ADDR["Espacio de Direcciones Virtuales"]
-    PROC --> HANDLES["Tabla de Handles"]
-    HANDLES --> HX["Handle → Hilo X"]
-    HANDLES --> HY["Handle → Archivo Y"]
-    HANDLES --> HZ["Handle → Sección de Memoria Compartida"]
-    PROC --> H1["Hilo 1 — ejecuta instrucciones"]
-    PROC --> H2["Hilo 2 — ejecuta instrucciones"]
-    PROC --> HN["Hilo N — ejecuta instrucciones"]
-```
+![windows-jerarquia-objetos](img/windows-jerarquia-objetos.png)
 
 - El proceso **no ejecuta código** por sí mismo — solo posee recursos
 - **Los hilos** son quienes realmente ejecutan instrucciones
@@ -578,19 +486,7 @@ graph TD
 
 # 4.4 Diagrama: Ciclo de Vida de un Hilo en Windows
 
-```mermaid
-stateDiagram-v2
-    [*] --> Listo : crear hilo
-    Listo --> En_Espera : seleccionado por dispatcher
-    En_Espera --> Ejecutando : cambio de contexto
-    Ejecutando --> Listo : tiempo agotado / apropiación
-    Ejecutando --> Esperando : bloqueo / suspensión
-    Esperando --> Transicion : recurso no disponible (pila paginada)
-    Transicion --> Listo : recurso disponible
-    Esperando --> Listo : evento completado
-    Ejecutando --> Terminado : exit
-    Terminado --> [*]
-```
+![windows-ciclo-hilo](img/windows-ciclo-hilo.png)
 
 > **Transición** ocurre cuando el hilo está listo para correr pero su pila fue paginada a disco
 
@@ -598,30 +494,7 @@ stateDiagram-v2
 
 # 4.5 Diagrama: Modelo de 4 Niveles de Solaris
 
-```mermaid
-graph TD
-    subgraph USUARIO["ESPACIO DE USUARIO — Proceso"]
-        direction LR
-        ULT1["ULT 1"] & ULT2["ULT 2"] & ULT3["ULT 3"]
-    end
-    subgraph LWP_SPACE["PROCESOS LIGEROS (LWP)"]
-        direction LR
-        LWP1["LWP 1"] & LWP2["LWP 2"] & LWP3["LWP 3"]
-    end
-    subgraph NUCLEO["ESPACIO DEL NÚCLEO"]
-        direction LR
-        KT1["Hilo Núcleo 1"] & KT2["Hilo Núcleo 2"] & KT3["Hilo Núcleo 3"]
-    end
-    ULT1 --> LWP1
-    ULT2 --> LWP2
-    ULT3 --> LWP3
-    LWP1 --> KT1
-    LWP2 --> KT2
-    LWP3 --> KT3
-    KT1 --> CPU1["CPU 1"]
-    KT2 --> CPU2["CPU 2"]
-    KT3 --> CPU3["CPU 3"]
-```
+![solaris-4-niveles-detalle](img/solaris-4-niveles-detalle.png)
 
 > Cada LWP se mapea **exactamente a un** hilo del núcleo (Solaris 9+)
 
@@ -629,38 +502,13 @@ graph TD
 
 # 4.5 Diagrama: Interrupciones como Hilos en Solaris
 
-```mermaid
-flowchart LR
-    subgraph TRADICIONAL["Enfoque Tradicional"]
-        direction TB
-        I1["Interrupción llega"] --> B1["Bloquear otras interrupciones"]
-        B1 --> H1["Ejecutar handler\n(acceso directo al núcleo)"]
-        H1 --> R1["Restaurar nivel de interrupción\n← costoso en multiprocesador"]
-    end
-    subgraph SOLARIS["Enfoque Solaris"]
-        direction TB
-        I2["Interrupción llega"] --> T2["Activar Hilo de Interrupción\ndel pool precreado"]
-        T2 --> M2["Compite por recursos con mutex\n(igual que hilos normales)"]
-        M2 --> P2["Prioridad alta garantiza\nejecución rápida"]
-        P2 --> F2["Hilo termina → regresa al pool\n← escalable y uniforme"]
-    end
-```
+![solaris-interrupciones](img/solaris-interrupciones.png)
 
 ---
 
 # 4.6 Diagrama: `fork()` vs `clone()` en Linux
 
-```mermaid
-graph LR
-    subgraph FORK["fork() — Copia completa del proceso padre"]
-        direction TB
-        P1["Padre PID 100"] -->|"COW (copia al escribir)"| C1["Hijo PID 101\nMemoria: copia\nArchivos: copia\nPID: nuevo"]
-    end
-    subgraph CLONE["clone(CLONE_VM + CLONE_FILES) — Hilo compartido"]
-        direction TB
-        P2["Padre PID 100"] <-->|COMPARTIDO| C2["Hilo PID 102\nMemoria: misma\nArchivos: mismos\nPila: propia siempre"]
-    end
-```
+![linux-fork-clone](img/linux-fork-clone.png)
 
 > La pila **nunca se comparte** — `clone()` crea espacios de pila separados
 
@@ -668,23 +516,7 @@ graph LR
 
 # 4.6 Diagrama: Namespaces y Contenedores Linux
 
-```mermaid
-graph TD
-    subgraph HOST["Sistema Host (Linux)\nPID ns: 1,2,3… · Net ns: eth0 · User ns: root"]
-        subgraph CA["Contenedor A (Docker)"]
-            CA_PID["PID ns: 1, 2…"]
-            CA_NET["Net ns: eth0 propio"]
-            CA_MNT["mnt ns: / propio"]
-            CA_CG["cgroup: 2 CPU, 1 GB"]
-        end
-        subgraph CB["Contenedor B (Docker)"]
-            CB_PID["PID ns: 1, 2…"]
-            CB_NET["Net ns: eth0 propio"]
-            CB_MNT["mnt ns: / propio"]
-            CB_CG["cgroup: 1 CPU, 512 MB"]
-        end
-    end
-```
+![linux-namespaces](img/linux-namespaces.png)
 
 - **Namespaces** → cada contenedor cree que es el único en el sistema
 - **cgroups** → limitan cuántos recursos puede consumir cada contenedor
@@ -694,35 +526,13 @@ graph TD
 
 # 4.7 Diagrama: Pila de Activities en Android
 
-```mermaid
-graph TD
-    A["Activity A: Lista de correos\n— Primer plano"]
-    A -->|"usuario toca un correo"| B["Activity B: Ver correo — Primer plano\nActivity A → Detenida"]
-    B -->|"usuario pulsa Responder"| C["Activity C: Componer respuesta — Primer plano\nActivity B → Detenida\nActivity A → Detenida"]
-    C -->|"ATRÁS — desapila C"| B2["Activity B: Ver correo — Primer plano nuevamente"]
-    B2 -->|"ATRÁS — desapila B"| A2["Activity A: Lista de correos — Primer plano nuevamente"]
-```
+![android-pila-activities](img/android-pila-activities.png)
 
 ---
 
 # 4.8 Diagrama: Colas en Grand Central Dispatch
 
-```mermaid
-graph LR
-    subgraph CONC["Cola Concurrente (global queue) — ejecución paralela"]
-        direction TB
-        BF["Bloque F"] & BG["Bloque G"] & BH["Bloque H"] & BI["Bloque I"]
-        BF --> T1["Hilo 1"]
-        BG --> T2["Hilo 2"]
-        BH --> T3["Hilo 3"]
-        BI --> T4["Hilo 4"]
-    end
-    subgraph SERIAL["Cola Serial (main queue) — un bloque a la vez"]
-        direction LR
-        SF["F"] --> SG["G"] --> SH["H"] --> SI["I"]
-        SG -.->|"espera a que F termine"| T5["Hilo Principal (UI)"]
-    end
-```
+![gcd-colas](img/gcd-colas.png)
 
 > La cola serial del hilo principal garantiza que la **UI solo se actualice desde un hilo**
 
@@ -745,44 +555,4 @@ graph LR
 
 # Resumen Visual: Todo el Capítulo 4
 
-```mermaid
-mindmap
-    root(Capítulo 4: Hilos)
-        CONCEPTOS
-            Proceso vs Hilo
-            ULT / KLT
-            Fibra / UMS
-        RENDIMIENTO
-            Ley de Amdahl
-            Multinúcleo
-            Motor Source de Valve
-            Grand Central Dispatch
-        IMPLEMENTACIONES
-            Windows
-                6 estados de hilo
-                Fibras y UMS
-            Solaris
-                4 niveles ULT/LWP/KT/CPU
-                Interrupciones como hilos
-            Linux
-                task_struct unificado
-                clone() y namespaces
-                cgroups y contenedores
-            Android
-                4 componentes de app
-                Jerarquía de procesos
-```
-
-<script type="module">
-import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-mermaid.initialize({ startOnLoad: false, theme: 'base' });
-document.querySelectorAll('pre[is="marp-pre"] code.language-mermaid').forEach(async el => {
-  try {
-    const { svg } = await mermaid.render('mmd' + Math.random().toString(36).slice(2), el.textContent.trim());
-    const div = document.createElement('div');
-    div.style.cssText = 'width:100%;text-align:center';
-    div.innerHTML = svg;
-    el.closest('pre').replaceWith(div);
-  } catch(e) { console.warn('Mermaid render error:', e); }
-});
-</script>
+![capitulo4-mindmap](img/capitulo4-mindmap.png)

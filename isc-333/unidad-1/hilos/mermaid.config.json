@@ -1,0 +1,17 @@
+{
+  "theme": "base",
+  "themeVariables": {
+    "background": "#ffffff",
+    "mainBkg": "#e8f0fe",
+    "nodeBorder": "#0055b3",
+    "clusterBkg": "#f0f4ff",
+    "titleColor": "#0055b3",
+    "edgeLabelBackground": "#ffffff",
+    "lineColor": "#0055b3",
+    "primaryColor": "#e8f0fe",
+    "primaryBorderColor": "#0055b3",
+    "primaryTextColor": "#1e1e2e",
+    "secondaryColor": "#f4f6f8",
+    "fontFamily": "Segoe UI, Arial, sans-serif"
+  }
+}

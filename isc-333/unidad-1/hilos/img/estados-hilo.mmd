@@ -1,0 +1,8 @@
+stateDiagram-v2
+    [*] --> running : crear
+    running --> blocked : E/S o sincronización
+    blocked --> ready : evento completado
+    running --> ready : preempt
+    ready --> running : planificador
+    running --> terminated : thread_exit
+    terminated --> [*]

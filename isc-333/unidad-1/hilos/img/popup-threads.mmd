@@ -1,0 +1,9 @@
+sequenceDiagram
+    participant C as Cliente
+    participant S as Sistema
+    participant T as Pop-up Thread
+
+    C->>S: mensaje llega
+    S->>T: crear hilo nuevo
+    T->>T: procesar mensaje
+    T->>T: terminar

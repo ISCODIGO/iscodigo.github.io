@@ -1,0 +1,13 @@
+graph LR
+    subgraph SERVIDOR["Servidor Web"]
+        H1["Worker 1\n(idle)"]
+        H2["Worker 2\n(idle)"]
+        H3["Worker 3\n(idle)"]
+        H4["Worker 4\n(idle)"]
+    end
+    C1["Cliente A"] -->|solicitud| H1
+    H1 -->|lee disco| D1["Disco"]
+    C2["Cliente B"] -->|solicitud| H2
+    C3["Cliente C"] -->|solicitud| H3
+    H2 -->|respuesta| C2
+    H3 -->|respuesta| C3

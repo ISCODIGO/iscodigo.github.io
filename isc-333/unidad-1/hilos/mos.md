@@ -143,20 +143,12 @@ Limitación:
 
 ### Modelo de tres hilos:
 
-```mermaid
-graph LR
-    subgraph PROCESO["Procesador de texto"]
-        H1["Hilo 1: Interactivo\n(teclado, ratón)"]
-        H2["Hilo 2: Reformateo\n(recompone documento)"]
-        H3["Hilo 3: Respaldo\n(guarda periódicamente)"]
-    end
-    MEM["Espacio de direcciones compartido"]
-    H1 --> MEM
-    H2 --> MEM
-    H3 --> MEM
-```
+![procesador-texto](img/procesador-texto.png)
 
-### Beneficio:
+---
+
+# Procesador de texto: beneficios del modelo multihilo
+
 - Mejor respuesta al usuario sin programación basada en interrupciones complejas.
 - Compartir memoria del proceso permite operar sobre el mismo documento.
 
@@ -166,22 +158,12 @@ graph LR
 
 ### Arquitectura:
 
-```mermaid
-graph LR
-    DISP["Dispatcher\nrecibe solicitudes"]
-    POOL["Pool de hilos workers"]
-    CACHE["Cache de páginas"]
-    DISCO["Disco"]
-    CLIENTE["Cliente"]
+![servidor-web-arch](img/servidor-web-arch.png)
 
-    CLIENTE --> DISP
-    DISP -->|asigna| POOL
-    POOL -->|consulta| CACHE
-    POOL -->|miss → lee| DISCO
-    POOL -->|respuesta| CLIENTE
-```
+---
 
-Ventaja:
+# Servidor Web multihilo: ventaja
+
 - Mientras un worker espera disco, otros continúan procesando solicitudes.
 - Se conserva un modelo de programación secuencial por hilo.
 
@@ -189,21 +171,7 @@ Ventaja:
 
 # Servidor Web multihilo (Fig. 2-9)
 
-```mermaid
-graph LR
-    subgraph SERVIDOR["Servidor Web"]
-        H1["Worker 1\n(idle)"]
-        H2["Worker 2\n(idle)"]
-        H3["Worker 3\n(idle)"]
-        H4["Worker 4\n(idle)"]
-    end
-    C1["Cliente A"] -->|solicitud| H1
-    H1 -->|lee disco| D1["Disco"]
-    C2["Cliente B"] -->|solicitud| H2
-    C3["Cliente C"] -->|solicitud| H3
-    H2 -->|respuesta| C2
-    H3 -->|respuesta| C3
-```
+![servidor-web-workers](img/servidor-web-workers.png)
 
 ---
 
@@ -236,49 +204,18 @@ Múltiples hilos dentro de un proceso comparten recursos, pero cada hilo mantien
 
 # Recursos por proceso vs por hilo (Fig. 2-12)
 
-```mermaid
-graph TD
-    subgraph PROCESO["Proceso"]
-        subgraph COMPARTIDO["Compartidos por todos los hilos"]
-            ADDR["Espacio de direcciones"]
-            GLOB["Variables globales"]
-            FILES["Archivos abiertos"]
-            HIJOS["Procesos hijo"]
-            SIGS["Señales / handlers"]
-        end
-        subgraph H1["Hilo 1"]
-            PC1["Contador de programa"]
-            REG1["Registros"]
-            STACK1["Pila"]
-            STATE1["Estado"]
-        end
-        subgraph H2["Hilo 2"]
-            PC2["Contador de programa"]
-            REG2["Registros"]
-            STACK2["Pila"]
-            STATE2["Estado"]
-        end
-    end
-```
+![recursos-proceso-hilo](img/recursos-proceso-hilo.png)
 
 ---
 
-# Estado de hilos y operaciones básicas
+# Estados clásicos de un hilo
 
-## Estados clásicos:
+![estados-hilo](img/estados-hilo.png)
 
-```mermaid
-stateDiagram-v2
-    [*] --> running : crear
-    running --> blocked : E/S o sincronización
-    blocked --> ready : evento completado
-    running --> ready : preempt
-    ready --> running : planificador
-    running --> terminated : thread_exit
-    terminated --> [*]
-```
+---
 
-## Operaciones típicas:
+# Operaciones básicas de hilos
+
 - `thread_create` — crear hilo
 - `thread_exit` — terminar hilo
 - `thread_join` — esperar a otro hilo
@@ -321,22 +258,12 @@ La sección muestra un ejemplo de programa que crea 10 hilos, cada uno imprime s
 
 # 2.2.4 Hilos en espacio de usuario (Fig. 2-16a)
 
-```mermaid
-graph TD
-    subgraph USER["Espacio de Usuario"]
-        LIB["Biblioteca de hilos (user space)"]
-        T1["Thread 1"]
-        T2["Thread 2"]
-        T3["Thread 3"]
-        LIB --> T1
-        LIB --> T2
-        LIB --> T3
-    end
-    KERNEL["Kernel\n(solo ve un proceso)"]
-    USER --> KERNEL
-```
+![hilos-user-space](img/hilos-user-space.png)
 
-## Ventajas:
+---
+
+# Ventajas: hilos en espacio de usuario
+
 - No requiere soporte de hilos en el kernel.
 - Cambio de hilo muy rápido (sin llamada al sistema).
 - Planificación personalizable por proceso.
@@ -358,24 +285,11 @@ Solución: **jacketing** — envolver llamadas bloqueantes en wrappers que verif
 
 # 2.2.5 Hilos en el kernel (Fig. 2-16b)
 
-```mermaid
-graph TD
-    subgraph USER["Espacio de Usuario"]
-        T1["Thread 1"]
-        T2["Thread 2"]
-        T3["Thread 3"]
-    end
-    subgraph KERNEL["Espacio del Kernel"]
-        KT1["Hilo Kernel 1"]
-        KT2["Hilo Kernel 2"]
-        KT3["Hilo Kernel 3"]
-    end
-    T1 --> KT1
-    T2 --> KT2
-    T3 --> KT3
-    CPU1["CPU 1"] --> KT1
-    CPU2["CPU 2"] --> KT2
-```
+![hilos-kernel](img/hilos-kernel.png)
+
+---
+
+# Hilos en el kernel: ventajas y desventaja
 
 ## Ventajas:
 - Si un hilo bloquea, el kernel puede ejecutar otro hilo listo.
@@ -389,25 +303,11 @@ graph TD
 
 # 2.2.6 Implementaciones híbridas (Fig. 2-17)
 
-```mermaid
-graph TD
-    subgraph USER["Espacio de Usuario"]
-        U1["ULT 1"]
-        U2["ULT 2"]
-        U3["ULT 3"]
-        U4["ULT 4"]
-    end
-    subgraph KERNEL["Espacio del Kernel"]
-        K1["KLT 1"]
-        K2["KLT 2"]
-    end
-    CPU1["CPU 1"] --> K1
-    CPU2["CPU 2"] --> K2
-    U1 --> K1
-    U2 --> K1
-    U3 --> K2
-    U4 --> K2
-```
+![hilos-hibrido](img/hilos-hibrido.png)
+
+---
+
+# Implementaciones híbridas: análisis
 
 ## Idea:
 - Combinar flexibilidad y bajo costo en user space con capacidad de bloqueo/planificación en kernel.
@@ -438,17 +338,11 @@ graph TD
 ## Concepto:
 Al llegar un mensaje, el sistema crea un hilo nuevo para atenderlo inmediatamente.
 
-```mermaid
-sequenceDiagram
-    participant C as Cliente
-    participant S as Sistema
-    participant T as Pop-up Thread
+![popup-threads](img/popup-threads.png)
 
-    C->>S: mensaje llega
-    S->>T: crear hilo nuevo
-    T->>T: procesar mensaje
-    T->>T: terminar
-```
+---
+
+# Pop-up threads: ventajas y consideraciones
 
 ## Ventaja principal:
 - Muy baja latencia entre llegada del mensaje e inicio de procesamiento.
@@ -470,7 +364,10 @@ sequenceDiagram
 | Señales | ¿Qué hilo recibe `SIGINT`? | Señales por proceso o hilo específico |
 | Gestión de pilas | Múltiples pilas por proceso | Stack guard pages, crecimiento automático |
 
-## Técnicas:
+---
+
+# Técnicas para conversión a multihilo
+
 - Variables globales privadas por hilo (TLS — Thread-Local Storage).
 - Wrappers/jackets para serializar secciones no seguras.
 
@@ -490,31 +387,7 @@ sequenceDiagram
 
 # Resumen: conceptos clave de la sección 2.2
 
-```mermaid
-mindmap
-    root(Hilos - Sección 2.2)
-        MOTIVACION
-            "Procesador de texto (3 hilos)"
-            "Servidor Web (pool de workers)"
-            "Solapar cómputo y E/S"
-        MODELO
-            "Proceso = recursos"
-            "Hilo = ejecución"
-            "Recursos compartidos vs privados"
-        IMPLEMENTACION
-            "User space (ULT)"
-            "Kernel space (KLT)"
-            "Híbrido (ULT sobre KLT)"
-        MECANISMOS
-            "POSIX Threads (Pthreads)"
-            "Activaciones de planificador"
-            "Pop-up threads"
-        DIFICULTADES
-            "Variables globales (errno)"
-            "Bibliotecas no reentrantes"
-            "Manejo de señales"
-            "Múltiples pilas"
-```
+![resumen-mindmap](img/resumen-mindmap.png)
 
 ---
 
@@ -530,16 +403,3 @@ mindmap
 > *«Un hilo es una unidad de ejecución que comparte el espacio de direcciones del proceso con otros hilos, pero tiene su propio contador de programa, registros y pila.»*
 > — Tanenbaum & Bos, Modern Operating Systems
 
-<script type="module">
-import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-mermaid.initialize({ startOnLoad: false, theme: 'base' });
-document.querySelectorAll('pre[is="marp-pre"] code.language-mermaid').forEach(async el => {
-  try {
-    const { svg } = await mermaid.render('mmd' + Math.random().toString(36).slice(2), el.textContent.trim());
-    const div = document.createElement('div');
-    div.style.cssText = 'width:100%;text-align:center';
-    div.innerHTML = svg;
-    el.closest('pre').replaceWith(div);
-  } catch(e) { console.warn('Mermaid render error:', e); }
-});
-</script>
