@@ -301,9 +301,9 @@ turn = 1;                     turn = 0;
 ```
 
 **Problemas:**
-✅ Garantiza exclusión mutua
-❌ **Alternancia estricta** — proceso lento dicta el ritmo
-❌ Si un proceso falla, el otro queda **bloqueado permanentemente**
+- Garantiza exclusión mutua
+- **Alternancia estricta** — proceso lento dicta el ritmo
+- Si un proceso falla, el otro queda **bloqueado permanentemente**
 
 <!--
 **Primer intento — análisis detallado:**
@@ -596,6 +596,7 @@ Peterson elimina la necesidad de la variable `turn` adicional y la 'retirada tem
 1. **Recursos globales compartidos** — el orden de lectura/escritura es crítico
 2. **Asignación óptima de recursos** difícil para el SO
 3. **Errores no deterministas** — resultados no reproducibles
+
 
 ### Ejemplo clásico — Procedimiento `echo`
 
@@ -955,14 +956,29 @@ Esta tabla es un resumen de todo el capítulo. Los estudiantes deberían poder r
 
 ---
 
-# **Tabla 5.3 — Mecanismos Comunes de Concurrencia**
+# **Mecanismos Comunes de Concurrencia**
 
-| Mecanismo | Descripción | Tipo de dato compartido | Sincronización |
-|:----------|:------------|:------------------------|:---------------|
-| **Cerradura (lock)** | Mecanismo simple de exclusión mutua — solo un proceso puede tener la cerradura | Variable compartida | Exclusión mutua (espera ocupada o bloqueo) |
-| **Semáforo** | Variable entera con semWait/semSignal atómicos; generalización del lock | Contador + cola de bloqueo | Exclusión mutua + sincronización de condición |
-| **Monitor** | Encapsulación de datos + procedimientos + sincronización en una estructura | Datos privados + variables de condición | Exclusión mutua automática + señalización con cwait/csignal |
-| **Mensajes** | Paso de datos entre procesos sin memoria compartida | Buzones / colas de mensajes | Sincronización por rendezvous o buffering |
+Existen cuatro mecanismos fundamentales para gestionar la concurrencia, cada uno con distintas propiedades:
+
+### 🔒 Cerradura (Lock)
+- **Descripción:** mecanismo simple de exclusión mutua — solo un proceso puede tener la cerradura
+- **Dato compartido:** variable compartida
+- **Sincronización:** exclusión mutua (espera ocupada o bloqueo)
+
+### 🚦 Semáforo
+- **Descripción:** variable entera con `semWait`/`semSignal` atómicos; generalización del lock con contador
+- **Dato compartido:** contador + cola de bloqueo
+- **Sincronización:** exclusión mutua + sincronización de condición
+
+### 🏛️ Monitor
+- **Descripción:** encapsulación de datos + procedimientos + sincronización en una estructura
+- **Dato compartido:** datos privados + variables de condición
+- **Sincronización:** exclusión mutua automática + señalización con `cwait`/`csignal`
+
+### ✉️ Mensajes
+- **Descripción:** paso de datos entre procesos sin memoria compartida
+- **Dato compartido:** buzones / colas de mensajes
+- **Sincronización:** por rendezvous o buffering
 
 <!--
 **Definición formal del semáforo — el concepto central del capítulo:**
