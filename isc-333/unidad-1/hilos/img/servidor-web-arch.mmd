@@ -1,0 +1,12 @@
+graph LR
+    DISP["Dispatcher\nrecibe solicitudes"]
+    POOL["Pool de hilos workers"]
+    CACHE["Cache de páginas"]
+    DISCO["Disco"]
+    CLIENTE["Cliente"]
+
+    CLIENTE --> DISP
+    DISP -->|asigna| POOL
+    POOL -->|consulta| CACHE
+    POOL -->|miss → lee| DISCO
+    POOL -->|respuesta| CLIENTE

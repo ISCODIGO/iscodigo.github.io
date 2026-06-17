@@ -1,0 +1,10 @@
+graph LR
+    subgraph PROCESO["Procesador de texto"]
+        H1["Hilo 1: Interactivo\n(teclado, ratón)"]
+        H2["Hilo 2: Reformateo\n(recompone documento)"]
+        H3["Hilo 3: Respaldo\n(guarda periódicamente)"]
+    end
+    MEM["Espacio de direcciones compartido"]
+    H1 --> MEM
+    H2 --> MEM
+    H3 --> MEM

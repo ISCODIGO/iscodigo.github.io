@@ -1,0 +1,12 @@
+graph TD
+    subgraph USER["Espacio de Usuario"]
+        LIB["Biblioteca de hilos (user space)"]
+        T1["Thread 1"]
+        T2["Thread 2"]
+        T3["Thread 3"]
+        LIB --> T1
+        LIB --> T2
+        LIB --> T3
+    end
+    KERNEL["Kernel\n(solo ve un proceso)"]
+    USER --> KERNEL

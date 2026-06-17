@@ -202,7 +202,7 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
 <h1 id="cap%C3%ADtulo-2-hilos">Capítulo 2: Hilos</h1>
 <h2 id="secci%C3%B3n-22-threads">Sección 2.2 (Threads)</h2>
 <h3 id="modern-operating-systems">Modern Operating Systems</h3>
@@ -402,7 +402,7 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
 <h1 id="22-hilos-idea-central">2.2 Hilos: idea central</h1>
 <p>En sistemas tradicionales, un proceso tiene:</p>
 <ul>
@@ -608,7 +608,7 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
 <h1 id="221-%C2%BFpor-qu%C3%A9-usar-hilos">2.2.1 ¿Por qué usar hilos?</h1>
 <p>Razones principales:</p>
 <ul>
@@ -816,25 +816,10 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
 <h1 id="ejemplo-1-procesador-de-texto-fig-2-7">Ejemplo 1: procesador de texto (Fig. 2-7)</h1>
 <h3 id="modelo-de-tres-hilos">Modelo de tres hilos:</h3>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-mermaid">graph LR
-    subgraph PROCESO[&quot;Procesador de texto&quot;]
-        H1[&quot;Hilo 1: Interactivo\n(teclado, ratón)&quot;]
-        H2[&quot;Hilo 2: Reformateo\n(recompone documento)&quot;]
-        H3[&quot;Hilo 3: Respaldo\n(guarda periódicamente)&quot;]
-    end
-    MEM[&quot;Espacio de direcciones compartido&quot;]
-    H1 --&gt; MEM
-    H2 --&gt; MEM
-    H3 --&gt; MEM
-</code></pre>
-<h3 id="beneficio">Beneficio:</h3>
-<ul>
-<li>Mejor respuesta al usuario sin programación basada en interrupciones complejas.</li>
-<li>Compartir memoria del proceso permite operar sobre el mismo documento.</li>
-</ul>
+<p><img src="img/procesador-texto.png" alt="procesador-texto" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -1030,26 +1015,11 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="ejemplo-2-servidor-web-multihilo-fig-2-8">Ejemplo 2: servidor Web multihilo (Fig. 2-8)</h1>
-<h3 id="arquitectura">Arquitectura:</h3>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-mermaid">graph LR
-    DISP[&quot;Dispatcher\nrecibe solicitudes&quot;]
-    POOL[&quot;Pool de hilos workers&quot;]
-    CACHE[&quot;Cache de páginas&quot;]
-    DISCO[&quot;Disco&quot;]
-    CLIENTE[&quot;Cliente&quot;]
-
-    CLIENTE --&gt; DISP
-    DISP --&gt;|asigna| POOL
-    POOL --&gt;|consulta| CACHE
-    POOL --&gt;|miss → lee| DISCO
-    POOL --&gt;|respuesta| CLIENTE
-</code></pre>
-<p>Ventaja:</p>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="procesador-de-texto-beneficios-del-modelo-multihilo">Procesador de texto: beneficios del modelo multihilo</h1>
 <ul>
-<li>Mientras un worker espera disco, otros continúan procesando solicitudes.</li>
-<li>Se conserva un modelo de programación secuencial por hilo.</li>
+<li>Mejor respuesta al usuario sin programación basada en interrupciones complejas.</li>
+<li>Compartir memoria del proceso permite operar sobre el mismo documento.</li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
@@ -1246,22 +1216,10 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="servidor-web-multihilo-fig-2-9">Servidor Web multihilo (Fig. 2-9)</h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-mermaid">graph LR
-    subgraph SERVIDOR[&quot;Servidor Web&quot;]
-        H1[&quot;Worker 1\n(idle)&quot;]
-        H2[&quot;Worker 2\n(idle)&quot;]
-        H3[&quot;Worker 3\n(idle)&quot;]
-        H4[&quot;Worker 4\n(idle)&quot;]
-    end
-    C1[&quot;Cliente A&quot;] --&gt;|solicitud| H1
-    H1 --&gt;|lee disco| D1[&quot;Disco&quot;]
-    C2[&quot;Cliente B&quot;] --&gt;|solicitud| H2
-    C3[&quot;Cliente C&quot;] --&gt;|solicitud| H3
-    H2 --&gt;|respuesta| C2
-    H3 --&gt;|respuesta| C3
-</code></pre>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="ejemplo-2-servidor-web-multihilo-fig-2-8">Ejemplo 2: servidor Web multihilo (Fig. 2-8)</h1>
+<h3 id="arquitectura">Arquitectura:</h3>
+<p><img src="img/servidor-web-arch.png" alt="servidor-web-arch" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -1457,41 +1415,11 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="tres-modelos-para-construir-un-servidor-fig-2-10">Tres modelos para construir un servidor (Fig. 2-10)</h1>
-<table>
-<thead>
-<tr>
-<th>Modelo</th>
-<th>Características</th>
-<th>Paralelismo</th>
-<th>Simplicidad</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Hilos</strong></td>
-<td>Paralelismo + llamadas bloqueantes</td>
-<td><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/></td>
-<td><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/></td>
-</tr>
-<tr>
-<td><strong>Proceso monohilo</strong></td>
-<td>Sin paralelismo + llamadas bloqueantes</td>
-<td><img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/274c.svg" data-marp-twemoji=""/></td>
-<td><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/></td>
-</tr>
-<tr>
-<td><strong>Máquina de estados finitos</strong></td>
-<td>Paralelismo + llamadas no bloqueantes + interrupciones</td>
-<td><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/></td>
-<td><img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/274c.svg" data-marp-twemoji=""/></td>
-</tr>
-</tbody>
-</table>
-<p>Conclusión:</p>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="servidor-web-multihilo-ventaja">Servidor Web multihilo: ventaja</h1>
 <ul>
-<li>Hilos combinan <strong>simplicidad</strong> de llamadas bloqueantes con mejor <strong>rendimiento</strong> por solapamiento.</li>
+<li>Mientras un worker espera disco, otros continúan procesando solicitudes.</li>
+<li>Se conserva un modelo de programación secuencial por hilo.</li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
@@ -1688,19 +1616,9 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="222-modelo-cl%C3%A1sico-de-hilos">2.2.2 Modelo clásico de hilos</h1>
-<p>El modelo de proceso contiene dos conceptos:</p>
-<ol>
-<li><strong>Agrupación de recursos</strong> (espacio de direcciones, archivos, señales, etc.).</li>
-<li><strong>Ejecución</strong> (hilo con PC, registros y pila).</li>
-</ol>
-<p>Separación conceptual:</p>
-<ul>
-<li><strong>Proceso</strong> = unidad de recursos.</li>
-<li><strong>Hilo</strong> = unidad planificable en CPU.</li>
-</ul>
-<p>Múltiples hilos dentro de un proceso comparten recursos, pero cada hilo mantiene su contexto de ejecución privado.</p>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="servidor-web-multihilo-fig-2-9">Servidor Web multihilo (Fig. 2-9)</h1>
+<p><img src="img/servidor-web-workers.png" alt="servidor-web-workers" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -1896,31 +1814,42 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="recursos-por-proceso-vs-por-hilo-fig-2-12">Recursos por proceso vs por hilo (Fig. 2-12)</h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-mermaid">graph TD
-    subgraph PROCESO[&quot;Proceso&quot;]
-        subgraph COMPARTIDO[&quot;Compartidos por todos los hilos&quot;]
-            ADDR[&quot;Espacio de direcciones&quot;]
-            GLOB[&quot;Variables globales&quot;]
-            FILES[&quot;Archivos abiertos&quot;]
-            HIJOS[&quot;Procesos hijo&quot;]
-            SIGS[&quot;Señales / handlers&quot;]
-        end
-        subgraph H1[&quot;Hilo 1&quot;]
-            PC1[&quot;Contador de programa&quot;]
-            REG1[&quot;Registros&quot;]
-            STACK1[&quot;Pila&quot;]
-            STATE1[&quot;Estado&quot;]
-        end
-        subgraph H2[&quot;Hilo 2&quot;]
-            PC2[&quot;Contador de programa&quot;]
-            REG2[&quot;Registros&quot;]
-            STACK2[&quot;Pila&quot;]
-            STATE2[&quot;Estado&quot;]
-        end
-    end
-</code></pre>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="tres-modelos-para-construir-un-servidor-fig-2-10">Tres modelos para construir un servidor (Fig. 2-10)</h1>
+<table>
+<thead>
+<tr>
+<th>Modelo</th>
+<th>Características</th>
+<th>Paralelismo</th>
+<th>Simplicidad</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Hilos</strong></td>
+<td>Paralelismo + llamadas bloqueantes</td>
+<td><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/></td>
+<td><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/></td>
+</tr>
+<tr>
+<td><strong>Proceso monohilo</strong></td>
+<td>Sin paralelismo + llamadas bloqueantes</td>
+<td><img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/274c.svg" data-marp-twemoji=""/></td>
+<td><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/></td>
+</tr>
+<tr>
+<td><strong>Máquina de estados finitos</strong></td>
+<td>Paralelismo + llamadas no bloqueantes + interrupciones</td>
+<td><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/></td>
+<td><img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/274c.svg" data-marp-twemoji=""/></td>
+</tr>
+</tbody>
+</table>
+<p>Conclusión:</p>
+<ul>
+<li>Hilos combinan <strong>simplicidad</strong> de llamadas bloqueantes con mejor <strong>rendimiento</strong> por solapamiento.</li>
+</ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -2116,25 +2045,19 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="estado-de-hilos-y-operaciones-b%C3%A1sicas">Estado de hilos y operaciones básicas</h1>
-<h2 id="estados-cl%C3%A1sicos">Estados clásicos:</h2>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-mermaid">stateDiagram-v2
-    [*] --&gt; running : crear
-    running --&gt; blocked : E/S o sincronización
-    blocked --&gt; ready : evento completado
-    running --&gt; ready : preempt
-    ready --&gt; running : planificador
-    running --&gt; terminated : thread_exit
-    terminated --&gt; [*]
-</code></pre>
-<h2 id="operaciones-t%C3%ADpicas">Operaciones típicas:</h2>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="222-modelo-cl%C3%A1sico-de-hilos">2.2.2 Modelo clásico de hilos</h1>
+<p>El modelo de proceso contiene dos conceptos:</p>
+<ol>
+<li><strong>Agrupación de recursos</strong> (espacio de direcciones, archivos, señales, etc.).</li>
+<li><strong>Ejecución</strong> (hilo con PC, registros y pila).</li>
+</ol>
+<p>Separación conceptual:</p>
 <ul>
-<li><code>thread_create</code> — crear hilo</li>
-<li><code>thread_exit</code> — terminar hilo</li>
-<li><code>thread_join</code> — esperar a otro hilo</li>
-<li><code>thread_yield</code> — ceder CPU voluntariamente</li>
+<li><strong>Proceso</strong> = unidad de recursos.</li>
+<li><strong>Hilo</strong> = unidad planificable en CPU.</li>
 </ul>
+<p>Múltiples hilos dentro de un proceso comparten recursos, pero cada hilo mantiene su contexto de ejecución privado.</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -2330,28 +2253,9 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="complicaciones-del-modelo-multihilo">Complicaciones del modelo multihilo</h1>
-<p>Problemas que aparecen al usar hilos:</p>
-<ul>
-<li><strong>Interacción con <code>fork</code></strong>
-<ul>
-<li>¿Cuándo se duplican todos los hilos?</li>
-<li>¿Solo se duplica el hilo que invocó <code>fork</code>?</li>
-</ul>
-</li>
-<li><strong>Acceso concurrente a estructuras compartidas</strong>
-<ul>
-<li>Requiere sincronización (mutex, semáforos).</li>
-</ul>
-</li>
-<li><strong>Cierre de recursos usados por otro hilo</strong>
-<ul>
-<li>Un hilo cierra un archivo que otro hilo está usando.</li>
-<li>Requiere conteo de referencias o cuidado en diseño.</li>
-</ul>
-</li>
-</ul>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="recursos-por-proceso-vs-por-hilo-fig-2-12">Recursos por proceso vs por hilo (Fig. 2-12)</h1>
+<p><img src="img/recursos-proceso-hilo.png" alt="recursos-proceso-hilo" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -2547,45 +2451,9 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="223-posix-threads-pthreads">2.2.3 POSIX Threads (Pthreads)</h1>
-<p>IEEE 1003.1c define un estándar portable de hilos.</p>
-<p>Llamadas destacadas:</p>
-<table>
-<thead>
-<tr>
-<th>Función</th>
-<th>Descripción</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>pthread_create</code></td>
-<td>Crea un nuevo hilo</td>
-</tr>
-<tr>
-<td><code>pthread_exit</code></td>
-<td>Termina el hilo actual</td>
-</tr>
-<tr>
-<td><code>pthread_join</code></td>
-<td>Espera a que otro hilo termine</td>
-</tr>
-<tr>
-<td><code>pthread_yield</code></td>
-<td>Cede voluntariamente la CPU</td>
-</tr>
-<tr>
-<td><code>pthread_attr_init</code></td>
-<td>Inicializa atributos de hilo</td>
-</tr>
-<tr>
-<td><code>pthread_attr_destroy</code></td>
-<td>Libera atributos de hilo</td>
-</tr>
-</tbody>
-</table>
-<p>La sección muestra un ejemplo de programa que crea 10 hilos, cada uno imprime su identificador y termina.</p>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="estados-cl%C3%A1sicos-de-un-hilo">Estados clásicos de un hilo</h1>
+<p><img src="img/estados-hilo.png" alt="estados-hilo" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -2781,26 +2649,13 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="224-hilos-en-espacio-de-usuario-fig-2-16a">2.2.4 Hilos en espacio de usuario (Fig. 2-16a)</h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-mermaid">graph TD
-    subgraph USER[&quot;Espacio de Usuario&quot;]
-        LIB[&quot;Biblioteca de hilos (user space)&quot;]
-        T1[&quot;Thread 1&quot;]
-        T2[&quot;Thread 2&quot;]
-        T3[&quot;Thread 3&quot;]
-        LIB --&gt; T1
-        LIB --&gt; T2
-        LIB --&gt; T3
-    end
-    KERNEL[&quot;Kernel\n(solo ve un proceso)&quot;]
-    USER --&gt; KERNEL
-</code></pre>
-<h2 id="ventajas">Ventajas:</h2>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="operaciones-b%C3%A1sicas-de-hilos">Operaciones básicas de hilos</h1>
 <ul>
-<li>No requiere soporte de hilos en el kernel.</li>
-<li>Cambio de hilo muy rápido (sin llamada al sistema).</li>
-<li>Planificación personalizable por proceso.</li>
+<li><code>thread_create</code> — crear hilo</li>
+<li><code>thread_exit</code> — terminar hilo</li>
+<li><code>thread_join</code> — esperar a otro hilo</li>
+<li><code>thread_yield</code> — ceder CPU voluntariamente</li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
@@ -2997,23 +2852,28 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="problemas-de-hilos-en-espacio-de-usuario">Problemas de hilos en espacio de usuario</h1>
-<p>Problemas:</p>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="complicaciones-del-modelo-multihilo">Complicaciones del modelo multihilo</h1>
+<p>Problemas que aparecen al usar hilos:</p>
 <ul>
-<li><strong>Llamadas bloqueantes</strong> pueden bloquear todo el proceso.
+<li><strong>Interacción con <code>fork</code></strong>
 <ul>
-<li>Ejemplo: <code>read()</code> bloquea el proceso, no solo el hilo.</li>
+<li>¿Cuándo se duplican todos los hilos?</li>
+<li>¿Solo se duplica el hilo que invocó <code>fork</code>?</li>
 </ul>
 </li>
-<li><strong>Fallos de página</strong> bloquean el proceso completo.</li>
-<li><strong>Sin interrupción de reloj por hilo</strong>, puede faltar equidad.
+<li><strong>Acceso concurrente a estructuras compartidas</strong>
 <ul>
-<li>Un hilo CPU-bound monopoliza el proceso.</li>
+<li>Requiere sincronización (mutex, semáforos).</li>
+</ul>
+</li>
+<li><strong>Cierre de recursos usados por otro hilo</strong>
+<ul>
+<li>Un hilo cierra un archivo que otro hilo está usando.</li>
+<li>Requiere conteo de referencias o cuidado en diseño.</li>
 </ul>
 </li>
 </ul>
-<p>Solución: <strong>jacketing</strong> — envolver llamadas bloqueantes en wrappers que verifican si bloquearían y cambian de hilo en su lugar.</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -3209,35 +3069,45 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="225-hilos-en-el-kernel-fig-2-16b">2.2.5 Hilos en el kernel (Fig. 2-16b)</h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-mermaid">graph TD
-    subgraph USER[&quot;Espacio de Usuario&quot;]
-        T1[&quot;Thread 1&quot;]
-        T2[&quot;Thread 2&quot;]
-        T3[&quot;Thread 3&quot;]
-    end
-    subgraph KERNEL[&quot;Espacio del Kernel&quot;]
-        KT1[&quot;Hilo Kernel 1&quot;]
-        KT2[&quot;Hilo Kernel 2&quot;]
-        KT3[&quot;Hilo Kernel 3&quot;]
-    end
-    T1 --&gt; KT1
-    T2 --&gt; KT2
-    T3 --&gt; KT3
-    CPU1[&quot;CPU 1&quot;] --&gt; KT1
-    CPU2[&quot;CPU 2&quot;] --&gt; KT2
-</code></pre>
-<h2 id="ventajas-1">Ventajas:</h2>
-<ul>
-<li>Si un hilo bloquea, el kernel puede ejecutar otro hilo listo.</li>
-<li>No requiere wrappers para evitar bloqueos de llamadas.</li>
-<li>Manejo más natural de page faults por hilo.</li>
-</ul>
-<h2 id="desventaja">Desventaja:</h2>
-<ul>
-<li>Operaciones de hilo implican llamadas al sistema (más costo).</li>
-</ul>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="223-posix-threads-pthreads">2.2.3 POSIX Threads (Pthreads)</h1>
+<p>IEEE 1003.1c define un estándar portable de hilos.</p>
+<p>Llamadas destacadas:</p>
+<table>
+<thead>
+<tr>
+<th>Función</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pthread_create</code></td>
+<td>Crea un nuevo hilo</td>
+</tr>
+<tr>
+<td><code>pthread_exit</code></td>
+<td>Termina el hilo actual</td>
+</tr>
+<tr>
+<td><code>pthread_join</code></td>
+<td>Espera a que otro hilo termine</td>
+</tr>
+<tr>
+<td><code>pthread_yield</code></td>
+<td>Cede voluntariamente la CPU</td>
+</tr>
+<tr>
+<td><code>pthread_attr_init</code></td>
+<td>Inicializa atributos de hilo</td>
+</tr>
+<tr>
+<td><code>pthread_attr_destroy</code></td>
+<td>Libera atributos de hilo</td>
+</tr>
+</tbody>
+</table>
+<p>La sección muestra un ejemplo de programa que crea 10 hilos, cada uno imprime su identificador y termina.</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -3433,35 +3303,9 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="226-implementaciones-h%C3%ADbridas-fig-2-17">2.2.6 Implementaciones híbridas (Fig. 2-17)</h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-mermaid">graph TD
-    subgraph USER[&quot;Espacio de Usuario&quot;]
-        U1[&quot;ULT 1&quot;]
-        U2[&quot;ULT 2&quot;]
-        U3[&quot;ULT 3&quot;]
-        U4[&quot;ULT 4&quot;]
-    end
-    subgraph KERNEL[&quot;Espacio del Kernel&quot;]
-        K1[&quot;KLT 1&quot;]
-        K2[&quot;KLT 2&quot;]
-    end
-    CPU1[&quot;CPU 1&quot;] --&gt; K1
-    CPU2[&quot;CPU 2&quot;] --&gt; K2
-    U1 --&gt; K1
-    U2 --&gt; K1
-    U3 --&gt; K2
-    U4 --&gt; K2
-</code></pre>
-<h2 id="idea">Idea:</h2>
-<ul>
-<li>Combinar flexibilidad y bajo costo en user space con capacidad de bloqueo/planificación en kernel.</li>
-</ul>
-<h2 id="resultado">Resultado:</h2>
-<ul>
-<li>El kernel planifica hilos de kernel.</li>
-<li>El runtime de usuario planifica hilos de usuario sobre ellos.</li>
-</ul>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="224-hilos-en-espacio-de-usuario-fig-2-16a">2.2.4 Hilos en espacio de usuario (Fig. 2-16a)</h1>
+<p><img src="img/hilos-user-space.png" alt="hilos-user-space" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -3657,21 +3501,12 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="227-activaciones-del-planificador">2.2.7 Activaciones del planificador</h1>
-<h2 id="objetivo">Objetivo:</h2>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="ventajas-hilos-en-espacio-de-usuario">Ventajas: hilos en espacio de usuario</h1>
 <ul>
-<li>Aproximar ventajas de hilos de kernel con rendimiento/flexibilidad de user space.</li>
-</ul>
-<h2 id="mecanismo-clave">Mecanismo clave:</h2>
-<ul>
-<li>El kernel asigna <strong>procesadores virtuales</strong> por proceso.</li>
-<li>Cuando un hilo bloquea o se desbloquea, el kernel notifica al runtime mediante <strong>upcalls</strong>.</li>
-<li>El runtime decide qué hilo ejecutar después.</li>
-</ul>
-<h2 id="punto-cr%C3%ADtico">Punto crítico:</h2>
-<ul>
-<li><code>upcall</code> rompe el patrón clásico estratificado (capa inferior invocando superior).</li>
+<li>No requiere soporte de hilos en el kernel.</li>
+<li>Cambio de hilo muy rápido (sin llamada al sistema).</li>
+<li>Planificación personalizable por proceso.</li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
@@ -3868,29 +3703,23 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="228-pop-up-threads">2.2.8 Pop-up threads</h1>
-<h2 id="concepto">Concepto:</h2>
-<p>Al llegar un mensaje, el sistema crea un hilo nuevo para atenderlo inmediatamente.</p>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-mermaid">sequenceDiagram
-    participant C as Cliente
-    participant S as Sistema
-    participant T as Pop-up Thread
-
-    C-&gt;&gt;S: mensaje llega
-    S-&gt;&gt;T: crear hilo nuevo
-    T-&gt;&gt;T: procesar mensaje
-    T-&gt;&gt;T: terminar
-</code></pre>
-<h2 id="ventaja-principal">Ventaja principal:</h2>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="problemas-de-hilos-en-espacio-de-usuario">Problemas de hilos en espacio de usuario</h1>
+<p>Problemas:</p>
 <ul>
-<li>Muy baja latencia entre llegada del mensaje e inicio de procesamiento.</li>
-</ul>
-<h2 id="consideraciones">Consideraciones:</h2>
+<li><strong>Llamadas bloqueantes</strong> pueden bloquear todo el proceso.
 <ul>
-<li>Puede ejecutarse en contexto de kernel (más rápido, acceso directo).</li>
-<li>Un bug en kernel thread es más peligroso que en user thread.</li>
+<li>Ejemplo: <code>read()</code> bloquea el proceso, no solo el hilo.</li>
 </ul>
+</li>
+<li><strong>Fallos de página</strong> bloquean el proceso completo.</li>
+<li><strong>Sin interrupción de reloj por hilo</strong>, puede faltar equidad.
+<ul>
+<li>Un hilo CPU-bound monopoliza el proceso.</li>
+</ul>
+</li>
+</ul>
+<p>Solución: <strong>jacketing</strong> — envolver llamadas bloqueantes en wrappers que verifican si bloquearían y cambian de hilo en su lugar.</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -4086,45 +3915,9 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="229-convertir-c%C3%B3digo-monohilo-a-multihilo">2.2.9 Convertir código monohilo a multihilo</h1>
-<h2 id="dificultades-destacadas">Dificultades destacadas:</h2>
-<table>
-<thead>
-<tr>
-<th>Problema</th>
-<th>Ejemplo</th>
-<th>Solución</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Variables globales</td>
-<td><code>errno</code> (variable global de error)</td>
-<td>Hacer <code>errno</code> privada por hilo</td>
-</tr>
-<tr>
-<td>Bibliotecas no reentrantes</td>
-<td><code>strtok</code>, <code>malloc</code> no thread-safe</td>
-<td>Wrappers/jackets para serializar</td>
-</tr>
-<tr>
-<td>Señales</td>
-<td>¿Qué hilo recibe <code>SIGINT</code>?</td>
-<td>Señales por proceso o hilo específico</td>
-</tr>
-<tr>
-<td>Gestión de pilas</td>
-<td>Múltiples pilas por proceso</td>
-<td>Stack guard pages, crecimiento automático</td>
-</tr>
-</tbody>
-</table>
-<h2 id="t%C3%A9cnicas">Técnicas:</h2>
-<ul>
-<li>Variables globales privadas por hilo (TLS — Thread-Local Storage).</li>
-<li>Wrappers/jackets para serializar secciones no seguras.</li>
-</ul>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="225-hilos-en-el-kernel-fig-2-16b">2.2.5 Hilos en el kernel (Fig. 2-16b)</h1>
+<p><img src="img/hilos-kernel.png" alt="hilos-kernel" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -4320,50 +4113,18 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="resumen-modelos-de-implementaci%C3%B3n-de-hilos">Resumen: Modelos de implementación de hilos</h1>
-<table>
-<thead>
-<tr>
-<th>Característica</th>
-<th>User space</th>
-<th>Kernel</th>
-<th>Híbrido</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Cambio de hilo</strong></td>
-<td>Rápido (no syscall)</td>
-<td>Lento (syscall)</td>
-<td>Medio</td>
-</tr>
-<tr>
-<td><strong>Bloqueo de llamada</strong></td>
-<td>Bloquea proceso</td>
-<td>Solo bloquea hilo</td>
-<td>Depende</td>
-</tr>
-<tr>
-<td><strong>Paralelismo en MP</strong></td>
-<td>No</td>
-<td>Sí</td>
-<td>Sí (si hay KLTs &gt;= CPUs)</td>
-</tr>
-<tr>
-<td><strong>Flexibilidad</strong></td>
-<td>Alta</td>
-<td>Baja</td>
-<td>Media</td>
-</tr>
-<tr>
-<td><strong>Ejemplo</strong></td>
-<td>GNU Portable Threads</td>
-<td>Windows/Linux nativo</td>
-<td>Solaris, NPTL</td>
-</tr>
-</tbody>
-</table>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="hilos-en-el-kernel-ventajas-y-desventaja">Hilos en el kernel: ventajas y desventaja</h1>
+<h2 id="ventajas">Ventajas:</h2>
+<ul>
+<li>Si un hilo bloquea, el kernel puede ejecutar otro hilo listo.</li>
+<li>No requiere wrappers para evitar bloqueos de llamadas.</li>
+<li>Manejo más natural de page faults por hilo.</li>
+</ul>
+<h2 id="desventaja">Desventaja:</h2>
+<ul>
+<li>Operaciones de hilo implican llamadas al sistema (más costo).</li>
+</ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -4559,34 +4320,11 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
-<h1 id="resumen-conceptos-clave-de-la-secci%C3%B3n-22">Resumen: conceptos clave de la sección 2.2</h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-mermaid">mindmap
-    root(Hilos - Sección 2.2)
-        MOTIVACION
-            &quot;Procesador de texto (3 hilos)&quot;
-            &quot;Servidor Web (pool de workers)&quot;
-            &quot;Solapar cómputo y E/S&quot;
-        MODELO
-            &quot;Proceso = recursos&quot;
-            &quot;Hilo = ejecución&quot;
-            &quot;Recursos compartidos vs privados&quot;
-        IMPLEMENTACION
-            &quot;User space (ULT)&quot;
-            &quot;Kernel space (KLT)&quot;
-            &quot;Híbrido (ULT sobre KLT)&quot;
-        MECANISMOS
-            &quot;POSIX Threads (Pthreads)&quot;
-            &quot;Activaciones de planificador&quot;
-            &quot;Pop-up threads&quot;
-        DIFICULTADES
-            &quot;Variables globales (errno)&quot;
-            &quot;Bibliotecas no reentrantes&quot;
-            &quot;Manejo de señales&quot;
-            &quot;Múltiples pilas&quot;
-</code></pre>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="226-implementaciones-h%C3%ADbridas-fig-2-17">2.2.6 Implementaciones híbridas (Fig. 2-17)</h1>
+<p><img src="img/hilos-hibrido.png" alt="hilos-hibrido" /></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="titulo" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -4683,7 +4421,7 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-" lang="C" class="titulo" data-marpit-pagination="22" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:titulo;--theme:default;--style:section {
+" lang="C" data-marpit-pagination="22" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -4780,7 +4518,1697 @@ section.titulo h3 {
 section.titulo h4 {
   color: #666;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="22">
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="implementaciones-h%C3%ADbridas-an%C3%A1lisis">Implementaciones híbridas: análisis</h1>
+<h2 id="idea">Idea:</h2>
+<ul>
+<li>Combinar flexibilidad y bajo costo en user space con capacidad de bloqueo/planificación en kernel.</li>
+</ul>
+<h2 id="resultado">Resultado:</h2>
+<ul>
+<li>El kernel planifica hilos de kernel.</li>
+<li>El runtime de usuario planifica hilos de usuario sobre ellos.</li>
+</ul>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+" lang="C" data-marpit-pagination="23" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="227-activaciones-del-planificador">2.2.7 Activaciones del planificador</h1>
+<h2 id="objetivo">Objetivo:</h2>
+<ul>
+<li>Aproximar ventajas de hilos de kernel con rendimiento/flexibilidad de user space.</li>
+</ul>
+<h2 id="mecanismo-clave">Mecanismo clave:</h2>
+<ul>
+<li>El kernel asigna <strong>procesadores virtuales</strong> por proceso.</li>
+<li>Cuando un hilo bloquea o se desbloquea, el kernel notifica al runtime mediante <strong>upcalls</strong>.</li>
+<li>El runtime decide qué hilo ejecutar después.</li>
+</ul>
+<h2 id="punto-cr%C3%ADtico">Punto crítico:</h2>
+<ul>
+<li><code>upcall</code> rompe el patrón clásico estratificado (capa inferior invocando superior).</li>
+</ul>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+" lang="C" data-marpit-pagination="24" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="228-pop-up-threads">2.2.8 Pop-up threads</h1>
+<h2 id="concepto">Concepto:</h2>
+<p>Al llegar un mensaje, el sistema crea un hilo nuevo para atenderlo inmediatamente.</p>
+<p><img src="img/popup-threads.png" alt="popup-threads" /></p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+" lang="C" data-marpit-pagination="25" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="pop-up-threads-ventajas-y-consideraciones">Pop-up threads: ventajas y consideraciones</h1>
+<h2 id="ventaja-principal">Ventaja principal:</h2>
+<ul>
+<li>Muy baja latencia entre llegada del mensaje e inicio de procesamiento.</li>
+</ul>
+<h2 id="consideraciones">Consideraciones:</h2>
+<ul>
+<li>Puede ejecutarse en contexto de kernel (más rápido, acceso directo).</li>
+<li>Un bug en kernel thread es más peligroso que en user thread.</li>
+</ul>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+" lang="C" data-marpit-pagination="26" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="229-convertir-c%C3%B3digo-monohilo-a-multihilo">2.2.9 Convertir código monohilo a multihilo</h1>
+<h2 id="dificultades-destacadas">Dificultades destacadas:</h2>
+<table>
+<thead>
+<tr>
+<th>Problema</th>
+<th>Ejemplo</th>
+<th>Solución</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Variables globales</td>
+<td><code>errno</code> (variable global de error)</td>
+<td>Hacer <code>errno</code> privada por hilo</td>
+</tr>
+<tr>
+<td>Bibliotecas no reentrantes</td>
+<td><code>strtok</code>, <code>malloc</code> no thread-safe</td>
+<td>Wrappers/jackets para serializar</td>
+</tr>
+<tr>
+<td>Señales</td>
+<td>¿Qué hilo recibe <code>SIGINT</code>?</td>
+<td>Señales por proceso o hilo específico</td>
+</tr>
+<tr>
+<td>Gestión de pilas</td>
+<td>Múltiples pilas por proceso</td>
+<td>Stack guard pages, crecimiento automático</td>
+</tr>
+</tbody>
+</table>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+" lang="C" data-marpit-pagination="27" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="t%C3%A9cnicas-para-conversi%C3%B3n-a-multihilo">Técnicas para conversión a multihilo</h1>
+<ul>
+<li>Variables globales privadas por hilo (TLS — Thread-Local Storage).</li>
+<li>Wrappers/jackets para serializar secciones no seguras.</li>
+</ul>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+" lang="C" data-marpit-pagination="28" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="resumen-modelos-de-implementaci%C3%B3n-de-hilos">Resumen: Modelos de implementación de hilos</h1>
+<table>
+<thead>
+<tr>
+<th>Característica</th>
+<th>User space</th>
+<th>Kernel</th>
+<th>Híbrido</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Cambio de hilo</strong></td>
+<td>Rápido (no syscall)</td>
+<td>Lento (syscall)</td>
+<td>Medio</td>
+</tr>
+<tr>
+<td><strong>Bloqueo de llamada</strong></td>
+<td>Bloquea proceso</td>
+<td>Solo bloquea hilo</td>
+<td>Depende</td>
+</tr>
+<tr>
+<td><strong>Paralelismo en MP</strong></td>
+<td>No</td>
+<td>Sí</td>
+<td>Sí (si hay KLTs &gt;= CPUs)</td>
+</tr>
+<tr>
+<td><strong>Flexibilidad</strong></td>
+<td>Alta</td>
+<td>Baja</td>
+<td>Media</td>
+</tr>
+<tr>
+<td><strong>Ejemplo</strong></td>
+<td>GNU Portable Threads</td>
+<td>Windows/Linux nativo</td>
+<td>Solaris, NPTL</td>
+</tr>
+</tbody>
+</table>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="29" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+" lang="C" data-marpit-pagination="29" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
+<h1 id="resumen-conceptos-clave-de-la-secci%C3%B3n-22">Resumen: conceptos clave de la sección 2.2</h1>
+<p><img src="img/resumen-mindmap.png" alt="resumen-mindmap" /></p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="30" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="titulo" data-theme="default" data-style="section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+" lang="C" class="titulo" data-marpit-pagination="30" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:titulo;--theme:default;--style:section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+}
+pre code {
+  background: none;
+  color: #1e1e2e;
+}
+blockquote {
+  border-left: 4px solid #0055b3;
+  padding-left: 14px;
+  color: #444;
+  font-style: italic;
+  background: #f0f4ff;
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+}
+table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: #ffffff;
+  padding: 8px 10px;
+  border: 1px solid #0055b3;
+}
+td {
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+}
+tr:nth-child(even) td {
+  background: #f4f6f8;
+}
+section.titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);
+}
+section.titulo h1 {
+  font-size: 2.4em;
+  border: none;
+  color: #003d99;
+}
+section.titulo h2 {
+  color: #0055b3;
+  font-size: 1.2em;
+}
+section.titulo h3 {
+  color: #0077cc;
+}
+section.titulo h4 {
+  color: #666;
+}
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="30">
 <h1 id="fin-de-la-secci%C3%B3n-22">Fin de la sección 2.2</h1>
 <h2 id="hilos--concurrencia-con-memoria-compartida">Hilos = concurrencia con memoria compartida</h2>
 <ul>
@@ -4792,20 +6220,166 @@ section.titulo h4 {
 <p><em>«Un hilo es una unidad de ejecución que comparte el espacio de direcciones del proceso con otros hilos, pero tiene su propio contador de programa, registros y pila.»</em><br />
 — Tanenbaum &amp; Bos, Modern Operating Systems</p>
 </blockquote>
-<script type="module">
-import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-mermaid.initialize({ startOnLoad: false, theme: 'base' });
-document.querySelectorAll('pre[is="marp-pre"] code.language-mermaid').forEach(async el => {
-  try {
-    const { svg } = await mermaid.render('mmd' + Math.random().toString(36).slice(2), el.textContent.trim());
-    const div = document.createElement('div');
-    div.style.cssText = 'width:100%;text-align:center';
-    div.innerHTML = svg;
-    el.closest('pre').replaceWith(div);
-  } catch(e) { console.warn('Mermaid render error:', e); }
-});
-</script>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()})}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame(()=>{t.style.display=""}))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=Symbol(),l=()=>o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o);let c;const d="marpitSVGPolyfill:setZoomFactor,",h=Symbol(),g=Symbol();const p=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[v]:[],i={then:e=>(t?(async()=>{if(void 0===c){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise(t=>{i.addEventListener("load",()=>t())});i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),c=e.getImageData(5,5,1,1).data[3]<128}return c})().then(t=>{null==e||e(t?[v]:[])}):null==e||e([]),i)};return Object.assign(e,i)};let m,u;function v(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[g]||(Object.defineProperty(window,g,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(d)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(u=i)}}catch(t){console.error(t)}}));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||u||t.currentScale||1;m!==a&&(m=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}}),!1!==n&&Array.from(e.querySelectorAll("iframe"),({contentWindow:t})=>{null==t||t.postMessage(`${d}${n}`,"null"===window.origin?"*":window.origin)})}function w({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[h])return t[h];let e=!0;const i=()=>{e=!1,delete t[h]};Object.defineProperty(t,h,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await p()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}m=1,u=void 0;const b=Symbol(),y=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[a];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,o=t[n].proto();l()&&o!==HTMLElement?i||customElements.define(s,r(o,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach(t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)}))}window[a]=!0})(e),e[b])return e[b];const i=w({target:e}),n=()=>{i(),delete e[b]},o=Object.assign(n,{cleanup:n,update:()=>y(e)});return Object.defineProperty(e,b,{configurable:!0,value:o}),o},f=document.currentScript;y(f?f.getRootNode():document)}();
-</script></foreignObject></svg></div><script>/*!! License: https://unpkg.com/@marp-team/marp-cli@4.4.0/lib/bespoke.js.LICENSE.txt */
+</script></foreignObject></svg></div><div class="bespoke-marp-note" data-index="1" tabindex="0"><p>**Contexto histórico:** en los sistemas UNIX clásicos cada proceso era monohilo. Para lograr concurrencia había que usar `fork()`, que duplica todo el espacio de memoria —muy costoso—. Los hilos resuelven esto al compartir el espacio de direcciones del proceso.
+
+**Cuasi-paralelismo vs paralelismo real:** en un CPU de un núcleo los hilos alternan en la CPU (tiempo compartido); con multinúcleo pueden ejecutarse verdaderamente en paralelo.
+
+**Pregunta de reflexión:** ¿qué diferencia hay entre tener 4 procesos y tener 1 proceso con 4 hilos?</p></div><div class="bespoke-marp-note" data-index="2" tabindex="0"><p>**Puntos clave:**
+- El beneficio central en E/S es el **solapamiento**: mientras hilo A espera que el disco responda (puede tardar milisegundos), hilo B usa la CPU productivamente.
+- Creación de hilo ≈ 10-100× más rápida que `fork()` porque no hay copia de memoria.
+- La limitación CPU-bound es importante para el examen: si todos los hilos solo computan y no hacen E/S, el paralelismo real solo ocurre con múltiples núcleos.
+
+**Ejemplo práctico:** un servidor web sin hilos que atiende 1000 req/s: con una sola petición lenta de disco todo el servidor se bloquea. Con hilos, solo ese hilo se bloquea.</p></div><div class="bespoke-marp-note" data-index="3" tabindex="0"><p>**Análisis del diagrama (Fig. 2-7):**
+- **Hilo 1 (interactivo):** responde a teclado/ratón. Sin él, el usuario esperaría cada vez que el reformateador trabaja.
+- **Hilo 2 (reformateo):** recalcula paginación en segundo plano mientras el usuario escribe.
+- **Hilo 3 (respaldo):** guarda periódicamente sin detener los otros dos hilos.
+
+**Sin hilos:** habría que usar una máquina de estados con interrupciones y callbacks, lo que hace el código muy difícil de mantener.</p></div><div class="bespoke-marp-note" data-index="4" tabindex="0"><p>**El punto crítico es la memoria compartida:** los tres hilos acceden directamente a las mismas estructuras de datos del documento —sin IPC (pipes, sockets, shared memory explícita)—. Esto simplifica enormemente la comunicación pero obliga a usar sincronización (mutex, semáforos) para evitar condiciones de carrera.</p></div><div class="bespoke-marp-note" data-index="5" tabindex="0"><p>**Patrón Dispatcher/Worker:** el dispatcher es un hilo ligero que solo recibe solicitudes y las asigna al pool; los workers hacen el trabajo real.
+
+Este patrón es la base de Nginx, Apache MPM Worker, Java thread pools y Go routines.
+
+**Ventaja clave:** si Worker 1 se bloquea esperando un disco lento, Worker 2 y 3 continúan atendiendo otras solicitudes sin interferencia.</p></div><div class="bespoke-marp-note" data-index="6" tabindex="0"><p>**Comparación directa con proceso monohilo:** si el servidor tuviese un solo hilo atendiendo solicitudes, mientras espera el disco **ningún** cliente puede ser atendido —el proceso entero está bloqueado en la syscall `read()`—.
+
+Con hilos, la E/S de un hilo se solapa con el cómputo de otros. Este solapamiento es la razón principal de mejora de throughput en servidores web.</p></div><div class="bespoke-marp-note" data-index="7" tabindex="0"><p>**Pool precreado vs creación por demanda:** crear un hilo por cada solicitud introduciría latencia de creación y consumiría muchos recursos. El pool amortiza ese costo: los hilos se crean al arrancar el servidor y se reutilizan.
+
+Cuando no hay workers libres, las solicitudes entran en cola. El tamaño del pool es un parámetro de configuración clave (ej. `MaxThreads` en Apache).</p></div><div class="bespoke-marp-note" data-index="8" tabindex="0"><p>**Análisis de los tres modelos (Fig. 2-10):**
+- **Monohilo:** el más simple, pero una llamada bloqueante detiene todo. Solo útil para cargas triviales.
+- **Máquina de estados finitos (FSM):** usa `select()`/`epoll()` con E/S no bloqueante. Es el más eficiente en un solo núcleo pero muy difícil de programar (código como callbacks anidados — «callback hell»).
+- **Hilos:** el mejor balance. El programador escribe código secuencial natural; el SO maneja la concurrencia.
+
+**Node.js** usa el modelo FSM para el event loop; **Java EE** usa hilos; **Nginx** combina ambos.</p></div><div class="bespoke-marp-note" data-index="9" tabindex="0"><p>**Separación conceptual fundamental:**
+- **Proceso = contenedor de recursos** (espacio de direcciones, archivos abiertos, señales, procesos hijo). Garantiza aislamiento entre aplicaciones.
+- **Hilo = unidad de ejecución** (PC, registros, pila). La CPU planifica hilos, no procesos.
+
+Esta distinción aparece en Windows (PROCESS_OBJECT vs THREAD_OBJECT), POSIX pthreads, y en el modelo de 4 niveles de Solaris.
+
+**Nota:** Linux difumina esta línea: proceso e hilo son ambos `task_struct` (ver Stallings cap. 4).</p></div><div class="bespoke-marp-note" data-index="10" tabindex="0"><p>**Para el examen — memorizar qué es compartido y qué es privado:**
+
+| Compartido (proceso) | Privado (hilo) |
+|---|---|
+| Espacio de direcciones | Contador de programa (PC) |
+| Variables globales | Registros del CPU |
+| Archivos abiertos | Pila de ejecución |
+| Procesos hijo | Estado del hilo |
+| Señales y handlers | Variables locales |
+
+**¿Por qué la pila es privada?** Cada hilo tiene su propia secuencia de llamadas a funciones con sus propias variables locales y direcciones de retorno.</p></div><div class="bespoke-marp-note" data-index="11" tabindex="0"><p>**Transiciones importantes:**
+- `running → blocked`: el hilo hace una llamada bloqueante (E/S, `wait()`, adquirir mutex ocupado).
+- `blocked → ready`: el evento que esperaba ocurrió (datos disponibles, mutex liberado).
+- `running → ready`: el planificador expulsa al hilo por quantum agotado (preemption).
+- `thread_exit → terminated`: fin del hilo; sus recursos no se liberan hasta que otro hilo haga `join()`.
+
+**Diferencia con procesos:** los estados son análogos, pero las transiciones en hilos de kernel son más frecuentes y rápidas.</p></div><div class="bespoke-marp-note" data-index="12" tabindex="0"><p>**Mapeo con la API POSIX pthreads:**
+```c
+pthread_create(&amp;tid, NULL, fn, arg);  // thread_create
+pthread_exit(retval);                  // thread_exit
+pthread_join(tid, &amp;retval);            // thread_join
+pthread_yield();                       // thread_yield (no estándar en todos los SO)
+```
+
+**`thread_yield`** raramente se usa directamente en producción; el planificador del kernel maneja la cesión de CPU automáticamente. Se usa principalmente en implementaciones de hilos en espacio de usuario donde no hay planificador con preemption.</p></div><div class="bespoke-marp-note" data-index="13" tabindex="0"><p>**Problema del fork en contexto multihilo (POSIX):**
+POSIX define que `fork()` en un proceso multihilo crea un hijo con **un solo hilo** (el que llamó a `fork()`). Los mutexes bloqueados por otros hilos en el padre quedan bloqueados en el hijo sin nadie que los libere → deadlock potencial.
+
+**Solución:** usar `exec()` inmediatamente después de `fork()`, o registrar handlers con `pthread_atfork()`.
+
+**Señales y multihilo:** `SIGINT` puede ser recibida por cualquier hilo. Para control preciso se usa `pthread_sigmask()` y `sigwait()`.</p></div><div class="bespoke-marp-note" data-index="14" tabindex="0"><p>**Historia de Pthreads:** antes del estándar IEEE 1003.1c (1995), cada SO tenía su propia API de hilos incompatible (Solaris threads, DCE threads, POSIX draft, etc.). Pthreads permitió escribir código portable entre Linux, macOS, Solaris y otros UNIX.
+
+**Implementación en Linux:** Pthreads usa internamente `clone()` con los flags `CLONE_VM | CLONE_FILES | CLONE_THREAD | CLONE_SIGHAND`. La biblioteca NPTL (Native POSIX Thread Library) reemplazó a LinuxThreads en 2003 con una implementación 1:1 mucho más eficiente.</p></div><div class="bespoke-marp-note" data-index="15" tabindex="0"><p>**La biblioteca de hilos** (como GNU Portable Threads) se ejecuta completamente en modo usuario. El kernel solo ve un proceso monohilo.
+
+**Cómo funciona el cambio de contexto en user space:**
+1. La biblioteca guarda los registros del hilo actual en su TCB (Thread Control Block)
+2. Carga los registros del siguiente hilo desde su TCB
+3. Salta al PC guardado del siguiente hilo
+Todo esto sin una sola llamada al sistema → muy rápido.</p></div><div class="bespoke-marp-note" data-index="16" tabindex="0"><p>**Velocidad del cambio de contexto en user space:**
+Un cambio de contexto de kernel requiere:
+1. Trap (cambio a modo kernel) — ~100 ciclos
+2. Guardar/restaurar contexto de kernel
+3. Retorno a modo usuario
+
+Un cambio de contexto en user space: solo guardar/restaurar registros (~10-20 ciclos).
+
+**En hardware moderno** con vDSO (Linux) y syscalls optimizadas, la diferencia es menos dramática que en los años 90, pero sigue siendo relevante para aplicaciones con millones de cambios de contexto por segundo.</p></div><div class="bespoke-marp-note" data-index="17" tabindex="0"><p>**Técnica de jacketing en detalle:**
+En lugar de llamar directamente a `read()` (que bloquea el proceso entero), se llama a una versión envuelta:
+```c
+// Versión 'jacket' de read():
+ssize_t read_jacket(int fd, void *buf, size_t n) {
+    while (!data_available(fd))  // select() no bloqueante
+        thread_yield();           // ceder CPU a otro hilo
+    return real_read(fd, buf, n);
+}
+```
+
+**El problema:** hay que envolver TODAS las llamadas bloqueantes del sistema. Esto es laborioso y propenso a errores. Los hilos de kernel eliminan esta necesidad.</p></div><div class="bespoke-marp-note" data-index="18" tabindex="0"><p>**Diferencia clave con user space:** cada hilo tiene su propio hilo de kernel. Si Hilo A del proceso hace `read()` y se bloquea, el kernel puede planificar Hilo B del mismo proceso en otra CPU —o en la misma CPU después del bloqueo—.
+
+**Paralelismo real en multinúcleo:** dos hilos del mismo proceso pueden ejecutarse simultáneamente en CPU1 y CPU2. Esto es imposible con hilos en user space (el kernel solo ve un proceso en una CPU a la vez).</p></div><div class="bespoke-marp-note" data-index="19" tabindex="0"><p>**Costo concreto de las syscalls para operaciones de hilo:**
+- Crear un hilo de kernel: ~microsegundo
+- Crear un hilo de user space: ~nanosegundos
+- Bloquear en mutex de kernel: syscall `futex()` — tiene costo si hay contención
+
+**Por eso se usan thread pools:** pagar el costo de creación una sola vez, reutilizar los hilos para muchas tareas.
+
+**Pregunta de examen:** ¿qué ventaja tienen los hilos de kernel sobre los de user space? → Paralelismo real en multinúcleo y no bloquean el proceso entero en llamadas al sistema.</p></div><div class="bespoke-marp-note" data-index="20" tabindex="0"><p>**Modelo M:N (muchos-a-muchos):** N hilos de usuario se mapean a M hilos de kernel (M ≤ N). Permite tener miles de hilos de usuario ligeros, con solo M hilos de kernel activos.
+
+**NPTL en Linux eligió 1:1:** cada pthread corresponde exactamente a un hilo de kernel. Razón: las syscalls de Linux son muy eficientes, y la complejidad del M:N superó sus beneficios.
+
+**Solaris 9+ también migró a 1:1** por la misma razón. El modelo híbrido persiste en Go (goroutines sobre hilos de OS) y en Erlang.</p></div><div class="bespoke-marp-note" data-index="21" tabindex="0"><p>**¿Por qué el M:N es difícil de implementar?**
+El planificador de usuario necesita coordinarse con el planificador del kernel para evitar que ambos tomen decisiones conflictivas. Por ejemplo: si el kernel bloquea un hilo de kernel que el runtime de usuario cree que está libre, el runtime puede asignarle más trabajo que nunca se ejecutará.
+
+**Conclusión práctica:** los SO modernos (Linux, Windows, macOS) usan 1:1 porque las syscalls son baratas y la simplicidad supera al rendimiento teórico del M:N.</p></div><div class="bespoke-marp-note" data-index="22" tabindex="0"><p>**El mecanismo de upcall rompe el principio de capas:**
+Normalmente en un SO las capas inferiores nunca llaman a las superiores (el kernel no llama a código de usuario). Con activaciones del planificador, el kernel usa upcalls para notificar al runtime cuando un hilo se bloquea o se desbloquea.
+
+**Flujo de una upcall:**
+1. Hilo A llama a `read()` y el kernel lo bloquea
+2. El kernel hace upcall al runtime: «el hilo A se bloqueó, te asigno un VP extra»
+3. El runtime ejecuta el hilo B en ese VP
+4. Cuando A se desbloquea, otra upcall notifica al runtime
+
+**Implementación real:** `scheduler activations` de Anderson et al. (1991), base conceptual de los goroutines de Go.</p></div><div class="bespoke-marp-note" data-index="23" tabindex="0"><p>**Casos de uso reales de pop-up threads:**
+- Servidores de red que crean un hilo por conexión entrante
+- Sistemas de mensajería asíncrona (MQ, Kafka consumers)
+- Manejadores de eventos en sistemas embebidos
+
+**Diferencia clave con un pool de hilos:**
+| Pop-up thread | Pool de hilos |
+|---|---|
+| Se crea al llegar el mensaje | Hilos esperan en idle |
+| Latencia = costo de creación | Latencia mínima |
+| Menor uso de memoria en idle | Mayor uso de memoria en idle |
+| Riesgo de crear demasiados | Límite natural de hilos |</p></div><div class="bespoke-marp-note" data-index="24" tabindex="0"><p>**Kernel thread vs user thread para pop-up:**
+- **En kernel:** acceso directo a estructuras del kernel, más rápido, pero un bug puede corromper el estado del kernel (panic). Usado en controladores de dispositivos.
+- **En user space:** más seguro, aislado, pero requiere cambio de contexto kernel↔usuario. Usado en la mayoría de aplicaciones.
+
+**Regla práctica:** solo se usan pop-up threads en kernel para rutas de código extremadamente críticas en rendimiento y muy bien probadas.</p></div><div class="bespoke-marp-note" data-index="25" tabindex="0"><p>**El problema de `errno` ilustra perfectamente el desafío:**
+En C estándar, `errno` es una variable global. Si Hilo 1 llama a `open()` y falla, y antes de leer `errno` el planificador cede a Hilo 2 que también falla en una syscall, Hilo 2 sobreescribe `errno`. Cuando Hilo 1 reanuda, lee el `errno` incorrecto.
+
+**Solución moderna:** en glibc `errno` es una macro que expande a `(*__errno_location())` — una función que retorna un puntero a la copia TLS de `errno`.
+
+**`strtok` no reentrante:** mantiene un puntero interno estático. Alternativa: `strtok_r()` que recibe el contexto como argumento.</p></div><div class="bespoke-marp-note" data-index="26" tabindex="0"><p>**TLS en diferentes lenguajes/plataformas:**
+- **C/GCC:** `__thread int var;` o `_Thread_local int var;` (C11)
+- **C++11:** `thread_local int var;`
+- **Java:** `ThreadLocal&lt;T&gt; var = new ThreadLocal&lt;&gt;();`
+- **Python:** `import threading; local = threading.local()`
+- **Go:** no tiene TLS directo — goroutines evitan variables globales mediante closures
+- **Rust:** el sistema de tipos previene data races en tiempo de compilación (`Send` y `Sync` traits)
+
+**Wrappers para serialización** (jacketing): envuelven funciones no reentrantes con un mutex para garantizar acceso exclusivo.</p></div><div class="bespoke-marp-note" data-index="27" tabindex="0"><p>**Para el examen — tabla de comparación:**
+
+| Aspecto | User Space | Kernel | Híbrido |
+|---|---|---|---|
+| Cambio de contexto | Sin syscall (rápido) | Con syscall (lento) | Medio |
+| Bloqueo E/S | Bloquea TODO el proceso | Solo bloquea ese hilo | Depende |
+| Paralelismo (multicore) | NO | SÍ | SÍ (si M KLTs ≥ CPUs) |
+| Flexibilidad planif. | Alta (programa define) | Baja (kernel decide) | Media |
+| Ejemplo real | GNU Portable Threads | Linux NPTL, Windows | Go, Erlang |
+
+**Tendencia actual:** la mayoría de SO modernos usa 1:1 (kernel threads) porque el hardware es rápido y la simplicidad supera los beneficios teóricos del M:N.</p></div><div class="bespoke-marp-note" data-index="28" tabindex="0"><p>**Síntesis del capítulo 2.2:**
+Los hilos son la solución del SO al problema de la concurrencia dentro de un proceso. Los temas están interconectados:
+- La **motivación** (procesador de texto, servidor web) justifica la necesidad
+- El **modelo clásico** define qué se comparte y qué es privado
+- Las **implementaciones** (user/kernel/híbrido) son trade-offs del mismo problema
+- Las **complicaciones** (fork, señales, TLS) son consecuencias del modelo compartido
+
+**Conexión con Stallings (osid.md):** los conceptos aquí vistos son los fundamentos de las implementaciones reales en Windows (cap. 4.4), Solaris (4.5), Linux (4.6) y Android (4.7).</p></div><script>/*!! License: https://unpkg.com/@marp-team/marp-cli@4.3.1/lib/bespoke.js.LICENSE.txt */
 !function(){"use strict";function e(e){return e&&e.__esModule&&Object.prototype.hasOwnProperty.call(e,"default")?e.default:e}var t,n,r=(n||(n=1,t={from:function(e,t){var n,r=1===(e.parent||e).nodeType?e.parent||e:document.querySelector(e.parent||e),o=[].filter.call("string"==typeof e.slides?r.querySelectorAll(e.slides):e.slides||r.children,function(e){return"SCRIPT"!==e.nodeName}),i={},a=function(e,t){return(t=t||{}).index=o.indexOf(e),t.slide=e,t},s=function(e,t){i[e]=(i[e]||[]).filter(function(e){return e!==t})},l=function(e,t){return(i[e]||[]).reduce(function(e,n){return e&&!1!==n(t)},!0)},c=function(e,t){o[e]&&(n&&l("deactivate",a(n,t)),n=o[e],l("activate",a(n,t)))},d=function(e,t){var r=o.indexOf(n)+e;l(e>0?"next":"prev",a(n,t))&&c(r,t)},u={off:s,on:function(e,t){return(i[e]||(i[e]=[])).push(t),s.bind(null,e,t)},fire:l,slide:function(e,t){if(!arguments.length)return o.indexOf(n);l("slide",a(o[e],t))&&c(e,t)},next:d.bind(null,1),prev:d.bind(null,-1),parent:r,slides:o,destroy:function(e){l("destroy",a(n,e)),i={}}};return(t||[]).forEach(function(e){e(u)}),n||c(0),u}}),t),o=e(r);const i=document.body,a=(...e)=>history.replaceState(...e),s="",l="presenter",c="next",d="overview",u=["",l,d,c],f="bespoke-marp-",m=`data-${f}`,g=(e,{protocol:t,host:n,pathname:r,hash:o}=location)=>{const i=e.toString();return`${t}//${n}${r}${i?"?":""}${i}${o}`},p=()=>i.dataset.bespokeView,v=e=>new URLSearchParams(location.search).get(e),h=(e,t={})=>{const n={location,setter:a,...t},r=new URLSearchParams(n.location.search);for(const t of Object.keys(e)){const n=e[t];"string"==typeof n?r.set(t,n):r.delete(t)}try{n.setter({...window.history.state??{}},"",g(r,n.location))}catch(e){console.error(e)}},w=(()=>{const e="bespoke-marp";try{return localStorage.setItem(e,e),localStorage.removeItem(e),!0}catch{return!1}})(),y=e=>{try{return localStorage.getItem(e)}catch{return null}},b=(e,t)=>{try{return localStorage.setItem(e,t),!0}catch{return!1}},k=e=>{try{return localStorage.removeItem(e),!0}catch{return!1}},x=(e,t)=>{const n="aria-hidden";t?e.setAttribute(n,"true"):e.removeAttribute(n)},E=e=>{e.parent.classList.add(`${f}parent`),e.slides.forEach(e=>e.classList.add(`${f}slide`)),e.on("activate",t=>{const n=`${f}active`,r=t.slide,o=r.classList,i=!o.contains(n);if(e.slides.forEach(e=>{e.classList.remove(n),x(e,!0)}),o.add(n),x(r,!1),i){const e=`${n}-ready`;o.add(e),document.body.clientHeight,o.remove(e)}})},$=e=>{let t=0,n=0;Object.defineProperty(e,"fragments",{enumerable:!0,value:e.slides.map(e=>[null,...e.querySelectorAll("[data-marpit-fragment]")])});const r=r=>void 0!==e.fragments[t][n+r],o=(r,o)=>{t=r,n=o,e.fragments.forEach((e,t)=>{e.forEach((e,n)=>{if(null==e)return;const i=t<r||t===r&&n<=o;e.setAttribute(`${m}fragment`,(i?"":"in")+"active");const a=`${m}current-fragment`;t===r&&n===o?e.setAttribute(a,"current"):e.removeAttribute(a)})}),e.fragmentIndex=o;const i={slide:e.slides[r],index:r,fragments:e.fragments[r],fragmentIndex:o};e.fire("fragment",i)};e.on("next",({fragment:i=!0})=>{if(i){if(r(1))return o(t,n+1),!1;const i=t+1;e.fragments[i]&&o(i,0)}else{const r=e.fragments[t].length;if(n+1<r)return o(t,r-1),!1;const i=e.fragments[t+1];i&&o(t+1,i.length-1)}}),e.on("prev",({fragment:i=!0})=>{if(r(-1)&&i)return o(t,n-1),!1;const a=t-1;e.fragments[a]&&o(a,e.fragments[a].length-1)}),e.on("slide",({index:t,fragment:n})=>{let r=0;if(void 0!==n){const o=e.fragments[t];if(o){const{length:e}=o;r=-1===n?e-1:Math.min(Math.max(n,0),e-1)}}o(t,r)}),o(0,0)},L=document,S=()=>!(!L.fullscreenEnabled&&!L.webkitFullscreenEnabled),P=()=>!(!L.fullscreenElement&&!L.webkitFullscreenElement),_=e=>{e.fullscreen=()=>{S()&&(async()=>{P()?(L.exitFullscreen||L.webkitExitFullscreen)?.call(L):((e=L.body)=>{(e.requestFullscreen||e.webkitRequestFullscreen)?.call(e)})()})()},document.addEventListener("keydown",t=>{"f"!==t.key&&"F11"!==t.key||t.altKey||t.ctrlKey||t.metaKey||!S()||(e.fullscreen(),t.preventDefault())})},O=`${f}inactive`,T=(e=2e3)=>({parent:t,fire:n})=>{const r=t.classList,o=e=>n(`marp-${e?"":"in"}active`);let i;const a=()=>{i&&clearTimeout(i),i=setTimeout(()=>{r.add(O),o()},e),r.contains(O)&&(r.remove(O),o(!0))};for(const e of["mousedown","mousemove","touchend"])document.addEventListener(e,a);setTimeout(a,0)},I=["AUDIO","BUTTON","INPUT","SELECT","TEXTAREA","VIDEO"],M=e=>{e.parent.addEventListener("keydown",e=>{if(!e.target)return;const t=e.target;(I.includes(t.nodeName)||"true"===t.contentEditable)&&e.stopPropagation()})},A=e=>{window.addEventListener("load",()=>{for(const t of e.slides){const e=t.querySelector("marp-auto-scaling, [data-auto-scaling], [data-marp-fitting]");t.setAttribute(`${m}load`,e?"":"hideable")}})},C=({interval:e=250}={})=>t=>{document.addEventListener("keydown",e=>{if(" "===e.key&&e.shiftKey)t.prev();else if("ArrowLeft"===e.key||"ArrowUp"===e.key||"PageUp"===e.key)t.prev({fragment:!e.shiftKey});else if(" "!==e.key||e.shiftKey)if("ArrowRight"===e.key||"ArrowDown"===e.key||"PageDown"===e.key)t.next({fragment:!e.shiftKey});else if("End"===e.key)t.slide(t.slides.length-1,{fragment:-1});else{if("Home"!==e.key)return;t.slide(0)}else t.next();e.preventDefault()});let n,r,o=0;t.parent.addEventListener("wheel",i=>{let a=!1;const s=(e,t)=>{e&&(a=a||((e,t)=>((e,t)=>{const n="X"===t?"Width":"Height";return e[`client${n}`]<e[`scroll${n}`]})(e,t)&&((e,t)=>{const{overflow:n}=e,r=e[`overflow${t}`];return"auto"===n||"scroll"===n||"auto"===r||"scroll"===r})(getComputedStyle(e),t))(e,t)),e?.parentElement&&s(e.parentElement,t)};if(0!==i.deltaX&&s(i.target,"X"),0!==i.deltaY&&s(i.target,"Y"),a)return;i.preventDefault();const l=Math.sqrt(i.deltaX**2+i.deltaY**2);if(void 0!==i.wheelDelta){if(void 0===i.webkitForce&&Math.abs(i.wheelDelta)<40)return;if(i.deltaMode===i.DOM_DELTA_PIXEL&&l<4)return}else if(i.deltaMode===i.DOM_DELTA_PIXEL&&l<12)return;r&&clearTimeout(r),r=setTimeout(()=>{n=0},e);const c=Date.now()-o<e,d=l<=n;if(n=l,c||d)return;let u;(i.deltaX>0||i.deltaY>0)&&(u="next"),(i.deltaX<0||i.deltaY<0)&&(u="prev"),u&&(t[u](),o=Date.now())})},D=(e=`.${f}osc`)=>{const t=document.querySelector(e);if(!t)return()=>{};const n=(e,n)=>{t.querySelectorAll(`[${m}osc=${JSON.stringify(e)}]`).forEach(n)};if(S()||n("fullscreen",e=>e.style.display="none"),!w){const e=(e,t)=>{e.disabled=!0,e.title=`${t} is disabled due to restricted localStorage.`};n("presenter",t=>e(t,"Presenter view")),n("overview",t=>e(t,"Overview view"))}return e=>{t.addEventListener("click",t=>{if(t.target instanceof HTMLElement){const{bespokeMarpOsc:n}=t.target.dataset;n&&t.target.blur();const r={fragment:!t.shiftKey};"next"===n?e.next(r):"prev"===n?e.prev(r):"fullscreen"===n?e?.fullscreen():"presenter"===n?e.openPresenterView():"overview"===n&&e.toggleOverviewView()}}),e.parent.appendChild(t),e.on("activate",({index:t})=>{n("page",n=>n.textContent=`Page ${t+1} of ${e.slides.length}`)}),e.on("fragment",({index:t,fragments:r,fragmentIndex:o})=>{n("prev",e=>e.disabled=0===t&&0===o),n("next",n=>n.disabled=t===e.slides.length-1&&o===r.length-1)}),e.on("marp-active",()=>x(t,!1)),e.on("marp-inactive",()=>x(t,!0)),S()&&(e=>{for(const t of["","webkit"])L.addEventListener(t+"fullscreenchange",e)})(()=>n("fullscreen",e=>e.classList.toggle("exit",S()&&P())))}},N=e=>{if(e.syncKey&&"string"==typeof e.syncKey)return!0;throw new Error("The current instance of Bespoke.js is incompatible with Marp bespoke sync plugin.")},B=(e={})=>{const t=e.key||window.history.state?.marpBespokeSyncKey||Math.random().toString(36).slice(2),n=`bespoke-marp-sync-${t}`;var r;r={marpBespokeSyncKey:t},h({},{setter:(e,...t)=>a({...e,...r},...t)});const o=()=>{const e=y(n);return e?JSON.parse(e):Object.create(null)},i=e=>{const t=o(),r={...t,...e(t)};return b(n,JSON.stringify(r)),r},s=()=>{window.removeEventListener("pageshow",s),i(e=>({reference:(e.reference||0)+1}))};return e=>{s(),Object.defineProperty(e,"syncKey",{value:t,enumerable:!0});let r=!0;setTimeout(()=>{e.on("fragment",e=>{r&&i(()=>({index:e.index,fragmentIndex:e.fragmentIndex}))})},0),window.addEventListener("storage",t=>{if(t.key===n&&t.oldValue&&t.newValue){const n=JSON.parse(t.oldValue),o=JSON.parse(t.newValue);if(n.index!==o.index||n.fragmentIndex!==o.fragmentIndex)try{r=!1,e.slide(o.index,{fragment:o.fragmentIndex,forSync:!0})}finally{r=!0}}});const a=()=>{const{reference:e}=o();void 0===e||e<=1?k(n):i(()=>({reference:e-1}))};window.addEventListener("pagehide",e=>{e.persisted&&window.addEventListener("pageshow",s),a()}),e.on("destroy",a)}},K=e=>{w&&document.addEventListener("keydown",t=>{("o"!==t.key||t.altKey||t.ctrlKey||t.metaKey)&&"Escape"!==t.key||(t.preventDefault(),e())})};let q=null;const V=({closeOnSelect:e=!0}={})=>t=>{N(t);const n=n=>{const r=(()=>{if(!q||!q.isConnected){q=document.createElement("div"),q.className=`${f}overview`,q.inert=!0;const n=document.createElement("iframe");n.src=(()=>{const n=new URLSearchParams(location.search);return n.set("view","overview"),n.set("sync",t.syncKey),e&&n.set("closeOnSelect","1"),g(n)})(),q.append(n),document.body.append(q)}return q})(),o=n??!r.dataset.open;setTimeout(()=>{if(r.dataset.open=o?"1":"",r.inert=!o,t.skipTransition=o,o){const e=r.querySelector("iframe");try{e?.contentWindow?.focus()}catch{e?.focus()}}else window.focus()},0)};Object.defineProperties(t,{toggleOverviewView:{enumerable:!0,value:n}}),window.addEventListener("message",e=>{e.origin===window.origin&&"closeOverview"===e.data&&n(!1)}),K(n)},j=e=>{const{title:t}=document;document.title="[Overview]"+(t?` - ${t}`:"");const n=!!v("closeOnSelect"),r=()=>{window.parent.postMessage("closeOverview","null"===window.origin?"*":window.origin)};if(e.slides.forEach((t,o)=>{t.tabIndex=0;const i=()=>{e.slide(o,{fragment:-1}),n&&r()};t.addEventListener("click",i),t.addEventListener("keydown",e=>{"Enter"!==e.key&&" "!==e.key||(e.preventDefault(),i())})}),window.addEventListener("keydown",t=>{const n=e.slide(),r=t=>{const r=t=>{const n=e.slides[t].getBoundingClientRect();return[Math.round((n.left+n.right)/2),Math.round((n.top+n.bottom)/2)]};let o=null,i=n;do{const e=r(i);if(o){if(Math.abs(e[0]-o[0])<2)return i}else o=e;i+=t}while(i>=0&&i<e.slides.length);return n};if("ArrowLeft"===t.key)e.slide(Math.max(n-1,0),{fragment:-1});else if("ArrowRight"===t.key)e.slide(Math.min(n+1,e.slides.length-1),{fragment:-1});else if("ArrowUp"===t.key)e.slide(r(-1),{fragment:-1});else if("ArrowDown"===t.key)e.slide(r(1),{fragment:-1});else if("End"===t.key)e.slide(e.slides.length-1,{fragment:-1});else{if("Home"!==t.key)return;e.slide(0,{fragment:-1})}t.preventDefault();const o=e.slide();e.slides[o]?.focus?.(),e.slides[o]?.scrollIntoView?.({behavior:"smooth",block:"nearest"})}),e.on("slide",({index:t})=>{e.slides[t]?.scrollIntoView?.({behavior:"smooth",block:"nearest"})}),window.parent!==window){K(r);const e=document.createElement("header");e.className=`${f}overview-header`;const t=document.createElement("button");t.className=`${f}overview-close`,t.type="button",t.title="Close overview",t.textContent=t.title,t.addEventListener("click",r),e.append(t),document.body.prepend(e)}},F=()=>{const e=p();return{[s]:V(),[l]:V({closeOnSelect:!1}),[d]:j}[e]},U=e=>{window.addEventListener("message",t=>{if(t.origin!==window.origin)return;const[n,r]=t.data.split(":");if("navigate"===n){const[t,n]=r.split(",");let o=Number.parseInt(t,10),i=Number.parseInt(n,10)+1;i>=e.fragments[o].length&&(o+=1,i=0),e.slide(o,{fragment:i})}})};var R,X,H,W,J,Y,z,G={exports:{}},Q=(R||(R=1,G.exports=(X=["area","base","br","col","command","embed","hr","img","input","keygen","link","meta","param","source","track","wbr"],H=function(e){return String(e).replace(/[&<>"']/g,function(e){return"&"+W[e]+";"})},W={"&":"amp","<":"lt",">":"gt",'"':"quot","'":"apos"},J="dangerouslySetInnerHTML",Y={className:"class",htmlFor:"for"},z={},function(e,t){var n=[],r="";t=t||{};for(var o=arguments.length;o-- >2;)n.push(arguments[o]);if("function"==typeof e)return t.children=n.reverse(),e(t);if(e){if(r+="<"+e,t)for(var i in t)!1!==t[i]&&null!=t[i]&&i!==J&&(r+=" "+(Y[i]?Y[i]:H(i))+'="'+H(t[i])+'"');r+=">"}if(-1===X.indexOf(e)){if(t[J])r+=t[J].__html;else for(;n.length;){var a=n.pop();if(a)if(a.pop)for(var s=a.length;s--;)n.push(a[s]);else r+=!0===z[a]?a:H(a)}r+=e?"</"+e+">":""}return z[r]=!0,r})),G.exports),Z=e(Q);const ee=({children:e})=>Z(null,null,...e),te=`${f}presenter-`,ne={container:`${te}container`,dragbar:`${te}dragbar-container`,next:`${te}next`,nextContainer:`${te}next-container`,noteContainer:`${te}note-container`,noteWrapper:`${te}note-wrapper`,noteButtons:`${te}note-buttons`,infoContainer:`${te}info-container`,infoPageArea:`${te}info-page-area`,infoPage:`${te}info-page`,infoPagePrev:`${te}info-page-prev`,infoPageNext:`${te}info-page-next`,noteButtonsBigger:`${te}note-bigger`,noteButtonsSmaller:`${te}note-smaller`,infoTime:`${te}info-time`,infoTimer:`${te}info-timer`},re=e=>{const{title:t}=document;document.title="[Presenter view]"+(t?` - ${t}`:"");const n={},r=e=>(n[e]=n[e]||document.querySelector(`.${e}`),n[e]);document.body.appendChild((e=>{const t=document.createElement("div");return t.className=ne.container,t.appendChild(e),t.insertAdjacentHTML("beforeend",Z(ee,null,Z("div",{class:ne.nextContainer},Z("iframe",{class:ne.next,src:"?view=next"})),Z("div",{class:ne.dragbar}),Z("div",{class:ne.noteContainer},Z("div",{class:ne.noteWrapper}),Z("div",{class:ne.noteButtons},Z("button",{class:ne.noteButtonsSmaller,tabindex:"-1",title:"Smaller notes font size"},"Smaller notes font size"),Z("button",{class:ne.noteButtonsBigger,tabindex:"-1",title:"Bigger notes font size"},"Bigger notes font size"))),Z("div",{class:ne.infoContainer},Z("div",{class:ne.infoPageArea},Z("button",{class:ne.infoPagePrev,tabindex:"-1",title:"Previous"},"Previous"),Z("button",{class:ne.infoPage}),Z("button",{class:ne.infoPageNext,tabindex:"-1",title:"Next"},"Next")),Z("time",{class:ne.infoTime,title:"Current time"}),Z("time",{class:ne.infoTimer,title:"Timer"})))),t})(e.parent)),(e=>{let t=!1;r(ne.dragbar).addEventListener("mousedown",()=>{t=!0,r(ne.dragbar).classList.add("active")}),window.addEventListener("mouseup",()=>{t=!1,r(ne.dragbar).classList.remove("active")}),window.addEventListener("mousemove",e=>{if(!t)return;const n=e.clientX/document.documentElement.clientWidth*100;r(ne.container).style.setProperty("--bespoke-marp-presenter-split-ratio",`${Math.max(0,Math.min(100,n))}%`)}),r(ne.nextContainer).addEventListener("click",()=>e.next());const n=r(ne.next),o=(i=n,(e,t)=>i.contentWindow?.postMessage(`navigate:${e},${t}`,"null"===window.origin?"*":window.origin));var i;n.addEventListener("load",()=>{r(ne.nextContainer).classList.add("active"),o(e.slide(),e.fragmentIndex),e.on("fragment",({index:e,fragmentIndex:t})=>o(e,t))});const a=document.querySelectorAll(".bespoke-marp-note");a.forEach(e=>{e.addEventListener("keydown",e=>e.stopPropagation()),r(ne.noteWrapper).appendChild(e)}),e.on("activate",()=>a.forEach(t=>t.classList.toggle("active",t.dataset.index==e.slide())));let s=0;const l=e=>{s=Math.max(-5,s+e),r(ne.noteContainer).style.setProperty("--bespoke-marp-note-font-scale",(1.2**s).toFixed(4))},c=()=>l(1),d=()=>l(-1),u=r(ne.noteButtonsBigger),f=r(ne.noteButtonsSmaller);u.addEventListener("click",()=>{u.blur(),c()}),f.addEventListener("click",()=>{f.blur(),d()}),document.addEventListener("keydown",e=>{"+"===e.key&&c(),"-"===e.key&&d()},!0);const m=r(ne.infoPage);e.on("activate",({index:t})=>{m.textContent=`${t+1} / ${e.slides.length}`}),m.addEventListener("click",()=>{m.blur(),e.toggleOverviewView()});const g=r(ne.infoPagePrev),p=r(ne.infoPageNext);g.addEventListener("click",t=>{g.blur(),e.prev({fragment:!t.shiftKey})}),p.addEventListener("click",t=>{p.blur(),e.next({fragment:!t.shiftKey})}),e.on("fragment",({index:t,fragments:n,fragmentIndex:r})=>{g.disabled=0===t&&0===r,p.disabled=t===e.slides.length-1&&r===n.length-1});let v=new Date;const h=()=>{const e=new Date,t=e=>`${Math.floor(e)}`.padStart(2,"0"),n=e.getTime()-v.getTime(),o=t(n/1e3%60),i=t(n/1e3/60%60),a=t(n/36e5%24);r(ne.infoTime).textContent=e.toLocaleTimeString(),r(ne.infoTimer).textContent=`${a}:${i}:${o}`};h(),setInterval(h,250),r(ne.infoTimer).addEventListener("click",()=>{v=new Date})})(e)},oe=e=>{N(e),Object.defineProperties(e,{openPresenterView:{enumerable:!0,value:ie},presenterUrl:{enumerable:!0,get:ae}}),w&&document.addEventListener("keydown",t=>{"p"!==t.key||t.altKey||t.ctrlKey||t.metaKey||(t.preventDefault(),e.openPresenterView())})};function ie(){const{max:e,floor:t}=Math,n=e(t(.85*window.innerWidth),640),r=e(t(.85*window.innerHeight),360);return window.open(this.presenterUrl,te+this.syncKey,`width=${n},height=${r},menubar=no,toolbar=no`)}function ae(){const e=new URLSearchParams(location.search);return e.set("view","presenter"),e.set("sync",this.syncKey),g(e)}const se=e=>{const t=p();return t===c&&e.appendChild(document.createElement("span")),{[s]:oe,[l]:re,[c]:U}[t]},le=e=>{e.on("activate",t=>{document.querySelectorAll(".bespoke-progress-parent > .bespoke-progress-bar").forEach(n=>{n.style.flexBasis=100*t.index/(e.slides.length-1)+"%"})})},ce=e=>{const t=Number.parseInt(e,10);return Number.isNaN(t)?null:t},de=(e={})=>{const t={history:!0,...e};return e=>{let n=!0;const r=e=>{const t=n;try{return n=!0,e()}finally{n=t}},o=(t={fragment:!0})=>{let n=t.fragment?ce(v("f")||""):null;((t,n)=>{const{min:r,max:o}=Math,{fragments:i,slides:a}=e,s=o(0,r(t,a.length-1)),l=o(0,r(n||0,i[s].length-1));s===e.slide()&&l===e.fragmentIndex||e.slide(s,{fragment:l})})((()=>{if(location.hash){const[t]=location.hash.slice(1).split(":~:");if(/^\d+$/.test(t))return(ce(t)??1)-1;const r=document.getElementById(t)||document.querySelector(`a[name="${CSS.escape(t)}"]`);if(r){const{length:t}=e.slides;for(let o=0;o<t;o+=1)if(e.slides[o].contains(r)){const t=e.fragments?.[o],i=r.closest("[data-marpit-fragment]");if(t&&i){const e=t.indexOf(i);e>=0&&(n=e)}return o}}}return 0})(),n)};e.on("fragment",({index:e,fragmentIndex:r})=>{n||h({f:0===r||r.toString()},{location:{...location,hash:`#${e+1}`},setter:(...e)=>t.history?history.pushState(...e):history.replaceState(...e)})}),setTimeout(()=>{o(),window.addEventListener("hashchange",()=>r(()=>{o({fragment:!1}),h({f:void 0})})),window.addEventListener("popstate",()=>{n||r(()=>o())}),n=!1},0)}},{PI:ue,abs:fe,sqrt:me,atan2:ge}=Math,pe={passive:!0},ve=({slope:e=-.7,swipeThreshold:t=30}={})=>n=>{let r;const o=n.parent,i=e=>{const t=o.getBoundingClientRect();return{x:e.pageX-(t.left+t.right)/2,y:e.pageY-(t.top+t.bottom)/2}};o.addEventListener("touchstart",({touches:e})=>{r=1===e.length?i(e[0]):void 0},pe),o.addEventListener("touchmove",e=>{if(r)if(1===e.touches.length){e.preventDefault();const t=i(e.touches[0]),n=t.x-r.x,o=t.y-r.y;r.delta=me(fe(n)**2+fe(o)**2),r.radian=ge(n,o)}else r=void 0}),o.addEventListener("touchend",o=>{if(r){if(r.delta&&r.delta>=t&&r.radian){const t=(r.radian-e+ue)%(2*ue)-ue;n[t<0?"next":"prev"](),o.stopPropagation()}r=void 0}},pe)},he=new Map;he.clear(),he.set("none",{backward:{both:void 0,incoming:void 0,outgoing:void 0},forward:{both:void 0,incoming:void 0,outgoing:void 0}});const we={both:"",outgoing:"outgoing-",incoming:"incoming-"},ye={forward:"",backward:"-backward"},be=e=>`--marp-bespoke-transition-animation-${e}`,ke=e=>`--marp-transition-${e}`,xe=be("name"),Ee=be("duration"),$e=e=>new Promise(t=>{const n={},r=document.createElement("div"),o=e=>{r.remove(),t(e)};r.addEventListener("animationstart",()=>o(n)),Object.assign(r.style,{animationName:e,animationDuration:"1s",animationFillMode:"both",animationPlayState:"paused",position:"absolute",pointerEvents:"none"}),document.body.appendChild(r);const i=getComputedStyle(r).getPropertyValue(ke("duration"));i&&Number.parseFloat(i)>=0&&(n.defaultDuration=i),((e,t)=>{requestAnimationFrame(()=>{e.style.animationPlayState="running",requestAnimationFrame(()=>t(void 0))})})(r,o)}),Le=async e=>he.has(e)?he.get(e):(e=>{const t={},n=[];for(const[r,o]of Object.entries(we))for(const[i,a]of Object.entries(ye)){const s=`marp-${o}transition${a}-${e}`;n.push($e(s).then(e=>{t[i]=t[i]||{},t[i][r]=e?{...e,name:s}:void 0}))}return Promise.all(n).then(()=>t)})(e).then(t=>(he.set(e,t),t)),Se=e=>Object.values(e).flatMap(Object.values).every(e=>!e),Pe=(e,{type:t,backward:n})=>{const r=e[n?"backward":"forward"],o=(()=>{const e=r[t],n=e=>({[xe]:e.name});if(e)return n(e);if(r.both){const e=n(r.both);return"incoming"===t&&(e[be("direction")]="reverse"),e}})();return!o&&n?Pe(e,{type:t,backward:!1}):o||{[xe]:"__bespoke_marp_transition_no_animation__"}},_e=e=>{if(e)try{const t=JSON.parse(e);if((e=>{if("object"!=typeof e)return!1;const t=e;return"string"==typeof t.name&&(void 0===t.duration||"string"==typeof t.duration)})(t))return t}catch{}},Oe="_tSId",Te="_tA",Ie="bespoke-marp-transition-warming-up",Me=window.matchMedia("(prefers-reduced-motion: reduce)"),Ae="__bespoke_marp_transition_reduced_outgoing__",Ce="__bespoke_marp_transition_reduced_incoming__",De={forward:{both:void 0,incoming:{name:Ce},outgoing:{name:Ae}},backward:{both:void 0,incoming:{name:Ce},outgoing:{name:Ae}}},Ne=e=>{if(!document.startViewTransition)return;const t=t=>(void 0!==t&&(e._tD=t),e._tD);let n;t(!1),((...e)=>{CSS.registerProperty({name:ke("duration"),syntax:"<time>",inherits:!0,initialValue:"-1s"});const t=[...new Set(e).values()];return Promise.all(t.map(e=>Le(e))).then()})(...Array.from(document.querySelectorAll("section[data-transition], section[data-transition-back]")).flatMap(e=>[e.dataset.transition,e.dataset.transitionBack].flatMap(e=>{const t=_e(e);return[t?.name,t?.builtinFallback?`__builtin__${t.name}`:void 0]}).filter(e=>!!e))).then(()=>{document.querySelectorAll("style").forEach(e=>{e.innerHTML=e.innerHTML.replace(/--marp-transition-duration:[^;}]*[;}]/g,e=>e.slice(0,-1)+"!important"+e.slice(-1))})});const r=(n,{back:r,cond:o})=>i=>{const a=t();if(a)return!!i[Te]||!("object"!=typeof a||(a.skipTransition(),!i.forSync));if(e.skipTransition)return!0;if(!o(i))return!0;const s=e.slides[e.slide()],l=()=>i.back??r,c="data-transition"+(l()?"-back":""),d=s.querySelector(`section[${c}]`);if(!d)return!0;const u=_e(d.getAttribute(c)??void 0);return!u||((async(e,{builtinFallback:t=!0}={})=>{let n=await Le(e);if(Se(n)){if(!t)return;return n=await Le(`__builtin__${e}`),Se(n)?void 0:n}return n})(u.name,{builtinFallback:u.builtinFallback}).then(e=>{if(!e){t(!0);try{n(i)}finally{t(!1)}return}let r=e;Me.matches&&(console.warn("Use a constant animation to transition because preferring reduced motion by viewer has detected."),r=De);const o=document.getElementById(Oe);o&&o.remove();const a=document.createElement("style");a.id=Oe,document.head.appendChild(a),((e,t)=>{const n=[`:root{${ke("direction")}:${t.backward?-1:1};}`,":root:has(.bespoke-marp-inactive){cursor:none;}"],r=t=>{const n=e[t].both?.defaultDuration||e[t].outgoing?.defaultDuration||e[t].incoming?.defaultDuration;return"forward"===t?n:n||r("forward")},o=t.duration||r(t.backward?"backward":"forward");void 0!==o&&n.push(`::view-transition-group(*){${Ee}:${o};}`);const i=e=>Object.entries(e).map(([e,t])=>`${e}:${t};`).join("");return n.push(`::view-transition-old(root){${i(Pe(e,{...t,type:"outgoing"}))}}`,`::view-transition-new(root){${i(Pe(e,{...t,type:"incoming"}))}}`),n})(r,{backward:l(),duration:u.duration}).forEach(e=>a.sheet?.insertRule(e));const s=document.documentElement.classList;s.add(Ie);let c=!1;const d=()=>{c||(n(i),c=!0,s.remove(Ie))},f=()=>{t(!1),a.remove(),s.remove(Ie)};try{t(!0);const e=document.startViewTransition(d);t(e),e.finished.finally(f)}catch(e){console.error(e),d(),f()}}),!1)};e.on("prev",r(t=>e.prev({...t,[Te]:!0}),{back:!0,cond:e=>e.index>0&&!((e.fragment??1)&&n.fragmentIndex>0)})),e.on("next",r(t=>e.next({...t,[Te]:!0}),{cond:t=>t.index+1<e.slides.length&&!(n.fragmentIndex+1<n.fragments.length)})),setTimeout(()=>{e.on("slide",r(t=>e.slide(t.index,{...t,[Te]:!0}),{cond:t=>{const n=e.slide();return t.index!==n&&(t.back=t.index<n,!0)}}))},0),e.on("fragment",e=>{n=e})};let Be;const Ke=()=>(void 0===Be&&(Be="wakeLock"in navigator&&navigator.wakeLock),Be),qe=async()=>{const e=Ke();if(e)try{return await e.request("screen")}catch(e){console.warn(e)}return null},Ve=async()=>{if(!Ke())return;let e;const t=()=>{e&&"visible"===document.visibilityState&&qe()};for(const e of["visibilitychange","fullscreenchange"])document.addEventListener(e,t);return e=await qe(),e};((e=document.getElementById(":$p"))=>{(()=>{const e=v("view");i.dataset.bespokeView=u.some(t=>t&&t===e)?e:""})();const t=(e=>{const t=v(e);return h({[e]:void 0}),t})("sync")||void 0;o.from(e,((...e)=>{const t=u.findIndex(e=>p()===e);return e.map(([e,n])=>e[t]&&n).filter(e=>e)})([[1,1,1,0],B({key:t})],[[1,1,0,1],se(e)],[[1,1,0,0],M],[[1,1,1,1],E],[[1,0,0,0],T()],[[1,1,1,1],A],[[1,1,1,1],de({history:!1})],[[1,1,0,0],C()],[[1,1,1,0],_],[[1,0,0,0],le],[[1,1,0,0],ve()],[[1,0,0,0],D()],[[1,1,1,0],F()],[[1,0,0,0],Ne],[[1,1,1,1],$],[[1,1,1,0],Ve]))})()}();</script></body></html>

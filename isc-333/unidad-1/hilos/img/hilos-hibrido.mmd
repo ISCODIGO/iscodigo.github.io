@@ -1,0 +1,17 @@
+graph TD
+    subgraph USER["Espacio de Usuario"]
+        U1["ULT 1"]
+        U2["ULT 2"]
+        U3["ULT 3"]
+        U4["ULT 4"]
+    end
+    subgraph KERNEL["Espacio del Kernel"]
+        K1["KLT 1"]
+        K2["KLT 2"]
+    end
+    CPU1["CPU 1"] --> K1
+    CPU2["CPU 2"] --> K2
+    U1 --> K1
+    U2 --> K1
+    U3 --> K2
+    U4 --> K2
