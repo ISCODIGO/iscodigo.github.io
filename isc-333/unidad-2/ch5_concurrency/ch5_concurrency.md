@@ -183,7 +183,7 @@ Esta diapositiva establece la base para entender por qué la concurrencia es imp
 |:---------------|:-----------------:|:------------------:|:-----------:|
 | **# de CPUs** | 1 | 2+ | Múltiples sistemas |
 | **Memoria** | Compartida | Compartida | Independiente (red) |
-| **Paralelismo real** | ❌ No | ✅ Sí | ✅ Sí |
+| **Paralelismo real** | No | Sí | Sí |
 | **Sincronización** | Variables compartidas | Variables compartidas + coherencia caché | Paso de mensajes |
 | **Escalabilidad** | Limitada (1 CPU) | Buena (hasta decenas de CPUs) | Excelente (centenares de nodos) |
 | **Complejidad** | Baja-media | Media-alta | Alta (fallos parciales, red) |
@@ -305,12 +305,31 @@ turn = 1;                     turn = 0;
 - **Alternancia estricta** — proceso lento dicta el ritmo
 - Si un proceso falla, el otro queda **bloqueado permanentemente**
 
+---
+
+**Secuencia de fallo (alternancia estricta — viola progreso):**
+
+| Paso | P0 | P1 | `turn` |
+|:----:|:---|:---|:------:|
+| 1 | `while(turn≠0)` → turn=0 → sale, **entra a SC** | — | 0 |
+| 2 | **Sección Crítica** | — | 0 |
+| 3 | `turn = 1` — pasa el turno | — | → **1** |
+| 4 | Código restante | Código restante (no necesita SC) | 1 |
+| 5 | **Quiere reingresar a SC** | — | 1 |
+| 6 | `while(turn≠0)` → turn=1 → **BLOQUEADO** | — | 1 |
+| 7 | **↑ P0 bloqueado esperando** a que P1 entre y salga de SC | Sigue con código restante, sin necesitar SC | 1 |
+| 8 | Espera innecesaria... | ...nunca entra a SC, turn nunca cambia | 1 |
+| ⋮ | **P0 no progresa** aunque P1 no necesita el recurso | — | 1 |
+
+<div style="font-size:0.75em; color:#666; margin-top:6px;">P0 no puede reingresar a SC porque P1 debe ceder el turno primero. Alternancia estricta viola el requisito #4.</div>
+
+
 <!--
 **Primer intento — análisis detallado:**
 
 Funciona como un 'turno' en un juego de mesa: un proceso espera hasta que sea su turno.
 
-✅ Garantiza exclusión mutua porque la variable `turn` solo puede tener un valor a la vez.
+Garantiza exclusión mutua porque la variable `turn` solo puede tener un valor a la vez.
 
 **Problemas fundamentales:**
 1. **Alternancia estricta:** si P0 entra a SC y sale, y quiere entrar inmediatamente otra vez, no puede —debe esperar a que P1 también entre y salga. Esto viola el requisito #4 (un proceso fuera de SC no debe interferir).
@@ -318,6 +337,7 @@ Funciona como un 'turno' en un juego de mesa: un proceso espera hasta que sea su
 
 **Analogía didáctica:** un semáforo peatonal que alterna estrictamente — si nadie cruza, los carros igual deben esperar su turno aunque no haya peatones.
 -->
+
 
 ---
 
@@ -333,11 +353,29 @@ flag[0] = false;              flag[1] = false;
 ```
 
 **Problema:**
-❌ **No garantiza exclusión mutua** — ambos procesos pueden entrar si se intercalan correctamente
-❌ Si un proceso falla dentro de la sección crítica, el otro se bloquea
+**No garantiza exclusión mutua** — ambos procesos pueden entrar si se intercalan correctamente
+Si un proceso falla dentro de la sección crítica, el otro se bloquea
+
+---
+
+**Secuencia de fallo (race condition — viola exclusión mutua):**
+
+| Paso | P0 | P1 | `flag[0]` | `flag[1]` |
+|:----:|:---|:---|:---------:|:---------:|
+| 1 | `while(flag[1])` → flag[1]=false → **sale del bucle** | — | false | false |
+| 2 | **⇨ ¡Cambio de contexto!** P0 interrumpido justo aquí ⇨ | — | false | false |
+| 3 | — | `while(flag[0])` → flag[0]=false → **sale del bucle** | false | false |
+| 4 | — | `flag[1] = true` — **marca intención** | false | → **true** |
+| 5 | — | **Sección Crítica** ← ¡P1 entra! | false | true |
+| 6 | — | *(P1 dentro de SC)* | false | true |
+| 7 | *(P0 reanuda)* `flag[0] = true` — **marca intención** | *(P1 en SC)* | → **true** | true |
+| 8 | **Sección Crítica** ← ¡P0 también entra! | *(P1 aún en SC)* | true | true |
+
+
 
 <!--
 **Segundo intento — el error de diseño:**
+
 
 Aquí cada proceso declara su intención de entrar (`flag[i] = true`) **después** de verificar que el otro no está interesado. El error es el orden de las operaciones.
 
@@ -366,17 +404,35 @@ flag[0] = false;              flag[1] = false;
 ```
 
 **Problema:**
-✅ Garantiza exclusión mutua
-❌ **Interbloqueo (deadlock)** — ambos se ponen en true simultáneamente
+Garantiza exclusión mutua
+**Interbloqueo (deadlock)** — ambos se ponen en true simultáneamente
+
+---
+
+**Secuencia de fallo (deadlock — ambos esperan al otro):**
+
+| Paso | P0 | P1 | `flag[0]` | `flag[1]` |
+|:----:|:---|:---|:---------:|:---------:|
+| 1 | `flag[0] = true` — **marca intención** | — | → **true** | false |
+| 2 | — | `flag[1] = true` — **marca intención** | true | → **true** |
+| 3 | `while(flag[1])` → flag[1]=true → **espera que P1 salga** | — | true | true |
+| 4 | — | `while(flag[0])` → flag[0]=true → **espera que P0 salga** | true | true |
+| 5 | **↑ P0 espera que P1 ponga flag[1]=false** | **↑ P1 espera que P0 ponga flag[0]=false** | true | true |
+| 6 | Pero P1 **no puede** salir de su while (flag[0]=true) | Pero P0 **no puede** salir de su while (flag[1]=true) | true | true |
+| ⋮ | **DEADLOCK** — nadie progresa | **DEADLOCK** — nadie progresa | true | true |
+
+<div style="font-size:0.1em; color:#666; margin-top:3px;">P0 espera que P1 baje flag[1]; P1 espera que P0 baje flag[0]. Ninguno puede bajar su propio flag porque está atrapado en el while. Deadlock clásico: deadly embrace.</div>
+
 
 <!--
 **Tercer intento — deadlock por inversión de orden:**
 
+
 Corrige el error anterior: ahora cada proceso marca su intención **antes** de verificar.
 
-✅ Garantiza exclusión mutua — si ambos marcan, ambos ven el flag del otro en true y ambos esperan.
+Garantiza exclusión mutua — si ambos marcan, ambos ven el flag del otro en true y ambos esperan.
 
-❌ **Deadlock:** si los dos procesos ejecutan `flag[0]=true` y `flag[1]=true` antes de llegar al while, ambos quedan atrapados:
+**Deadlock:** si los dos procesos ejecutan `flag[0]=true` y `flag[1]=true` antes de llegar al while, ambos quedan atrapados:
 - P0: `while (flag[1])` → flag[1]=true → espera
 - P1: `while (flag[0])` → flag[0]=true → espera
 - Ninguno puede avanzar porque `flag` del otro nunca cambiará.
@@ -404,8 +460,32 @@ flag[0] = false;                   flag[1] = false;
 - Exclusión mutua garantizada
 - **Livelock** — posibilidad de ciclo indefinido de cortesía mutua
 
+---
+
+**Secuencia de fallo (livelock — cortesía mutua, nadie avanza):**
+
+| Paso | P0 | P1 | `flag[0]` | `flag[1]` |
+|:----:|:---|:---|:---------:|:---------:|
+| 1 | `flag[0]=true` → while(flag[1])→ lo ve=true | — | → **true** | false |
+| 2 | — | `flag[1]=true` → while(flag[0])→ lo ve=true | true | → **true** |
+| 3 | `flag[0]=false` — **cede el paso** | — | → **false** | true |
+| 4 | `delay` — espera un momento | — | false | true |
+| 5 | — | `flag[1]=false` — **cede el paso** | false | → **false** |
+| 6 | — | `delay` — espera un momento | false | false |
+| 7 | `flag[0]=true` — **reintenta** | — | → **true** | false |
+| 8 | — | `flag[1]=true` — **reintenta** | true | → **true** |
+| 9 | `while(flag[1])` → **sigue true** | — | true | true |
+| 10 | — | `while(flag[0])` → **sigue true** | true | true |
+| ⋮ | **↑ Vuelve al paso 3** — ciclo infinito | **↑ Vuelve al paso 3** — ciclo infinito | ⋮ | ⋮ |
+
+---
+
+<div style="font-size:0.75em; color:#666; margin-top:6px;">Ambos se retiran al mismo tiempo, esperan el mismo delay, y vuelven a encontrarse en la misma situación. Livelock: los procesos cambian de estado (alternan true/false) pero nunca progresan a SC. Es como dos personas que se apartan al mismo lado repetidamente en un pasillo.</div>
+
+
 <!--
 **Cuarto intento — livelock corrección temporal pero no definitiva:**
+
 
 La 'retirada' (backoff) rompe el deadlock: si ambos ven ocupado, ceden el paso y reintentan. Pero esto introduce un nuevo problema.
 
@@ -434,7 +514,7 @@ La 'retirada' (backoff) rompe el deadlock: si ambos ven ocupado, ceden el paso y
 
 ---
 
-![width=600](img/mutual_exclusion_attempts.svg)
+![w:140%](img/mutual_exclusion_attempts.svg)
 
 
 <!--
@@ -477,6 +557,11 @@ void P0() {
 **Características:** Exclusión mutua. Sin deadlock. Progreso garantizado
 
 <!--
+**Regla #1:** flag[] indica **deseo** de entrar, turn decide **quién insiste** cuando hay conflicto.
+**Regla #2:** Si ambos quieren entrar, el que **NO tiene el turno** retrocede temporalmente (cede el paso).
+-->
+
+<!--
 **Algoritmo de Dekker — solución histórica:**
 
 Publicado por Th. J. Dekker en 1965, es la **primera solución correcta documentada** al problema de la exclusión mutua para 2 procesos.
@@ -489,9 +574,9 @@ Publicado por Th. J. Dekker en 1965, es la **primera solución correcta document
    - Si `turn == 0`: P0 espera activamente (tiene prioridad)
 
 **Propiedades:**
-- ✅ Exclusión mutua
-- ✅ Progreso garantizado (no hay deadlock)
-- ✅ Espera limitada (no hay starvation)
+- Exclusión mutua
+- Progreso garantizado (no hay deadlock)
+- Espera limitada (no hay starvation)
 
 **Limitación:** solo funciona para 2 procesos.
 -->
@@ -546,6 +631,12 @@ void P0() {
 ```
 
 Funciona para 2 procesos. **Principio:** si ambos quieren entrar, el que establece `turn` último **cede el paso**.
+
+<!--
+**Regla #1:** `flag[i]=true` declara intención, `turn=j` cede el paso cortésmente ("después de ti").
+**Regla #2:** Si ambos quieren entrar, el último en escribir `turn` espera — el que cedió último se aparta.
+**Regla #3:** Peterson = Dekker simplificado: solo 3 líneas vs ~10, misma funcionalidad.
+-->
 
 <!--
 **Algoritmo de Peterson — solución elegante (1981):**
@@ -887,9 +978,9 @@ void exchange(int *register, int *memory) {
 
 | Técnica | ¿Funciona en? | ¿Busy waiting? | Riesgo |
 |:--------|:-------------:|:--------------:|:-------|
-| **Deshabilitar IRQ** | Uniprocesador ❌ MultiCPU | Sí | Sistema congelado si falla |
-| **Compare&Swap** | Uniprocesador ✅ MultiCPU | Sí | Inanición |
-| **Exchange (XCHG)** | Uniprocesador ✅ MultiCPU | Sí | Inanición |
+| **Deshabilitar IRQ** | Uniprocesador (no en MultiCPU) | Sí | Sistema congelado si falla |
+| **Compare&Swap** | Uniprocesador y MultiCPU | Sí | Inanición |
+| **Exchange (XCHG)** | Uniprocesador y MultiCPU | Sí | Inanición |
 
 <!--
 **Figura 5.5 — comparativa de soporte hardware:**
@@ -1104,9 +1195,9 @@ void semSignalB(semaphore s) {
 <!--
 **Semáforo fuerte vs débil — la cola marca la diferencia:**
 
-**Fuerte (FIFO):** los procesos se desbloquean en el orden exacto en que llegaron. La cola es una estructura de datos FIFO. ✅ Garantiza que ningún proceso muera de hambre (libertad de inanición). Es el modelo asumido en la mayoría de libros de texto.
+**Fuerte (FIFO):** los procesos se desbloquean en el orden exacto en que llegaron. La cola es una estructura de datos FIFO. Garantiza que ningún proceso muera de hambre (libertad de inanición). Es el modelo asumido en la mayoría de libros de texto.
 
-**Débil:** el orden de desbloqueo no está especificado. El SO puede despertar cualquier proceso de la cola. ❌ Puede causar inanición si algunos procesos siempre son ignorados (ej. planificador que siempre da prioridad a procesos de mayor prioridad).
+**Débil:** el orden de desbloqueo no está especificado. El SO puede despertar cualquier proceso de la cola. Puede causar inanición si algunos procesos siempre son ignorados (ej. planificador que siempre da prioridad a procesos de mayor prioridad).
 
 **En la práctica:** Linux y Windows implementan semáforos fuertes (FIFO). Sin embargo, POSIX no exige FIFO para `sem_post()`/`sem_wait()`, por lo que el programador no debe asumir orden en código portable.
 
@@ -1655,11 +1746,11 @@ void append(char x) {
 # **Modelo Mesa (cont.)**
 
 ### Ventajas del Modelo Mesa:
-✅ **Menos cambios de contexto**
-✅ El proceso que notifica **continúa ejecutándose**
-✅ Menos propenso a errores — cada proceso **reverifica** la condición
-✅ Soporta **cbroadcast** — notifica a todos los procesos en espera
-✅ Permite **timeout** en condiciones
+**Menos cambios de contexto**
+El proceso que notifica **continúa ejecutándose**
+Menos propenso a errores — cada proceso **reverifica** la condición
+Soporta **cbroadcast** — notifica a todos los procesos en espera
+Permite **timeout** en condiciones
 
 ---
 
@@ -1884,10 +1975,10 @@ parbegin(P(1), P(2), ..., P(n));  // iniciar todos los procesos
 3. `parbegin` inicia todos los procesos concurrentemente (es una construcción clásica de Dijkstra)
 
 **Análisis de corrección:**
-- Solo un proceso puede tener el token → exclusión mutua ✅
-- El token siempre se devuelve → ningún proceso se bloquea permanentemente ✅
-- Si N procesos están esperando y uno libera, exactamente uno lo recibe ✅
-- **Pero:** hay busy waiting si `receive` es no bloqueante (polling) ❌
+- Solo un proceso puede tener el token → exclusión mutua
+- El token siempre se devuelve → ningún proceso se bloquea permanentemente
+- Si N procesos están esperando y uno libera, exactamente uno lo recibe
+- **Pero:** hay busy waiting si `receive` es no bloqueante (polling)
 -->
 
 ---
@@ -1904,7 +1995,7 @@ parbegin(P(1), P(2), ..., P(n));
 **Mecanismo:**
 - El buzón `box` contiene un token que da acceso a la SC
 - Cada proceso recibe el token → entra en SC → libera el token
-- ✅ Garantiza exclusión mutua
+- Garantiza exclusión mutua
 
 <!--
 **Buffer acotado con mensajes — dos buzones de control:**
@@ -1961,9 +2052,9 @@ Es uno de los problemas clásicos de concurrencia más estudiados. Su importanci
 - Diccionarios en memoria: búsquedas constantes, actualizaciones periódicas
 
 **Las 3 condiciones:**
-1. ✅ Varios lectores pueden leer simultáneamente
-2. ✅ Solo un escritor a la vez
-3. ✅ Nadie lee mientras se escribe (consistencia de datos)
+1. Varios lectores pueden leer simultáneamente
+2. Solo un escritor a la vez
+3. Nadie lee mientras se escribe (consistencia de datos)
 
 **Analogía:** una biblioteca pública — muchas personas pueden leer libros al mismo tiempo, pero si alguien está escribiendo en una pizarra, los lectores deben esperar a que termine.
 -->
@@ -1977,9 +2068,9 @@ Es uno de los problemas clásicos de concurrencia más estudiados. Su importanci
 - **Escritores:** solo escriben — **exclusión mutua** total
 
 ### Condiciones:
-1. ✅ Varios lectores pueden leer simultáneamente
-2. ✅ Solo un escritor a la vez
-3. ✅ Si un escritor escribe, ningún lector puede leer
+1. Varios lectores pueden leer simultáneamente
+2. Solo un escritor a la vez
+3. Si un escritor escribe, ningún lector puede leer
 
 <!--
 **Solución: Lectores tienen prioridad — el problema de la inanición:**
