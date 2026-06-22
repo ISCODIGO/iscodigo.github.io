@@ -689,18 +689,6 @@ Peterson elimina la necesidad de la variable `turn` adicional y la 'retirada tem
 3. **Errores no deterministas** — resultados no reproducibles
 
 
-### Ejemplo clásico — Procedimiento `echo`
-
-```c
-void echo() {
-  chin = getchar();
-  chout = chin;
-  putchar(chout);
-}
-```
-
-Problema: si P1 es interrumpido después de `getchar()`, P2 puede sobrescribir `chin` antes de que P1 lo use.
-
 <!--
 **Tres dificultades fundamentales — contexto más amplio:**
 
@@ -712,6 +700,20 @@ Problema: si P1 es interrumpido después de `getchar()`, P2 puede sobrescribir `
 
 **Regla práctica:** los bugs de concurrencia son los más costosos de la industria del software —ej. el 'Therac-25' (1985-87) causado por condiciones de carrera.
 -->
+
+---
+# **Ejemplo de Condición de Carrera (Race Condition)**
+### Ejemplo clásico — Procedimiento `echo`
+
+```c
+void echo() {
+  chin = getchar();
+  chout = chin;
+  putchar(chout);
+}
+```
+
+Problema: si P1 es interrumpido después de `getchar()`, P2 puede sobrescribir `chin` antes de que P1 lo use.
 
 ---
 
@@ -756,12 +758,11 @@ El código parece inocente: leer un char, copiarlo, imprimirlo. Pero al comparti
 
 **Tabla 5.2 — Grados de Conocimiento entre Procesos**
 
-| Grado de Conocimiento | Relación | Problemas |
-|:---------------------|:---------|:----------|
-| **Sin conocimiento** | Competición | Exclusión mutua, Deadlock, Inanición |
-| **Conocimiento indirecto** | Cooperación por compartición | Exclusión mutua, Deadlock, Inanición, Coherencia de datos |
-| **Conocimiento directo** | Cooperación por comunicación | Deadlock, Inanición |
-
+| Grado de Conocimiento | Relación | Problemas | Ejemplos |
+|:---------------------|:---------|:----------|:---------|
+| **Sin conocimiento** | Competición | Exclusión mutua, Deadlock, Inanición | Dos procesos imprimiendo |
+| **Conocimiento indirecto** | Cooperación por compartición | Exclusión mutua, Deadlock, Inanición, Coherencia de datos | Variables compartidas |
+| **Conocimiento directo** | Cooperación por comunicación | Deadlock, Inanición | Paso de mensajes
 <!--
 **Tabla 5.2 — grados de conocimiento entre procesos:**
 
@@ -776,15 +777,7 @@ Esta tabla clasifica los problemas de concurrencia según cuánto saben los proc
 
 ---
 
-# **Interacción entre Procesos (cont.)**
-
-| Tipo de relación | Característica | Ejemplo |
-|:-----------------|:---------------|:--------|
-| **Sin conocimiento** | Compiten por recursos | Dos procesos imprimiendo |
-| **Conocimiento indirecto** | Comparten datos vía recurso | Variables compartidas |
-| **Conocimiento directo** | Se comunican explícitamente | Paso de mensajes |
-
-Los sistemas modernos raramente caen en una sola categoría. Un servidor web típico tiene competición (CPU, RAM), cooperación (caché compartida) y comunicación (paso de mensajes entre workers).
+<a href="img/fig_5_4.png" target="_blank"><img src="img/fig_5_4.png" style="width:100%"></a>
 
 <!--
 **Figura 5.4 — representación visual de las relaciones:**
@@ -900,14 +893,6 @@ int compare_and_swap(int *word, int testval, int newval) {
 
 <!--
 **Compare&Swap (C&S) — la instrucción atómica más versátil:**
-
-```c
-int compare_and_swap(int *word, int testval, int newval) {
-  int oldval = *word;
-  if (oldval == testval) *word = newval;
-  return oldval;
-}
-```
 
 **Atomicidad:** C&S se ejecuta como una sola instrucción. Ningún otro proceso puede modificar `*word` entre la lectura y la escritura.
 
