@@ -877,19 +877,49 @@ En un **uniprocesador**, deshabilitar interrupciones evita el cambio de contexto
 
 # **Instrucción Compare&Swap**
 
+### ¿Qué hace el código, línea a línea?
+
 ```c
 int compare_and_swap(int *word, int testval, int newval) {
   int oldval;
-  oldval = *word;
-  if (oldval == testval) *word = newval;
-  return oldval;
+  oldval = *word;                        // 1. Lee el valor actual
+  if (oldval == testval) *word = newval; // 2. Si coincide con testval, escribe newval
+  return oldval;                         // 3. Devuelve el valor que leyó (antes del cambio)
 }
 ```
 
+**Clave:** los pasos 1–3 son atómicos — el hardware garantiza que ningún otro CPU puede tocar `*word` entre ellos.
+
+---
+
 ### Uso para exclusión mutua:
-- Variable compartida `bolt` inicializada en 0
-- `compare_and_swap(bolt, 0, 1)` → si bolt=0, lo establece a 1 y entra
-- Al salir: `bolt = 0`
+
+```c
+int bolt = 0;  // compartida: 0=libre, 1=ocupado
+
+// Entrar a sección crítica:
+while (compare_and_swap(&bolt, 0, 1) != 0);  // busy-wait
+/* sección crítica */
+bolt = 0;  // liberar
+```
+
+**¿Por qué funciona?**
+- Si bolt era **0** (libre): CAS lo pone a 1 y retorna **0** → `!= 0` es falso → salimos del while → entramos a SC
+- Si bolt era **1** (ocupado): CAS no lo modifica y retorna **1** → `!= 0` es verdadero → seguimos esperando
+
+---
+
+### Traza con 2 procesos simultáneos:
+
+| Tiempo | P1 | P2 | bolt |
+|:------:|:---|:---|:----:|
+| t1 | `CAS(&bolt, 0, 1)` → retorna **0**, bolt=1 | — | **1** |
+| t2 | Entra a SC | `CAS(&bolt, 0, 1)` → retorna **1**, sin cambio | **1** |
+| t3 | En SC | Sigue en busy-wait | **1** |
+| t4 | `bolt = 0` (sale de SC) | `CAS(&bolt, 0, 1)` → retorna **0**, bolt=1 | **1** |
+| t5 | — | Entra a SC | **1** |
+
+P1 y P2 nunca están en SC al mismo tiempo → **exclusión mutua garantizada**.
 
 <!--
 **Compare&Swap (C&S) — la instrucción atómica más versátil:**
@@ -935,14 +965,6 @@ bolt = 0;
 
 <!--
 **Exchange (XCHG) — intercambio atómico registro↔memoria:**
-
-```c
-void exchange(int *register, int *memory) {
-  int temp = *memory;
-  *memory = *register;
-  *register = temp;
-}
-```
 
 **Uso típico:**
 - Cada proceso tiene `keyi = 1` (local)
@@ -1041,10 +1063,14 @@ Existen cuatro mecanismos fundamentales para gestionar la concurrencia, cada uno
 - **Dato compartido:** variable compartida
 - **Sincronización:** exclusión mutua (espera ocupada o bloqueo)
 
+---
+
 ### 🚦 Semáforo
 - **Descripción:** variable entera con `semWait`/`semSignal` atómicos; generalización del lock con contador
 - **Dato compartido:** contador + cola de bloqueo
 - **Sincronización:** exclusión mutua + sincronización de condición
+
+---
 
 ### 🏛️ Monitor
 - **Descripción:** encapsulación de datos + procedimientos + sincronización en una estructura
