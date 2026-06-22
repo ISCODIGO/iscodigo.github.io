@@ -26,7 +26,6 @@ has_mermaid: true
 - [Ejercicio 4 — Estados: `wait()` y procesos zombie](#ejercicio-4--estados-wait-y-procesos-zombie)
 - [Ejercicio 5 — Reemplazar imagen con `execv()`](#ejercicio-5--reemplazar-imagen-con-execv)
 - [Ejercicio 6 — Comunicación entre procesos con `pipe()`](#ejercicio-6--comunicación-entre-procesos-con-pipe)
-- [Resumen del laboratorio](#resumen-del-laboratorio)
 
 ---
 
@@ -58,7 +57,7 @@ sudo apt update && sudo apt install -y gcc strace psmisc htop
 | `psmisc` | `pstree` | visualizar árbol de procesos (ejercicio 3) |
 | `htop` | `htop` | monitor interactivo de procesos |
 
-Verifica que quedaron instaladas:
+Se verifica que quedaron instaladas:
 
 ```bash
 gcc --version && strace --version && pstree --version && htop --version
@@ -66,7 +65,7 @@ gcc --version && strace --version && pstree --version && htop --version
 
 ### Nota WSL — una sola terminal
 
-En WSL no es necesario abrir múltiples ventanas. Ejecuta el programa en **segundo plano** con `&` y observa desde la misma terminal:
+En WSL no es necesario abrir múltiples ventanas. El programa se lanza en **segundo plano** con `&` y se observa desde la misma terminal:
 
 ```bash
 ./programa &          # lanza en background, imprime el PID del job
@@ -133,7 +132,7 @@ cd ~/lab-procesos
 
 ### Script de compilación rápida
 
-Guarda como `run.sh`:
+Se guarda como `run.sh`:
 
 ```bash
 #!/bin/bash
@@ -198,8 +197,8 @@ UID  (usuario)      : 1000
 
 ### Preguntas de análisis
 
-1. Verifica el PPID con `ps -p <PPID> -o comm=`. ¿Qué proceso es?
-2. Ejecuta el programa dos veces seguidas. ¿Son los PIDs consecutivos? ¿Qué dice eso sobre cómo el kernel asigna PIDs?
+1. El estudiante ejecuta el programa varias veces desde la misma terminal. ¿El PPID cambia entre ejecuciones? ¿Por qué siempre apunta al mismo proceso?
+2. El estudiante ejecuta el programa dos veces seguidas. ¿Son los PIDs consecutivos? ¿Qué dice eso sobre cómo el kernel asigna PIDs?
 
 ---
 
@@ -275,8 +274,8 @@ strace -e trace=fork,clone,wait4 ./p2_fork
 ### Preguntas de análisis
 
 1. ¿Por qué `fork()` retorna valores distintos al padre y al hijo?
-2. ¿El padre siempre imprime antes que el hijo? Ejecuta varias veces.
-3. Usa `strace` y localiza la syscall `clone`. ¿Qué flags aparecen?
+2. ¿El padre siempre imprime antes que el hijo? El estudiante ejecuta el programa varias veces para comprobarlo.
+3. Con `strace` se observa qué syscall aparece cuando el programa llama a `fork()`. ¿Qué dice eso sobre cómo Linux implementa `fork()` a nivel de kernel?
 
 ---
 
@@ -345,7 +344,7 @@ gcc -Wall -o p3_jerarquia p3_jerarquia.c
 
 ### Visualización con `pstree` y `htop`
 
-El programa ya incluye `sleep(3)` en cada rama. Lanza en background y observa desde la misma terminal:
+El programa ya incluye `sleep(3)` en cada rama. Se lanza en background y se observa desde la misma terminal:
 
 ```bash
 ./p3_jerarquia &
@@ -353,18 +352,18 @@ sleep 0.3
 pstree -p $!
 ```
 
-Para la vista interactiva con `htop` (el programa sigue corriendo en background):
+Para la vista interactiva con `htop` (el programa continúa en background):
 
 ```bash
 htop
 ```
 
-Presiona `F5` para árbol y `F3` para buscar `p3_jerarquia`. Al salir con `q`, el proceso de background termina solo cuando se cumple el `sleep(3)`.
+Se presiona `F5` para árbol y `F3` para buscar `p3_jerarquia`. Al salir con `q`, el proceso de background termina cuando se cumple el `sleep(3)`.
 
 ### Preguntas de análisis
 
-1. Dibuja el árbol de procesos con los PIDs obtenidos.
-2. Si el hijo 1 termina antes que el nieto, ¿quién adopta al nieto? Usa `cat /proc/<PID_nieto>/status | grep PPid` para verificar.
+1. El estudiante dibuja el árbol de procesos con los PIDs obtenidos.
+2. Para observar la adopción, se modifica el código para que hijo 1 no llame a `sleep()` (termina de inmediato) y el nieto use `sleep(5)`. Se recompila, se ejecuta en background y se verifica con `cat /proc/<PID_nieto>/status | grep PPid`. ¿Quién adopta al nieto? ¿Por qué el SO necesita garantizar que todo proceso tenga siempre un padre?
 
 ---
 
@@ -435,7 +434,7 @@ gcc -Wall -o p4_wait p4_wait.c
 
 ### Observar el estado `S (sleeping)` en `/proc`
 
-Lanza en background y captura el PID del hijo:
+Se lanza en background y se captura el PID del hijo:
 
 ```bash
 ./p4_wait &
@@ -450,7 +449,7 @@ cat /proc/$HIJO/status | grep State
 
 Para crear un zombie real el padre debe mantenerse **vivo** después de que el hijo ya haya terminado, sin llamar a `wait()`. Si solo se comenta `wait()`, el padre termina primero y el hijo queda huérfano, no zombie.
 
-Usa esta variante completa (`p4_zombie.c`) que invierte los tiempos:
+Se usa esta variante completa (`p4_zombie.c`) que invierte los tiempos:
 
 ```c
 #include <stdio.h>
@@ -486,7 +485,7 @@ int main(void) {
 gcc -Wall -o p4_zombie p4_zombie.c
 ```
 
-Lanza en background y observa desde la misma terminal:
+Se lanza en background y se observa desde la misma terminal:
 
 ```bash
 ./p4_zombie &
@@ -581,7 +580,7 @@ gcc -Wall -o p5_exec p5_exec.c
 
 ### Preguntas de análisis
 
-1. Verifica con `strace -e trace=execve ./p5_exec` que se invoca la syscall `execve`.
+1. Con `strace -e trace=execve ./p5_exec` se verifica que se invoca la syscall `execve`.
 2. ¿Qué diferencia hay entre `execv`, `execve` y `execvp`?
 
 ---
@@ -653,7 +652,7 @@ gcc -Wall -o p6_pipe p6_pipe.c
 
 ### Observación con `/proc`
 
-El padre escribe en el pipe casi de inmediato. Agrega un `sleep(3)` en el padre **antes** del `write()` para garantizar que el hijo ya esté bloqueado en `read()`:
+El padre escribe en el pipe casi de inmediato. Se agrega un `sleep(3)` en el padre **antes** del `write()` para que el hijo ya esté bloqueado en `read()`:
 
 ```c
 close(fd[0]);
@@ -661,7 +660,7 @@ sleep(3);                              /* ventana de observación */
 write(fd[1], mensaje, strlen(mensaje));
 ```
 
-Recompila, lanza en background y observa desde la misma terminal:
+Se recompila, se lanza en background y se observa desde la misma terminal:
 
 ```bash
 ./p6_pipe &
@@ -674,23 +673,8 @@ cat /proc/$HIJO/status | grep State
 
 ### Preguntas de análisis
 
-1. ¿Qué ocurre si el padre no cierra `fd[1]` (el extremo de escritura) después de llamar a `write()`? ¿Por qué el hijo quedaría bloqueado para siempre en `read()`?
-2. Modifica el programa para enviar un número entero en lugar de una cadena.
-
----
-
-### Llamadas al sistema utilizadas
-
-| Syscall | Propósito |
-|---------|-----------|
-| `getpid()` | PID del proceso actual |
-| `getppid()` | PPID (PID del padre) |
-| `getuid()` | UID del propietario |
-| `fork()` | Crear proceso hijo |
-| `wait(&status)` | Esperar que un hijo termine |
-| `exit(code)` | Terminar el proceso |
-| `execv(path, args)` | Reemplazar imagen del proceso |
-| `pipe(fd)` | Crear tubería de comunicación |
+1. Cuando el hijo espera datos en `read()`, ¿en qué estado se encuentra según el diagrama de estados del capítulo? ¿Qué evento lo lleva de vuelta al estado Ready?
+2. El estudiante modifica el programa para enviar un número entero en lugar de una cadena.
 
 ---
 
