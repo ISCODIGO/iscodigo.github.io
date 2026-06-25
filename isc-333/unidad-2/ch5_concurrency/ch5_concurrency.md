@@ -1039,148 +1039,34 @@ Esta figura muestra las tres técnicas hardware lado a lado: deshabilitación de
 <!-- _class: lead -->
 # **4. Semáforos**
 
-<!--
-**Tabla 5.3 — comparativa de mecanismos de concurrencia:**
-Esta tabla es un resumen de todo el capítulo. Los estudiantes deberían poder reproducirla al final.
-
-**Categorías principales:**
-1. **Cerradura (lock):** mecanismo simple de exclusión mutua (binario)
-2. **Semáforo:** generalización del lock con contador y cola de espera
-3. **Monitor:** encapsulación de datos + sincronización
-4. **Mensajes:** paso de datos entre procesos
-
-**Pregunta de reflexión:** ¿por qué necesitamos tantos mecanismos? → Cada uno resuelve un conjunto diferente de problemas.
--->
-
----
-
-# **Mecanismos Comunes de Concurrencia**
-
-Existen cuatro mecanismos fundamentales para gestionar la concurrencia, cada uno con distintas propiedades:
-
-### 🔒 Cerradura (Lock)
-- **Descripción:** mecanismo simple de exclusión mutua — solo un proceso puede tener la cerradura
-- **Dato compartido:** variable compartida
-- **Sincronización:** exclusión mutua (espera ocupada o bloqueo)
-
----
-
-### 🚦 Semáforo
-- **Descripción:** variable entera con `semWait`/`semSignal` atómicos; generalización del lock con contador
-- **Dato compartido:** contador + cola de bloqueo
-- **Sincronización:** exclusión mutua + sincronización de condición
-
----
-
-### 🏛️ Monitor
-- **Descripción:** encapsulación de datos + procedimientos + sincronización en una estructura
-- **Dato compartido:** datos privados + variables de condición
-- **Sincronización:** exclusión mutua automática + señalización con `cwait`/`csignal`
-
-### ✉️ Mensajes
-- **Descripción:** paso de datos entre procesos sin memoria compartida
-- **Dato compartido:** buzones / colas de mensajes
-- **Sincronización:** por rendezvous o buffering
-
-<!--
-**Definición formal del semáforo — el concepto central del capítulo:**
-
-Un semáforo `s` es una variable entera con tres operaciones atómicas:
-1. **Inicializar** a valor no negativo
-2. **semWait(s):** `s.count--`; si `s.count < 0`, el proceso se bloquea y se añade a `s.queue`
-3. **semSignal(s):** `s.count++`; si `s.count <= 0`, se mueve un proceso de `s.queue` a la cola de listos
-
-**Interpretación del valor:**
-- `s.count >= 0`: hay `s.count` recursos disponibles
-- `s.count < 0`: hay `|s.count|` procesos bloqueados esperando
-
-**Analogía:** un semáforo de tráfico:
-- `semWait` = esperar luz verde (decrementa el 'pase disponible')
-- `semSignal` = luz verde (incrementa el 'pase disponible')
-- Si no hay pases disponibles, los procesos hacen fila
-
-**Clave:** la atomicidad de semWait y semSignal es crítica. Deben implementarse con C&S o deshabilitando interrupciones.
--->
-
 ---
 
 # **Definición de Semáforo**
 
-- Variable entera con **3 operaciones atómicas**:
-  1. **Inicializar** a valor no negativo
-  2. **semWait(s):** decrementa; si valor < 0, el proceso se bloquea
-  3. **semSignal(s):** incrementa; si valor ≤ 0, desbloquea un proceso
+- **Estructura:** contador entero `count` + cola `queue` de procesos bloqueados
+- **Dos operaciones atómicas:**
+  1. **`semWait(s)`**: `s.count--`; si `s.count < 0`, el proceso se bloquea en `s.queue`
+  2. **`semSignal(s)`**: `s.count++`; si `s.count <= 0`, despierta un proceso de `s.queue`
 
-### Interpretación del valor:
-- `s.count >= 0`: número de procesos que pueden ejecutar semWait sin bloqueo
-- `s.count < 0`: magnitud = número de procesos bloqueados en s.queue
+<!-- 🎤 Narrador: El semáforo tiene dos componentes: un contador y una cola. La clave es que semWait y semSignal son atómicas — no pueden interrumpirse a medias. Cuando s.count > 0 hay recursos disponibles; cuando s.count < 0 hay procesos esperando. Fíjate que semSignal usa <= 0, no <. Esto asegura que siempre se despierte a alguien si hay procesos en la cola. -->
 
-<!--
-**Figura 5.6 — diagrama de las primitivas semWait/semSignal:**
-Esta figura muestra el flujo de decisión dentro de semWait y semSignal.
-
-**semWait:**
-1. Decrementa contador
-2. Si contador < 0 → bloquea el proceso en la cola
-3. Si contador >= 0 → proceso continúa
-
-**semSignal:**
-1. Incrementa contador
-2. Si contador <= 0 → desbloquea un proceso de la cola
-3. El proceso desbloqueado pasa a la cola de listos
-
-**Nota importante:** el signo ≤ en semSignal (no <). Si antes de signal el contador era -3 (3 procesos bloqueados), después de signal es -2 (2 bloqueados, 1 desbloqueado). La condición `<= 0` garantiza que siempre se desbloquee a alguien si hay procesos esperando.
--->
+> **Nota:** `semWait` decrementa primero, luego decide. `semSignal` incrementa primero, luego decide. Este orden es clave para entender el comportamiento con múltiples procesos.
 
 ---
 
-# **Figura 5.6 — Primitivas de Semáforo**
+### Interpretación de `s.count`
 
-![Primitivas de Semáforo](img/semaphore_wait_signal.svg)
+| Valor | Significado |
+|:-----|:------------|
+| `s.count > 0` | Hay recursos disponibles. `semWait` no bloquea |
+| `s.count == 0` | No hay recursos. El próximo `semWait` **bloqueará** |
+| `s.count < 0` | Hay `\|s.count\|` procesos **bloqueados** esperando |
 
-<!--
-**Semáforo binario — simplificación para exclusión mutua:**
-
-Solo dos valores: 0 (tomado/rojo) y 1 (libre/verde).
-
-**semWaitB:**
-- Si value == one → cambia a zero y continúa
-- Si value == zero → bloquea el proceso en la cola
-
-**semSignalB:**
-- Si cola vacía → cambia value a one (libera el recurso)
-- Si cola no vacía → despierta un proceso (no cambia value, porque el proceso despertado tomará el recurso inmediatamente)
-
-**Diferencia clave con semáforo general:** en el binario, el valor nunca pasa de 1. En el general, puede tener cualquier valor ≥ 0.
-
-**Uso típico:** `semWaitB(mutex)` / `semSignalB(mutex)` para proteger SC.
--->
-
----
-
-| Operación | `s.count` antes | `s.count` después | Efecto |
-|:---------:|:---------------:|:-----------------:|:-------|
-| semWait (libre) | 2 | 1 | Proceso entra |
-| semWait (ocupado) | 0 | -1 | Proceso se bloquea |
-| semSignal (con espera) | -3 | -2 | Se despierta 1 proceso |
-| semSignal (sin espera) | 1 | 2 | Solo incrementa |
-
-> **Nota:** `≤` en semSignal (no `<`). Si antes de signal el contador era `-3` (3 bloqueados), después de signal es `-2` (2 bloqueados, 1 desbloqueado).
-
-<!--
-**Figura 5.7 — semáforo binario en detalle:**
-Esta figura es análoga a la 5.6 pero para el caso binario.
-
-**Observación:** la única diferencia con el semáforo general es que el valor se satura en 0 y 1, mientras que en el general puede tomar cualquier valor entero.
-
-**Importante para el examen:** en el semáforo binario, cuando semSignalB despierta a un proceso, no cambia el valor del semáforo. El proceso despertado ejecutará inmediatamente (y marcará el semáforo como tomado). En el semáforo general, signal siempre incrementa el contador.
--->
+> **Nota:** `semSignal` usa `<= 0` (no `<`). Si `count` era -3 (3 bloqueados), tras signal es -2 (2 bloqueados, 1 desbloqueado).
 
 ---
 
 # **Semáforo Binario**
-
-Valores solo 0 y 1:
 
 ```c
 struct binary_semaphore {
@@ -1189,382 +1075,142 @@ struct binary_semaphore {
 };
 void semWaitB(binary_semaphore s) {
   if (s.value == one) s.value = zero;
-  else {
-    /* place this process in s.queue */;
-    /* block this process */;
-  }
+  else { /* block this process in s.queue */; }
 }
-void semSignalB(semaphore s) {
+void semSignalB(binary_semaphore s) {
   if (s.queue is empty()) s.value = one;
-  else {
-    /* remove a process P from s.queue */;
-    /* place process P on ready list */;
-  }
+  else { /* remove a process from s.queue */;
+        /* place on ready list */; }
 }
 ```
 
-<!--
-**Semáforo fuerte vs débil — la cola marca la diferencia:**
-
-**Fuerte (FIFO):** los procesos se desbloquean en el orden exacto en que llegaron. La cola es una estructura de datos FIFO. Garantiza que ningún proceso muera de hambre (libertad de inanición). Es el modelo asumido en la mayoría de libros de texto.
-
-**Débil:** el orden de desbloqueo no está especificado. El SO puede despertar cualquier proceso de la cola. Puede causar inanición si algunos procesos siempre son ignorados (ej. planificador que siempre da prioridad a procesos de mayor prioridad).
-
-**En la práctica:** Linux y Windows implementan semáforos fuertes (FIFO). Sin embargo, POSIX no exige FIFO para `sem_post()`/`sem_wait()`, por lo que el programador no debe asumir orden en código portable.
-
-**Analogía:** fila del banco:
-- **Fuerte:** se atiende en orden de llegada (justo)
-- **Débil:** el guardia elige a quién atender (posible favoritismo)
--->
+> **Nota:** En el semáforo binario, `s.count` solo puede ser 0 o 1. Se usa principalmente para **exclusión mutua** (mutex). Cuando `semSignalB` despierta a un proceso bloqueado, **no cambia** el valor del semáforo — el proceso despertado tomará el recurso inmediatamente.
 
 ---
 
-# **Semáforo Fuerte vs. Débil**
+<!-- 🎤 Narrador: La diferencia clave del semáforo binario es que el valor solo puede ser 0 o 1 — se satura. En el general, semSignal siempre incrementa; en el binario, si hay alguien esperando, solo lo despierta sin cambiar el valor. Esto es importante porque el proceso despertado asume inmediatamente el recurso. -->
 
-### **Fuerte (Strong):**
-- Cola FIFO — el proceso que más tiempo lleva bloqueado se libera primero
-- **Garantiza libertad de inanición**
+### Semáforo Fuerte vs. Débil
+- **Fuerte (FIFO):** orden de llegada → garantiza **no inanición**. Es el que asume Stallings.
+- **Débil:** orden no especificado → puede causar **inanición** (algunos procesos nunca son despertados)
 
-### **Débil (Weak):**
-- Orden de extracción no especificado
-- Puede causar inanición
-
-<!--
-**Figura 5.8 — ejemplo completo del mecanismo de semáforo:**
-Esta figura muestra una línea de tiempo con 3 procesos compitiendo por un semáforo inicializado a 1.
-
-**Secuencia típica:**
-1. P1: semWait(s) → s=0 → entra a SC
-2. P2: semWait(s) → s=-1 → bloqueado
-3. P3: semWait(s) → s=-2 → bloqueado
-4. P1: semSignal(s) → s=-1 → despierta a P2
-5. P2: entra a SC...
-
-**Observar:** el semáforo actúa como portero: solo deja pasar a uno a la vez, los demás hacen fila.
--->
+> **Clave en semáforo binario:** `semSignalB` despierta a un proceso bloqueado **sin cambiar** `s.value` — el proceso despertado tomará el recurso inmediatamente. A diferencia del general, donde `semSignal` siempre incrementa el contador.
 
 ---
 
-# **Figura 5.8 — Ejemplo del Mecanismo de Semáforo**
+<!-- 🎤 Narrador: Esta figura es clave. Muestra cómo semWait (izquierda) y semSignal (derecha) se ramifican según el estado del contador. En semWait, si count es mayor que 0, simplemente decrementa y sigue; si es menor o igual a 0, decrementa y bloquea. En semSignal es al revés: incrementa, y si count es mayor o igual a 0, despierta a alguien de la cola; si no, simplemente sigue. -->
 
-| Tiempo | P1 | P2 | P3 | `s.count` | Cola de bloqueo |
-|:------:|:--:|:--:|:--:|:---------:|:---------------:|
-| t1 | semWait(s) → **SC** | — | — | 0 | vacía |
-| t2 | **SC** | semWait(s) → bloqueado | — | -1 | [P2] |
-| t3 | **SC** | bloqueado | semWait(s) → bloqueado | -2 | [P2, P3] |
-| t4 | semSignal(s) → sale | **despierta → SC** | bloqueado | -1 | [P3] |
+# **Figura 5.6 — Primitivas de Semáforo**
+
+![Primitivas de Semáforo](img/semaphore_wait_signal.svg)
+
+> **Leyendo la figura:** En `semWait` (izquierda), primero se decrementa el contador; si queda negativo, el proceso se bloquea en la cola. En `semSignal` (derecha), primero se incrementa; si el valor sigue siendo ≤ 0, se despierta a un proceso de la cola.
+
+---
+
+| Operación | Antes | Después | Efecto |
+|:---------:|:-----:|:-------:|:-------|
+| semWait (libre) | 2 | 1 | Proceso entra |
+| semWait (ocupado) | 0 | -1 | Proceso se bloquea |
+| semSignal (con espera) | -3 | -2 | Se despierta 1 proceso |
+| semSignal (sin espera) | 1 | 2 | Solo incrementa |
+
+---
+
+<!-- 🎤 Narrador: Esta tabla muestra la evolución de un semáforo general inicializado a 1 con tres procesos compitiendo por la sección crítica. P1 ejecuta semWait primero y entra — s baja de 1 a 0. P2 ejecuta semWait, s baja a -1, se bloquea en la cola. P3 ejecuta semWait, s baja a -2, se bloquea también. Cuando P1 sale con semSignal, s sube a -1 y se despierta a P2 de la cola FIFO. Cuando P2 sale con semSignal, se despierta a P3. Observa que el semáforo actúa como un portero: solo deja pasar a uno a la vez y los demás esperan ordenados en la fila. -->
+
+# **Ejemplo del Mecanismo de Semáforo**
+
+> **Sigue el rastro del semáforo `s` inicializado a 1.** Observa cómo `s.count` cambia con cada operación y cómo la cola refleja quién espera. P1 es el primero en entrar (t1), P2 se bloquea (t2), P3 también (t3). Cuando P1 sale (t4), se despierta a P2 — el semáforo FIFO asegura orden.
+
+| Tiempo | P1 | P2 | P3 | `s.count` | Cola |
+|:------:|:--:|:--:|:--:|:---------:|:----:|
+| t1 | semWait → **SC** | — | — | 0 | vacía |
+| t2 | **SC** | semWait → bloqueado | — | -1 | [P2] |
+| t3 | **SC** | bloqueado | semWait → bloqueado | -2 | [P2,P3] |
+| t4 | semSignal → sale | **despierta → SC** | bloqueado | -1 | [P3] |
 | t5 | — | **SC** | bloqueado | -1 | [P3] |
-| t6 | — | semSignal(s) → sale | **despierta → SC** | 0 | vacía |
+| t6 | — | semSignal → sale | **despierta → SC** | 0 | vacía |
 
-El semáforo actúa como **portero**: solo deja pasar a uno a la vez, los demás hacen fila.
-
-<!--
-**Exclusión mutua con semáforos — el patrón más usado:**
-
-```c
-semaphore s = 1;  // 1 recurso disponible
-
-void P(int i) {
-  while (true) {
-    semWait(s);         // solicitar acceso
-    /* critical section */;
-    semSignal(s);       // liberar acceso
-    /* remainder */;
-  }
-}
-```
-
-**¿Por qué s = 1?** Inicializar semáforo a 1 crea un 'mutex' (Mutual Exclusion). Un proceso puede pasar; los demás se bloquean.
-
-**El patrón es idéntico para N procesos:**
-- s=1 → primer proceso decrementa a 0, entra a SC
-- s=0 → otros procesos decrementan a <0, se bloquean
-- semSignal despierta a uno de la cola
-
-**Este patrón es universal:** se usa igual en pthreads (`pthread_mutex_lock`), Java (`synchronized`), C++ (`std::mutex`), etc.
--->
+El semáforo actúa como **portero**: solo deja pasar a uno a la vez.
 
 ---
+
+<!-- 🎤 Narrador: Con s inicializado a 1, el primer proceso que ejecuta semWait(s) entra a la SC. Los siguientes procesos que intenten semWait(s) se bloquean porque s.count se vuelve negativo. Cuando el proceso sale de SC y ejecuta semSignal(s), se despierta al siguiente proceso en la cola. El semáforo elimina el busy waiting que tenían los enfoques hardware — los procesos esperan bloqueados, no consumiendo CPU. -->
 
 # **Exclusión Mutua con Semáforos**
 
 ```c
-const int n = /* number of processes */;
 semaphore s = 1;
 
 void P(int i) {
   while (true) {
-    semWait(s);
-    /* critical section */;
-    semSignal(s);
-    /* remainder */;
+    semWait(s);         // solicitar acceso
+    /* sección crítica */;
+    semSignal(s);       // liberar acceso
+    /* resto */;
   }
 }
 ```
 
-- `s = 1` → primer proceso entra inmediatamente
-- `s = 0` → otros procesos se bloquean
-- Al salir: `semSignal(s)` → despierta un proceso en cola
-
-<!--
-**Figura 5.9 — exclusión mutua con semáforos en acción:**
-Esta figura muestra tres procesos (A, B, C) compitiendo por un recurso protegido por un semáforo.
-
-**Interpretación del diagrama:**
-- El tiempo avanza de izquierda a derecha
-- Las barras muestran cuándo cada proceso está ejecutando
-- Las regiones sombreadas indican la sección crítica
-- Las líneas punteadas muestran cuándo un proceso está bloqueado en semWait
-
-**Observar cómo:**
-- Los procesos se turnan para acceder a la SC
-- Mientras un proceso está en SC, los otros esperan (no hay ejecución concurrente en SC)
-- Fuera de SC, los procesos ejecutan libremente en paralelo
--->
+- `s = 1` → primer proceso entra; los demás se **bloquean** en la cola
+- `semSignal` **despierta** al siguiente proceso en cola
 
 ---
+<!-- 🎤 Narrador: Este es el primer problema clásico de sincronización. El semáforo general n cuenta cuántos elementos hay en el buffer (inicializado a 0). El semáforo binario s protege el acceso al buffer (exclusión mutua). El productor produce, espera s, añade al buffer y libera s, luego señala n. El consumidor espera n primero (que haya algo que consumir), luego espera s, toma del buffer, libera s y consume. El orden importa: n cuenta recursos, s protege datos. -->
 
-# **Figura 5.9 — Exclusión Mutua con Semáforos**
-
-![width:80%](img/ch5-page-0249.jpg)
-
-<!--
-**Figura 5.10 — datos compartidos y semáforos:**
-Esta figura complementa la anterior mostrando qué datos son compartidos y cómo el semáforo protege el acceso.
-
-**Arquitectura de memoria:**
-- Datos compartidos (variables globales, buffers, estructuras)
-- Semáforo de protección (uno o más)
-- Cada proceso tiene sus datos privados (pila, registros)
-
-**Concepto importante:** el semáforo protege los datos, no el código. Si dos procesos acceden a la misma variable pero no la modifican, no necesitan exclusión mutua. Solo la necesitan si hay **escritura**.
--->
-
----
-
-# **Figura 5.10 — Procesos Accediendo a Datos Compartidos**
-
-> **Concepto importante:** el semáforo protege los **datos**, no el código. Si dos procesos acceden a la misma variable pero no la modifican, no necesitan exclusión mutua.
-
-<!--
-**Problema del Productor/Consumidor — el ejemplo clásico de concurrencia:**
-
-**Buffer infinito (teórico):**
-- `in`: índice donde el productor coloca el siguiente elemento
-- `out`: índice donde el consumidor toma el siguiente elemento
-- `n = in - out`: número de elementos en el buffer
-- **Condición:** consumidor no debe tomar si `n == 0` (in ≤ out)
-
-**Problema fundamental:**
-1. Productor y consumidor comparten `in`, `out` y `n`
-2. `n` se modifica por ambos procesos
-3. La verificación `n == 0` no es atómica con la toma del elemento
-
-**Analogía:** un mostrador de atención al cliente donde se toman números. El productor imprime números, el consumidor atiende. Si no coordinamos quién vio el último número, pueden atenderse dos personas al mismo tiempo.
--->
-
----
-
-![width:60%](img/shared_memory.svg)
-
-<!--
-**Solución incorrecta — el error típico de diseño:**
-
-El error está en usar semáforo binario para proteger la E/S pero NO para proteger la verificación de `n == 0`.
-
-**Escenario de fallo:**
-1. Consumidor: `semWait(s)` → entra a SC, lee `n = 0`
-2. **Cambio de contexto:** productor entra, produce elemento, `n = 1`
-3. Productor: `semWait(s)` → bloqueado (consumidor está en SC)
-4. Consumidor: sale de SC `semSignal(s)`, encuentra `n == 0` (obsoleto) → **no consume** → ¡pierde el dato!
-5. **Inanición:** consumidor nunca consume lo que el productor produjo
-
-**Lección:** la verificación de condición y el consumo deben ser atómicos con respecto a la modificación compartida.
-
-**Error clásico en exámenes:** muchos estudiantes proponen esta solución incorrecta.
--->
-
----
 
 # **Problema del Productor/Consumidor**
 
 ![width:40%](img/ch5-page-0251.jpg)
 
-### Buffer Infinito:
-- **Productor:** genera datos y los coloca en `b[in]`, incrementa `in`
-- **Consumidor:** toma datos de `b[out]`, incrementa `out`
-- **Condición:** consumidor no debe tomar si `in <= out`
-
-<!--
-**Tabla 5.4 — línea de tiempo del error:**
-Esta tabla muestra paso a paso cómo la solución incorrecta lleva a la pérdida de datos.
-
-**Columnas de la tabla:**
-- Paso: número de paso
-- Productor: qué ejecuta el productor
-- Consumidor: qué ejecuta el consumidor
-- `n`: valor de la variable compartida después de cada paso
-- Semáforo: estado del semáforo binario
-
-**Punto crítico:** en el paso 4, el consumidor sale de la SC con `n = 1` (productor puso un dato) pero su variable local `m` (que guardó `n` al entrar) sigue siendo 0. No consume el dato porque `m == 0`.
--->
+**Buffer infinito:** productor coloca en `b[in]`, consumidor toma de `b[out]`
+- Condición: consumidor no debe tomar si `in <= out`
+- Solución con semáforo **general** `n` + semáforo **binario** `s`:
 
 ---
 
-# **Tabla 5.4 — Escenario del Programa Incorrecto**
-
-| Paso | Productor | Consumidor | `n` | Semáforo `s` |
-|:----:|:----------|:-----------|:---:|:------------:|
-| 1 | — | `semWait(s)` → SC | 0 | 0 (tomado) |
-| 2 | — | `m = n` → `m = 0` | 0 | 0 |
-| 3 | — | `semSignal(s)` → sale | 0 | 1 (libre) |
-| 4 | Produce dato | — | 1 | 1 |
-| 5 | `semWait(s)` → SC | — | 1 | 0 |
-| 6 | `append()` | — | 1 | 0 |
-| 7 | `semSignal(s)` → sale | — | 1 | 1 |
-| 8 | — | Verifica: `m == 0` → **no consume** | 1 | 1 |
-
-**Resultado:** el consumidor pierde el dato porque su variable local `m` guardó `n = 0` antes de que el productor produjera.
-
-<!--
-**Solución correcta — buffer infinito con variable local:**
-
-**La clave:** usar una **variable local** `m` para guardar el valor de `n` dentro de la sección crítica.
 
 ```c
-void consumer() {
-  int m;
-  semWait(s);
-  m = n;           // guardar n localmente
-  semSignal(s);    // salir de SC inmediatamente
-  if (m == 0) sleep();  // ahora podemos verificar fuera de SC
-  else consume();
-}
+semaphore n = 0, s = 1;
+
+void producer() {          void consumer() {
+  produce_item();            semWait(n);
+  semWait(s); append();      semWait(s); take();
+  semSignal(s);              semSignal(s);
+  semSignal(n);              consume_item();
+}                          }
 ```
-
-**¿Por qué funciona?**
-1. La lectura de `n` se hace dentro de la SC → valor consistente
-2. La salida de SC se hace antes del consumo → el productor puede producir
-3. La verificación y el consumo se hacen con `m` local → no hay condición de carrera
-
-**Pero aún queda un problema:** el `sleep()` no está sincronizado con el productor. Si el consumidor duerme mientras el productor produce, el consumidor no se despierta → inanición.
--->
 
 ---
 
-# **Solución Correcta — Buffer Infinito**
+<!-- 🎤 Narrador: El bounded buffer usa tres semáforos: e (empty) cuenta espacios vacíos, n (full) cuenta elementos ocupados, y s (mutex) protege el buffer. La regla de oro es crucial: primero esperar el recurso de condición (e o n), luego el mutex s. Si inviertes el orden, puedes causar deadlock — por ejemplo, el productor toma s pero espera e mientras el consumidor tiene e pero espera s. -->
 
-![width:80%](img/ch5-page-0254.jpg)
+# **Buffer Circular Finito (Bounded-Buffer)**
 
-**Clave:** Variable local `m` guarda el valor de `n` dentro de la sección crítica
+### Tres semáforos:
+- `e` (empty) = tamaño del buffer → espacios vacíos
+- `n` (full) = 0 → elementos ocupados  
+- `s` (mutex) = 1 → exclusión mutua
 
-<!--
-**Solución con semáforos generales — la mejor alternativa:**
-
-Aquí `n` **es un semáforo**, no una variable entera. Maneja automáticamente la atomicidad de la verificación y el bloqueo.
-
-```c
-semaphore n = 0;  // inicialmente sin elementos
-semaphore s = 1;  // mutex para el buffer
-
-void producer() {
-  produce_item();
-  semWait(s);
-  append();
-  semSignal(s);
-  semSignal(n);   // avisar que hay un nuevo elemento
-}
-
-void consumer() {
-  semWait(n);     // esperar hasta que haya un elemento
-  semWait(s);
-  take();
-  semSignal(s);
-}
+```
+Productor:  semWait(e) → semWait(s) → append() → semSignal(s) → semSignal(n)
+Consumidor: semWait(n) → semWait(s) → take()    → semSignal(s) → semSignal(e)
 ```
 
-**Ventaja:** `semWait(n)` bloquea automáticamente al consumidor si `n=0`. Cuando el productor hace `semSignal(n)`, el consumidor se despierta automáticamente. No hay busy waiting ni sleeps no coordinados.
--->
+> **Regla de oro:** pedir el recurso de condición (`e`/`n`) **antes** que el mutex (`s`). Invertir el orden puede causar **deadlock**.
 
 ---
 
-# **Solución con Semáforos Generales**
+<!-- 🎤 Narrador: Los semáforos se implementan con C&S en multiprocesador (microsegundos de busy waiting solo para modificar count y la cola) o deshabilitando interrupciones en uniprocesador. En la versión con IRQ disable, después de bloquear al proceso se re-habilitan las interrupciones antes de hacer el cambio de contexto. Esto evita el problema de sistema congelado. -->
 
-**Ventaja:** `n` es un semáforo, se maneja atomicidad automáticamente
+# **Implementación de Semáforos**
 
-<!--
-**Buffer circular finito — la versión realista:**
+### Con Compare&Swap (multiprocesador):
+- Atomicidad garantizada por hardware (C&S, XCHG)
+- Microsegundos de busy waiting (solo para modificar count/queue)
 
-A diferencia del buffer infinito (teórico), el buffer real tiene tamaño fijo. Esto agrega la restricción de **buffer lleno**: el productor debe esperar si el buffer no tiene espacio.
-
-**Tres semáforos necesarios:**
-1. `e` (empty): cuenta espacios vacíos → inicializado al tamaño del buffer
-2. `n` (full): cuenta elementos ocupados → inicializado a 0
-3. `s` (mutex): exclusión mutua para acceso al buffer
-
-**Relación clave:** `e + n = tamaño_del_buffer` (invariante). Cuando `e = 0`, el buffer está lleno (productor bloqueado). Cuando `n = 0`, el buffer está vacío (consumidor bloqueado).
--->
-
----
-
-# **Buffer Circular Finito — Figura 5.15**
-
-**Relaciones:**
-- Productor se bloquea si buffer **lleno**
-- Consumidor se bloquea si buffer **vacío**
-- Semáforo `e` (empty) + `n` (full) + `s` (mutex)
-
-<!--
-**Solución con buffer acotado — el patrón canónico:**
-
-```
-Productor:
-1. semWait(e)     → pedir espacio vacío
-2. semWait(s)     → entrar a SC del buffer
-3. append()       → agregar elemento
-4. semSignal(s)   → salir de SC
-5. semSignal(n)   → avisar que hay un elemento
-
-Consumidor:
-1. semWait(n)     → pedir un elemento
-2. semWait(s)     → entrar a SC del buffer
-3. take()         → extraer elemento
-4. semSignal(s)   → salir de SC
-5. semSignal(e)   → avisar que hay un espacio vacío
-```
-
-**¿Por qué este orden?**
-- Productor: pide espacio (e) ANTES del mutex (s) → si no hay espacio, se bloquea sin ocupar el mutex
-- Consumidor: pide elemento (n) ANTES del mutex (s) → mismo principio
-
-**Regla de oro:** siempre pedir el recurso de condición (e/n) antes que el mutex (s). Invertir el orden puede causar deadlock.
--->
-
----
-
-# **Solución con Buffer Acotado (Bounded-Buffer)**
-
-### Esquema:
-```
-semaphore s = 1, n = 0, e = sizeofbuffer;
-
-Productor: semWait(e) → semWait(s) → append() → semSignal(s) → semSignal(n)
-Consumidor: semWait(n) → semWait(s) → take() → semSignal(s) → semSignal(e)
-```
-
-<!--
-**Implementación de semáforos — dos enfoques:**
-
-**1. Con C&S (Figura 5.x):**
-```c
-void semWait(semaphore s) {
-  while (compare_and_swap(s.count, 0, 0) != 0
-         || compare_and_swap(s.count, ..., ...));
-}
-```
-Aún hay busy waiting en la implementación de semWait, pero solo por unos pocos ciclos (dentro de la función), no en la SC del usuario.
-
-**2. Deshabilitando interrupciones (uniprocesador):**
+### Deshabilitando interrupciones (uniprocesador):
 ```c
 void semWait(semaphore s) {
   inhibit_interrupts();
@@ -1576,125 +1222,115 @@ void semWait(semaphore s) {
   } else allow_interrupts();
 }
 ```
-Aquí deshabilitamos interrupciones solo por el tiempo de modificar el contador y la cola (microsegundos), no durante toda la SC del usuario.
-
-**Lección:** los semáforos se construyen sobre el soporte hardware, pero lo usan por períodos mínimos, no por toda la SC.
--->
 
 ---
 
-# **Implementación de Semáforos**
+# **Diagrama de Transición de Estados**
 
-### Con instrucción Compare&Swap:
+![Transición de Estados en Semáforo](img/semaphore_states.svg)
 
-### Deshabilitando interrupciones (uniprocesador):
-- `inhibit interrupts` antes de modificar semáforo
-- `allow interrupts` después
+**Ejecutando → Bloqueado:** cuando `semWait` encuentra `s.count < 0`
+**Bloqueado → Listo:** cuando `semSignal` despierta un proceso
+
+---
+
+<!-- 🎤 Narrador: El semáforo binario es un caso especial con rango 0-1, ideal para exclusión mutua. El general sirve para contar recursos — por ejemplo, inicializado a N para modelar N instancias de un dispositivo. La diferencia clave está en semSignal: el general siempre incrementa count; el binario, si hay procesos esperando, solo despierta a uno sin cambiar el valor. -->
+
+# **Semáforo Binario vs. General**
+
+| Propiedad | Binario | General |
+|:----------|:-------:|:-------:|
+| **Rango** | 0 y 1 | Entero ≥ 0 |
+| **Uso** | Exclusión mutua | Sincronización + control de recursos |
+| **Inicialización** | `s = 1` | `s = N` |
+| **semSignal sin espera** | value → one | count++ |
+| **semSignal con espera** | Despierta proceso | count++ y despierta |
+
+> **Un semáforo binario es un caso especial del general con cota superior 1.**
+
+---
+
+# **Patrones de Uso**
+
+### 1. Exclusión Mutua (mutex)
+```
+semWait(mutex) → SC → semSignal(mutex)
+```
+### 2. Sincronización de Condición
+```
+Proceso A:               Proceso B:
+/* código A */           semWait(s);  // espera
+semSignal(s);            /* después de A */
+```
+
+---
+
+<!-- 🎤 Narrador: Estos son los tres errores más frecuentes con semáforos. El primero (olvidar semSignal) es el más peligroso porque causa deadlock silencioso — un return temprano o una excepción puede saltarse el semSignal. El segundo (invertir orden en bounded buffer) produce deadlock. El tercero es conceptual: usar binario donde se necesita general. Ninguno da error de compilación, solo se manifiestan en ejecución. -->
+
+# **Errores Comunes**
+
+### 1. Olvidar `semSignal`
+```c
+semWait(s);
+// SC con return temprano → ¡se salta semSignal(s)!
+semSignal(s);
+```
+**→ Deadlock:** otros procesos se bloquean permanentemente.
+
+### 2. Invertir orden en bounded buffer
+```c
+// MAL: semWait(s) antes de semWait(e) → deadlock si buffer lleno
+semWait(s); semWait(e);
+
+// BIEN: semWait(e) antes de semWait(s)
+semWait(e); semWait(s);
+```
+
+### 3. Usar semáforo binario donde se necesita general
+Ej.: N instancias de un dispositivo → usar semáforo general con `s = N`.
 
 ---
 
 <!-- _class: lead -->
 # **5. Monitores**
 
-<!--
-**Estructura de un monitor — encapsulación de sincronización:**
-
-El monitor resuelve la limitación clave de los semáforos: los semáforos están dispersos en el código y es fácil olvidar un semWait o semSignal. El monitor condensa **datos + procedimientos + sincronización** en una sola unidad.
-
-**Reglas del monitor:**
-1. Los datos locales son privados — solo se acceden mediante procedimientos del monitor
-2. Un proceso entra invocando un procedimiento del monitor
-3. **Solo un proceso puede ejecutar en el monitor a la vez** — el compilador/run-time garantiza exclusión mutua automáticamente
-
-**Analogía:** una biblioteca con una sola sala de lectura. Varias personas pueden usar la biblioteca (= monitor), pero solo una persona a la vez puede estar en la sala de lectura ejecutando procedimientos del monitor.
-
-**Lenguajes que implementan monitores:**
-- Concurrent Pascal, Modula-2, Mesa (históricos)
-- Java: `synchronized` methods + `wait()`/`notify()`
-- C#: `lock` statement + `Monitor.Wait()`/`Monitor.Pulse()`
-- Python: `threading.Condition`
--->
-
 ---
 
 # **Estructura de un Monitor**
 
-### Características:
-1. Datos locales accesibles solo por procedimientos del monitor
-2. Un proceso entra invocando un procedimiento
-3. **Solo un proceso a la vez** puede ejecutar en el monitor
+- **Encapsula:** datos compartidos + procedimientos + sincronización
+- **Exclusión mutua automática:** solo un proceso puede ejecutar en el monitor a la vez
 
-<!--
-**Variables de condición — el mecanismo de señalización del monitor:**
+```c
+monitor nombre {
+  /* datos compartidos (privados) */
+  int dato_compartido;
 
-Dentro de un monitor, las variables de condición permiten que un proceso espere por una condición específica y que otro la señale.
+  void procedimiento1(...) { /* solo un proceso a la vez */ }
+  void procedimiento2(...) { /* solo un proceso a la vez */ }
+}
+```
 
-**cwait(c):**
-- Libera el monitor (permite que otro proceso entre)
-- Suspende el proceso en la cola de condición c
-- Cuando otro proceso hace csignal(c), se reanuda
-- Al reanudarse, **re-adquiere el monitor** (puede que tenga que esperar si hay otro proceso activo)
-
-**csignal(c):**
-- Si hay procesos esperando en c, despierta a uno
-- Si no hay procesos esperando, **la señal se pierde** — diferencia fundamental con semáforos
-
-**Diferencia con semáforos (importante para el examen):**
-| Aspecto | Semáforo | Variable condición |
-|---------|----------|--------------------|
-| Señal sin espera | Se acumula (el valor del semáforo aumenta) | Se pierde |
-| Asociación | Variable global | Dentro del monitor |
-| Contador | Sí (entero) | No (solo cola) |
--->
+**Analogía:** una biblioteca con una sola sala de lectura — solo una persona a la vez.
 
 ---
 
 # **Variables de Condición**
 
-Dos operaciones en variables de condición:
+Mecanismo de señalización dentro del monitor:
 
-- **cwait(c):** Suspende el proceso en la condición `c`, libera el monitor
-- **csignal(c):** Reanuda un proceso bloqueado en condición `c`
+- **`cwait(c)`**: suspende el proceso en la condición `c`, **libera el monitor**
+- **`csignal(c)`**: reanuda un proceso bloqueado en `c`
 
-### Diferencia con semáforos:
-- Si no hay proceso esperando, **la señal se pierde**
-
-<!--
-**Monitor para buffer acotado — ejemplo concreto:**
-
-```c
-monitor boundedbuffer;
-char buffer[N];
-int nextin, nextout, count;
-cond notfull, notempty;  // condiciones
-
-void append(char x) {
-  if (count == N) cwait(notfull);
-  buffer[nextin] = x;
-  nextin = (nextin + 1) % N;
-  count++;
-  csignal(notempty);
-}
-
-void take(char *x) {
-  if (count == 0) cwait(notempty);
-  *x = buffer[nextout];
-  nextout = (nextout + 1) % N;
-  count--;
-  csignal(notfull);
-}
-```
-
-**Observación:** la exclusión mutua del buffer está implícita en el monitor. No hay semWait/semSignal explícitos para el acceso al buffer.
-
-**Nota:** en el modelo Hoare (original), se usa `if` - el proceso señalizado ejecuta inmediatamente. En el modelo Mesa, se usa `while` - el proceso señalizado reverifica la condición.
--->
+### Diferencia clave con semáforos:
+| Aspecto | Semáforo | Variable condición |
+|:--------|:--------:|:------------------:|
+| Señal sin espera | Se **acumula** (count++) | Se **pierde** |
+| Contador | Sí (entero) | No (solo cola) |
 
 ---
 
 # **Monitor para Buffer Acotado**
-
-![width:80%](img/ch5-page-0260.jpg)
 
 ```c
 monitor boundedbuffer;
@@ -1706,62 +1342,27 @@ void append(char x) {
   count++;
   csignal(notempty);
 }
+
+void take(char *x) {
+  if (count == 0) cwait(notempty);
+  *x = buffer[nextout];
+  count--;
+  csignal(notfull);
+}
 ```
-
-<!--
-**Modelo Mesa vs Hoare — dos filosofías de señalización:**
-
-**Modelo Hoare (original):**
-- `csignal` transfiere inmediatamente el control al proceso despertado
-- El proceso que señaliza se bloquea hasta que el otro sale del monitor
-- La condición se cumple con certeza al reanudar → se usa `if`
-- Requiere dos cambios de contexto por señalización
-
-**Modelo Mesa (Lampson/Redell — Xerox PARC):**
-- `cnotify` solo marca que la condición puede ser cierta
-- El proceso despertado compite por el monitor (como cualquier otro)
-- La condición **puede haber cambiado** al reanudar → se usa `while`
-- Menos cambios de contexto, más robusto
-
-**¿Cuál se usa en la práctica?** Mesa — Java `notify()`, C# `Pulse()`, Python `notify()` usan el modelo Mesa.
-
-**Pregunta de examen:** ¿por qué en Mesa se usa `while` en lugar de `if`? → Porque cuando el proceso se reanuda, otro proceso pudo haber tomado la condición antes.
--->
+**Sin semáforos explícitos** — la exclusión mutua del buffer es **automática** en el monitor.
 
 ---
 
-# **Modelo Mesa (Lampson/Redell)**
+# **Modelo Mesa vs. Hoare**
 
 | Característica | Hoare | Mesa |
 |:--------------|:-----|:-----|
 | Señal | `csignal` — inmediata | `cnotify` — diferida |
 | Verificación | `if (condición)` | `while (condición)` |
-| Cambio de contexto | Inmediato al señalizar | El notificado compite por el monitor |
+| Control | Se transfiere al instante | El notificado compite por el monitor |
 
-<!--
-**Modelo Mesa — ventajas adicionales:**
-
-1. **cbroadcast:** notifica a todos los procesos en espera. Útil cuando no sabemos cuántos pueden progresar (ej. liberación de recursos).
-2. **Timeout:** un proceso puede esperar con límite de tiempo. Si la condición no se cumple, se reanuda automáticamente.
-3. **Eficiencia:** el señalizador no se bloquea → puede seguir trabajando mientras el señalizado espera su turno.
-
-**Diagrama:** el proceso A notifica a B y C. B y C compiten por el monitor. A continúa ejecutando. Cuando A sale, B y C compiten (el que gana entra).
-
-**Analogía:** un restaurante:
-- **Hoare:** el mesero deja caer todo y atiende a la mesa que llamó
-- **Mesa:** el mesero anota que la mesa pidió, termina lo que hace, y luego va a atender la mesa
--->
-
----
-
-# **Modelo Mesa (cont.)**
-
-### Ventajas del Modelo Mesa:
-**Menos cambios de contexto**
-El proceso que notifica **continúa ejecutándose**
-Menos propenso a errores — cada proceso **reverifica** la condición
-Soporta **cbroadcast** — notifica a todos los procesos en espera
-Permite **timeout** en condiciones
+**Uso práctico:** Java (`wait/notify`), C# (`Monitor.Pulse`), Python (`Condition`) usan el modelo **Mesa**.
 
 ---
 
@@ -1856,65 +1457,6 @@ receive(source, message);
 **Relaciones (muchos:muchos):** varios productores pueden enviar al mismo buzón, varios consumidores pueden recibir del mismo buzón.
 -->
 
----
-
-# **Direccionamiento Directo vs. Indirecto**
-
-### Directo:
-- `send(destino, msg)` — identificador explícito
-- `receive(fuente, msg)` — puede ser implícito
-
-### Indirecto (Mailboxes/Ports):
-- Mensajes enviados a un **buzón compartido**
-- Relaciones: 1:1, muchos:1, 1:muchos, muchos:muchos
-
-<!--
-**Figura 5.xx — direccionamiento indirecto:**
-Esta figura muestra las 4 configuraciones posibles con buzones:
-1. **1:1** — un proceso envía, un proceso recibe (típico en pipeline)
-2. **Muchos:1** — varios procesos envían, uno recibe (servidor centralizado)
-3. **1:Muchos** — uno envía, varios reciben (broadcast/multicast)
-4. **Muchos:Muchos** — varios envían y reciben (sistema de mensajería)
-
-**Propiedad importante de buzones:** el buzón es un recurso que debe ser creado, gestionado y destruido. Si un buzón se destruye mientras hay procesos esperando, esos procesos reciben un error.
--->
-
----
-
-# **Direccionamiento Indirecto**
-
-```
-┌─────────────────────────────────────────┐
-│         DIRECCIONAMIENTO INDIRECTO        │
-│              (Mailboxes)                  │
-├─────────────────────────────────────────┤
-│                                          │
-│  1:1          Muchos:1     1:Muchos      │
-│  P1 → □ → P2  P1,P2 → □ → P3  P1 → □ → │
-│                                        P2,P3 │
-│                                          │
-│  Muchos:Muchos                            │
-│  P1,P2 → □ → P3,P4                       │
-└─────────────────────────────────────────┘
-```
-
-**Ventaja:** desacoplamiento — el productor no necesita saber quiénes son los consumidores.
-
-<!--
-**Formato del mensaje y disciplinas de cola:**
-
-**Cabecera:** información de control (tipo, destino, fuente, longitud, checksum)
-**Cuerpo:** datos del mensaje
-
-**Disciplina de cola:**
-1. **FIFO:** el primer mensaje enviado es el primero en ser recibido (estándar)
-2. **Prioridad:** los mensajes con mayor prioridad se entregan primero (importante para sistemas de tiempo real)
-3. **Inspección y selección:** el receptor puede inspeccionar la cabecera y decidir si recibir o no — no consume el mensaje hasta que decide
-
-**Nota de implementación:** las colas de mensajes tienen capacidad limitada. Si un productor envía más rápido de lo que el consumidor recibe, la cola se llena y el send se bloquea (modo bloqueante) o falla (modo no bloqueante).
--->
-
----
 
 # **Formato de Mensaje**
 
@@ -1959,6 +1501,8 @@ void P(int i) {
 # **Exclusión Mutua con Mensajes**
 
 ![width:80%](img/ch5-page-0268.jpg)
+
+---
 
 ```c
 void P(int i) {
@@ -2045,6 +1589,30 @@ for (i = 0; i < capacity; i++) send(mayproduce, null);
 - **mayconsume:** contiene los mensajes producidos
 - Productor: recibe de `mayproduce`, envía a `mayconsume`
 - Consumidor: recibe de `mayconsume`, envía a `mayproduce`
+
+<!--
+**Cómo funciona la solución con mensajes:**
+
+La idea central es usar dos buzones (mailboxes) como "contadores" implícitos:
+
+- `mayproduce` comienza con `capacity` mensajes vacíos (tokens). Cada token representa un espacio libre en el buffer.
+- `mayconsume` comienza vacío.
+
+**Flujo del productor:**
+1. `receive(mayproduce, msg)` → bloquea si no hay espacios libres (mailbox vacío)
+2. Produce el elemento
+3. `send(mayconsume, element)` → pone el elemento en el buzón de consumo
+
+**Flujo del consumidor:**
+1. `receive(mayconsume, msg)` → bloquea si no hay elementos disponibles
+2. Consume el elemento
+3. `send(mayproduce, null)` → devuelve un token (espacio libre) al productor
+
+**Equivalencia con semáforos:**
+- `mayproduce` ≡ semáforo `e` (empty slots)
+- `mayconsume` ≡ semáforo `n` (full slots)
+- No se necesita mutex separado — el paso de mensajes es intrínsecamente atómico: solo un proceso puede recibir un mensaje a la vez.
+-->
 
 ---
 
