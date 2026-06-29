@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 580" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <linearGradient id="h1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#ee4444;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="h2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffa726;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#ff8f00;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="h3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#66bb6a;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#43a047;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="h4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#42a5f5;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#1e88e5;stop-opacity:1"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="60" rx="8" fill="#1a1a2e"/>
+  <text x="450" y="38" text-anchor="middle" fill="white" font-size="22" font-weight="bold">Estrategias para Manejar Deadlocks</text>
+
+  <!-- 4 Strategy Boxes -->
+
+  <!-- Prevention -->
+  <rect x="25" y="80" width="200" height="220" rx="10" fill="url(#h1)"/>
+  <text x="125" y="115" text-anchor="middle" fill="white" font-size="17" font-weight="bold">Prevención</text>
+  <text x="125" y="140" text-anchor="middle" fill="white" font-size="11">Evitar que ocurra deadlock</text>
+  <text x="125" y="160" text-anchor="middle" fill="white" font-size="11">negando una de las 4</text>
+  <text x="125" y="178" text-anchor="middle" fill="white" font-size="11">condiciones de Coffman</text>
+  <line x1="40" y1="195" x2="210" y2="195" stroke="white" stroke-width="0.5" opacity="0.4"/>
+  <text x="125" y="215" text-anchor="middle" fill="white" font-size="10.5" opacity="0.85">Ej: Solicitar todos los</text>
+  <text x="125" y="233" text-anchor="middle" fill="white" font-size="10.5" opacity="0.85">recursos al inicio, o</text>
+  <text x="125" y="251" text-anchor="middle" fill="white" font-size="10.5" opacity="0.85">liberar antes de pedir más</text>
+  <text x="125" y="278" text-anchor="middle" fill="white" font-size="9" opacity="0.6">Alta complejidad, baja utilización</text>
+
+  <!-- Avoidance -->
+  <rect x="245" y="80" width="200" height="220" rx="10" fill="url(#h2)"/>
+  <text x="345" y="115" text-anchor="middle" fill="white" font-size="17" font-weight="bold">Detección</text>
+  <text x="345" y="140" text-anchor="middle" fill="white" font-size="11">Permitir deadlock</text>
+  <text x="345" y="160" text-anchor="middle" fill="white" font-size="11">detectarlo y recuperarse</text>
+  <line x1="260" y1="195" x2="430" y2="195" stroke="white" stroke-width="0.5" opacity="0.4"/>
+  <text x="345" y="215" text-anchor="middle" fill="white" font-size="10.5" opacity="0.85">Ej: Algoritmo del</text>
+  <text x="345" y="233" text-anchor="middle" fill="white" font-size="10.5" opacity="0.85">banquero (Dijkstra)</text>
+  <text x="345" y="251" text-anchor="middle" fill="white" font-size="10.5" opacity="0.85">Estados seguro/inseguro</text>
+  <text x="345" y="278" text-anchor="middle" fill="white" font-size="9" opacity="0.6">Requiere conocer futuras solicitudes</text>
+
+  <!-- Detection -->
+  <rect x="465" y="80" width="200" height="220" rx="10" fill="url(#h3)"/>
+  <text x="565" y="115" text-anchor="middle" fill="white" font-size="17" font-weight="bold">Detección</text>
+  <text x="565" y="140" text-anchor="middle" fill="white" font-size="11">Permitir deadlock,</text>
+  <text x="565" y="160" text-anchor="middle" fill="white" font-size="11">detectarlo periódicamente</text>
+  <text x="565" y="178" text-anchor="middle" fill="white" font-size="11">y recuperarse</text>
+  <line x1="480" y1="195" x2="650" y2="195" stroke="white" stroke-width="0.5" opacity="0.4"/>
+  <text x="565" y="215" text-anchor="middle" fill="white" font-size="10.5" opacity="0.85">Ej: Grafo de asignación</text>
+  <text x="565" y="233" text-anchor="middle" fill="white" font-size="10.5" opacity="0.85">de recursos</text>
+  <text x="565" y="251" text-anchor="middle" fill="white" font-size="10.5" opacity="0.85">Algoritmo de detección</text>
+  <text x="565" y="278" text-anchor="middle" fill="white" font-size="9" opacity="0.6">Overhead de detección + recuperación</text>
+
+  <!-- Ignorance -->
+  <rect x="685" y="80" width="190" height="220" rx="10" fill="url(#h4)"/>
+  <text x="780" y="115" text-anchor="middle" fill="white" font-size="17" font-weight="bold">Ignorar</text>
+  <text x="780" y="140" text-anchor="middle" fill="white" font-size="11">No hacer nada</text>
+  <text x="780" y="158" text-anchor="middle" fill="white" font-size="11">(Algoritmo del</text>
+  <text x="780" y="176" text-anchor="middle" fill="white" font-size="11">Avestruz)</text>
+  <line x1="700" y1="195" x2="860" y2="195" stroke="white" stroke-width="0.5" opacity="0.4"/>
+  <text x="780" y="215" text-anchor="middle" fill="white" font-size="10.5" opacity="0.85">Asumir que deadlock</text>
+  <text x="780" y="233" text-anchor="middle" fill="white" font-size="10.5" opacity="0.85">es extremadamente</text>
+  <text x="780" y="251" text-anchor="middle" fill="white" font-size="10.5" opacity="0.85">raro</text>
+  <text x="780" y="278" text-anchor="middle" fill="white" font-size="9" opacity="0.6">Usado en SO modernos</text>
+
+  <!-- Arrow connecting all 4 -->
+  <text x="450" y="330" text-anchor="middle" fill="#555" font-size="14" font-weight="bold">Cada estrategia representa un balance entre complejidad, utilización de recursos y robustez</text>
+
+  <!-- Comparison table -->
+  <rect x="50" y="350" width="800" height="210" rx="8" fill="#f8f9fa" stroke="#ddd" stroke-width="1"/>
+  <rect x="50" y="350" width="800" height="35" rx="8" fill="#1a1a2e"/>
+  <text x="450" y="373" text-anchor="middle" fill="white" font-size="14" font-weight="bold">Comparación de Estrategias</text>
+
+  <!-- Headers -->
+  <text x="140" y="408" text-anchor="middle" fill="#333" font-size="12" font-weight="bold">Estrategia</text>
+  <text x="310" y="408" text-anchor="middle" fill="#333" font-size="12" font-weight="bold">Ventajas</text>
+  <text x="500" y="408" text-anchor="middle" fill="#333" font-size="12" font-weight="bold">Desventajas</text>
+  <text x="680" y="408" text-anchor="middle" fill="#333" font-size="12" font-weight="bold">Uso típico</text>
+
+  <line x1="70" y1="418" x2="830" y2="418" stroke="#ddd" stroke-width="1"/>
+
+  <text x="140" y="442" text-anchor="middle" fill="#ee4444" font-size="11" font-weight="bold">Prevención</text>
+  <text x="310" y="442" text-anchor="middle" fill="#333" font-size="10.5">Solución más radical</text>
+  <text x="500" y="442" text-anchor="middle" fill="#333" font-size="10.5">Baja utilización de recursos</text>
+  <text x="680" y="442" text-anchor="middle" fill="#333" font-size="10.5">Sistemas batch, DB</text>
+
+  <text x="140" y="470" text-anchor="middle" fill="#ff8f00" font-size="11" font-weight="bold">Detección</text>
+  <text x="310" y="470" text-anchor="middle" fill="#333" font-size="10.5">Sin overhead en runtime</text>
+  <text x="500" y="470" text-anchor="middle" fill="#333" font-size="10.5">Requiere info futura</text>
+  <text x="680" y="470" text-anchor="middle" fill="#333" font-size="10.5">Sistemas de tiempo real</text>
+
+  <text x="140" y="498" text-anchor="middle" fill="#43a047" font-size="11" font-weight="bold">Detección</text>
+  <text x="310" y="498" text-anchor="middle" fill="#333" font-size="10.5">Flexible</text>
+  <text x="500" y="498" text-anchor="middle" fill="#333" font-size="10.5">Overhead de detección</text>
+  <text x="680" y="498" text-anchor="middle" fill="#333" font-size="10.5">Sistemas interactivos</text>
+
+  <text x="140" y="526" text-anchor="middle" fill="#1e88e5" font-size="11" font-weight="bold">Ignorar</text>
+  <text x="310" y="526" text-anchor="middle" fill="#333" font-size="10.5">Sin overhead, simple</text>
+  <text x="500" y="526" text-anchor="middle" fill="#333" font-size="10.5">Pérdida de datos si ocurre</text>
+  <text x="680" y="526" text-anchor="middle" fill="#333" font-size="10.5">Windows, Linux (general)</text>
+
+  <!-- Bottom note about banker -->
+  <text x="450" y="565" text-anchor="middle" fill="#888" font-size="10">Nota: La "detección" se refiere tradicionalmente a "evitación" (deadlock avoidance). El algoritmo del banquero es el ejemplo clásico.</text>
+</svg>

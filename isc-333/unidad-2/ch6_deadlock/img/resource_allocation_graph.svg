@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#cc3333"/>
+    </marker>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#3333cc"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <rect x="0" y="0" width="900" height="55" rx="8" fill="#1a1a2e"/>
+  <text x="450" y="35" text-anchor="middle" fill="white" font-size="20" font-weight="bold">Grafo de Asignación de Recursos — Ejemplo de Deadlock</text>
+
+  <!-- LEFT SECTION: With Deadlock -->
+  <rect x="20" y="70" width="420" height="410" rx="10" fill="#fff5f5" stroke="#ffcccc" stroke-width="2"/>
+  <text x="230" y="100" text-anchor="middle" fill="#cc3333" font-size="16" font-weight="bold">Con Deadlock: Ciclo en el Grafo</text>
+
+  <!-- Process A (circle) -->
+  <circle cx="130" cy="200" r="35" fill="#ff6b6b" opacity="0.9"/>
+  <text x="130" y="206" text-anchor="middle" fill="white" font-size="18" font-weight="bold">A</text>
+
+  <!-- Process B (circle) -->
+  <circle cx="330" cy="200" r="35" fill="#ff6b6b" opacity="0.9"/>
+  <text x="330" y="206" text-anchor="middle" fill="white" font-size="18" font-weight="bold">B</text>
+
+  <!-- Resource R (rectangle) -->
+  <rect x="80" y="320" width="100" height="55" rx="6" fill="#42a5f5" opacity="0.9"/>
+  <text x="130" y="348" text-anchor="middle" fill="white" font-size="15" font-weight="bold">R</text>
+  <!-- Dot representing 1 instance -->
+  <circle cx="130" cy="368" r="6" fill="white" opacity="0.7"/>
+
+  <!-- Resource S (rectangle) -->
+  <rect x="280" y="320" width="100" height="55" rx="6" fill="#42a5f5" opacity="0.9"/>
+  <text x="330" y="348" text-anchor="middle" fill="white" font-size="15" font-weight="bold">S</text>
+  <circle cx="330" cy="368" r="6" fill="white" opacity="0.7"/>
+
+  <!-- A wants S (A -> S) -->
+  <path d="M155,215 Q240,250 280,215" fill="none" stroke="#cc3333" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="220" y="238" text-anchor="middle" fill="#cc3333" font-size="11" font-style="italic">A espera S</text>
+
+  <!-- S -> B (S assigned to B) -->
+  <path d="M330,320 L330,245" fill="none" stroke="#3333cc" stroke-width="2.5" marker-end="url(#arrow2)"/>
+  <text x="345" y="285" text-anchor="middle" fill="#3333cc" font-size="11" font-style="italic">S asignado a B</text>
+
+  <!-- B wants R (B -> R) -->
+  <path d="M300,215 Q230,250 230,320" fill="none" stroke="#cc3333" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="260" y="275" text-anchor="middle" fill="#cc3333" font-size="11" font-style="italic">B espera R</text>
+
+  <!-- R -> A (R assigned to A) -->
+  <path d="M130,320 L130,245" fill="none" stroke="#3333cc" stroke-width="2.5" marker-end="url(#arrow2)"/>
+  <text x="115" y="285" text-anchor="middle" fill="#3333cc" font-size="11" font-style="italic">R asignado a A</text>
+
+  <!-- Deadlock cycle highlight -->
+  <text x="230" y="405" text-anchor="middle" fill="#cc3333" font-size="13" font-weight="bold">Ciclo: A → S → B → R → A (Deadlock!)</text>
+  <text x="230" y="430" text-anchor="middle" fill="#666" font-size="11">A tiene R, espera S. B tiene S, espera R.</text>
+  <text x="230" y="450" text-anchor="middle" fill="#666" font-size="11">Ninguno puede progresar.</text>
+
+  <!-- RIGHT SECTION: Without Deadlock -->
+  <rect x="460" y="70" width="420" height="410" rx="10" fill="#f0fff4" stroke="#a5d6a7" stroke-width="2"/>
+  <text x="670" y="100" text-anchor="middle" fill="#2e7d32" font-size="16" font-weight="bold">Sin Deadlock: Ciclo pero sin Espera Circular</text>
+
+  <!-- Process C (circle) -->
+  <circle cx="570" cy="200" r="35" fill="#66bb6a" opacity="0.9"/>
+  <text x="570" y="206" text-anchor="middle" fill="white" font-size="18" font-weight="bold">C</text>
+
+  <!-- Process D (circle) -->
+  <circle cx="770" cy="200" r="35" fill="#66bb6a" opacity="0.9"/>
+  <text x="770" y="206" text-anchor="middle" fill="white" font-size="18" font-weight="bold">D</text>
+
+  <!-- Resource T (rectangle) -->
+  <rect x="520" y="320" width="100" height="55" rx="6" fill="#66bb6a" opacity="0.9"/>
+  <text x="570" y="348" text-anchor="middle" fill="white" font-size="15" font-weight="bold">T</text>
+  <circle cx="570" cy="368" r="6" fill="white" opacity="0.7"/>
+
+  <!-- Resource U (rectangle with 2 instances) -->
+  <rect x="720" y="320" width="100" height="55" rx="6" fill="#66bb6a" opacity="0.9"/>
+  <text x="770" y="340" text-anchor="middle" fill="white" font-size="13" font-weight="bold">U</text>
+  <text x="770" y="358" text-anchor="middle" fill="white" font-size="11">(2 instancias)</text>
+  <circle cx="742" cy="368" r="5" fill="white" opacity="0.7"/>
+  <circle cx="798" cy="368" r="5" fill="white" opacity="0.7"/>
+
+  <!-- C wants T (C -> T) -->
+  <path d="M595,215 Q630,250 630,310" fill="none" stroke="#cc3333" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="630" y="260" text-anchor="middle" fill="#cc3333" font-size="11" font-style="italic">C espera T</text>
+
+  <!-- T -> D (T assigned to D) -->
+  <path d="M620,320 L750,250" fill="none" stroke="#3333cc" stroke-width="2.5" marker-end="url(#arrow2)"/>
+  <text x="680" y="295" text-anchor="middle" fill="#3333cc" font-size="11" font-style="italic">T asignado a D</text>
+
+  <!-- D wants U (D -> U) -->
+  <path d="M795,235 Q800,270 790,310" fill="none" stroke="#cc3333" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="815" y="275" text-anchor="middle" fill="#cc3333" font-size="11" font-style="italic">D espera U</text>
+
+  <!-- U -> C (U instance assigned to C) -->
+  <path d="M640,340 L600,245" fill="none" stroke="#3333cc" stroke-width="2.5" marker-end="url(#arrow2)"/>
+  <text x="610" y="300" text-anchor="middle" fill="#3333cc" font-size="11" font-style="italic">U asignado a C</text>
+
+  <text x="670" y="405" text-anchor="middle" fill="#2e7d32" font-size="13" font-weight="bold">Hay ciclo, pero no deadlock</text>
+  <text x="670" y="430" text-anchor="middle" fill="#666" font-size="11">C tiene U, espera T. D tiene T, espera U.</text>
+  <text x="670" y="450" text-anchor="middle" fill="#666" font-size="11">Pero U tiene 2 instancias. D puede obtener 2da instancia.</text>
+</svg>
