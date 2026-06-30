@@ -180,7 +180,7 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
 <h1 id="cap%C3%ADtulo-6-deadlock-e-inanici%C3%B3n"><strong>Capítulo 6: Deadlock e Inanición</strong></h1>
 <h2 id="principios-prevenci%C3%B3n-evitaci%C3%B3n-y-recuperaci%C3%B3n">Principios, Prevención, Evitación y Recuperación</h2>
 <h3 id="william-stallings--operating-systems-internals-and-design-principles-9%C2%AA-ed">William Stallings — Operating Systems: Internals and Design Principles (9ª Ed.)</h3>
@@ -357,7 +357,7 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
 <h1 id="contenido-del-cap%C3%ADtulo"><strong>Contenido del Capítulo</strong></h1>
 <ol>
 <li><strong>Principios de Deadlock</strong></li>
@@ -541,7 +541,7 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
 <h1 id="objetivos-de-aprendizaje"><strong>Objetivos de Aprendizaje</strong></h1>
 <ul>
 <li>Definir <strong>deadlock</strong> y distinguirlo de otros problemas de concurrencia</li>
@@ -725,7 +725,7 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
 <h1 id="1-principios-de-deadlock"><strong>1. Principios de Deadlock</strong></h1>
 <p><img src="img/deadlock_example.png" alt="" /></p>
 </section>
@@ -901,13 +901,13 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
 <h1 id="definici%C3%B3n-de-deadlock"><strong>Definición de Deadlock</strong></h1>
 <p><strong>Deadlock (bloqueo mutuo):</strong> un conjunto de procesos está en deadlock cuando cada proceso en el conjunto espera un evento que solo otro proceso del conjunto puede provocar.</p>
 <blockquote>
 <p>Un deadlock es el <strong>abrazo mortal</strong> donde ninguno puede avanzar porque todos esperan a los demás.</p>
 </blockquote>
-<h3 id="ejemplo-cl%C3%A1sico--dos-procesos-y-dos-recursos-stallings-fig-61">Ejemplo clásico — Dos procesos y dos recursos (Stallings, Fig 6.1):</h3>
+<h3 id="ejemplo-cl%C3%A1sico--dos-procesos-y-dos-recursos">Ejemplo clásico — Dos procesos y dos recursos:</h3>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code>P1: Tiene el recurso A, espera el recurso B
 P2: Tiene el recurso B, espera el recurso A
 </code></pre>
@@ -1085,7 +1085,7 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
 <h1 id="condiciones-de-coffman-1971"><strong>Condiciones de Coffman (1971)</strong></h1>
 <p><strong>Cuatro condiciones necesarias para que ocurra deadlock:</strong></p>
 <table>
@@ -1300,8 +1300,46 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<p><img src="img/deadlock_conditions.svg" alt="" /></p>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="modelado-con-grafos-de-asignaci%C3%B3n-de-recursos"><strong>Modelado con Grafos de Asignación de Recursos</strong></h1>
+<p><strong>Elementos del grafo:</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Símbolo</th>
+<th style="text-align:left">Representa</th>
+<th style="text-align:left">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">![Círculo]</td>
+<td style="text-align:left"><strong>Proceso</strong></td>
+<td style="text-align:left">Nodo del grafo</td>
+</tr>
+<tr>
+<td style="text-align:center">![Cuadrado]</td>
+<td style="text-align:left"><strong>Recurso</strong></td>
+<td style="text-align:left">Nodo del grafo</td>
+</tr>
+<tr>
+<td style="text-align:center"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></td>
+<td style="text-align:left"><strong>Asignación</strong></td>
+<td style="text-align:left">Recurso asignado a proceso</td>
+</tr>
+<tr>
+<td style="text-align:center"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>←</mo></mrow><annotation encoding="application/x-tex">\leftarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">←</span></span></span></span></td>
+<td style="text-align:left"><strong>Solicitud</strong></td>
+<td style="text-align:left">Proceso espera recurso</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Regla de detección (Stallings, Sección 6.1.3):</strong></p>
+<ul>
+<li>Si el grafo <strong>no tiene ciclos</strong> → no hay deadlock</li>
+<li>Si el grafo <strong>tiene un ciclo</strong> y cada recurso en el ciclo tiene <strong>una sola instancia</strong> → deadlock</li>
+<li>Si el grafo tiene un ciclo pero algún recurso tiene <strong>múltiples instancias</strong> → puede no haber deadlock</li>
+</ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -1475,46 +1513,18 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="modelado-con-grafos-de-asignaci%C3%B3n-de-recursos"><strong>Modelado con Grafos de Asignación de Recursos</strong></h1>
-<p><strong>Elementos del grafo:</strong></p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">Símbolo</th>
-<th style="text-align:left">Representa</th>
-<th style="text-align:left">Descripción</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">![Círculo]</td>
-<td style="text-align:left"><strong>Proceso</strong></td>
-<td style="text-align:left">Nodo del grafo</td>
-</tr>
-<tr>
-<td style="text-align:center">![Cuadrado]</td>
-<td style="text-align:left"><strong>Recurso</strong></td>
-<td style="text-align:left">Nodo del grafo</td>
-</tr>
-<tr>
-<td style="text-align:center"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></td>
-<td style="text-align:left"><strong>Asignación</strong></td>
-<td style="text-align:left">Recurso asignado a proceso</td>
-</tr>
-<tr>
-<td style="text-align:center"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>←</mo></mrow><annotation encoding="application/x-tex">\leftarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">←</span></span></span></span></td>
-<td style="text-align:left"><strong>Solicitud</strong></td>
-<td style="text-align:left">Proceso espera recurso</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Regla de detección (Stallings, Sección 6.1.3):</strong></p>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="ejemplo-de-deadlock-con-grafos-de-asignaci%C3%B3n"><strong>Ejemplo de Deadlock con Grafos de Asignación</strong></h1>
+<p>El grafo de asignación de recursos permite visualizar cuándo ocurre deadlock:</p>
 <ul>
-<li>Si el grafo <strong>no tiene ciclos</strong> → no hay deadlock</li>
-<li>Si el grafo <strong>tiene un ciclo</strong> y cada recurso en el ciclo tiene <strong>una sola instancia</strong> → deadlock</li>
-<li>Si el grafo tiene un ciclo pero algún recurso tiene <strong>múltiples instancias</strong> → puede no haber deadlock</li>
+<li><strong>P1</strong> tiene asignado R (flecha R → P1) y solicita S (flecha P1 → S)</li>
+<li><strong>P2</strong> tiene asignado S (flecha S → P2) y solicita R (flecha P2 → R)</li>
+<li>Se forma un ciclo: <strong>P1 → S → P2 → R → P1</strong></li>
+<li>Como R y S tienen <strong>solo 1 instancia</strong> cada uno → <strong>deadlock inevitable</strong></li>
 </ul>
+<blockquote>
+<p><strong>Conclusión:</strong> un ciclo en el grafo donde cada recurso tiene una sola instancia indica deadlock.</p>
+</blockquote>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -1688,8 +1698,37 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<p><img src="img/resource_allocation_graph.svg" alt="" /></p>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="recursos-reutilizables-vs-consumibles"><strong>Recursos Reutilizables vs. Consumibles</strong></h1>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Tipo</th>
+<th style="text-align:left">Descripción</th>
+<th style="text-align:left">Ejemplos</th>
+<th style="text-align:center">Deadlock potencial</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Reutilizables</strong></td>
+<td style="text-align:left">Se pueden usar y liberar sin consumirse</td>
+<td style="text-align:left">CPU, memoria, archivos, dispositivos</td>
+<td style="text-align:center">Sí — deadlock clásico</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Consumibles</strong></td>
+<td style="text-align:left">Se crean y destruyen durante su uso</td>
+<td style="text-align:left">Mensajes, buffers, señales, interrupciones</td>
+<td style="text-align:center">Sí — deadlock por pérdida</td>
+</tr>
+</tbody>
+</table>
+<h3 id="deadlock-con-recursos-consumibles-stallings-p-331">Deadlock con recursos consumibles (Stallings, p. 331):</h3>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code>Proceso A: espera un mensaje de B → envía mensaje a B
+Proceso B: espera un mensaje de A → envía mensaje a A
+</code></pre>
+<p>Ambos esperan recibir antes de enviar → <strong>deadlock</strong>.</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -1863,26 +1902,44 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="figura-62--explicaci%C3%B3n-del-grafo-de-asignaci%C3%B3n-de-recursos-stallings-fig-62"><strong>Figura 6.2 — Explicación del Grafo de Asignación de Recursos (Stallings, Fig 6.2)</strong></h1>
-<h3 id="lado-izquierdo--deadlock-recursos-con-1-instancia">Lado izquierdo — <strong>Deadlock</strong> (Recursos con 1 instancia):</h3>
-<ul>
-<li><strong>P1</strong> tiene asignado R (flecha R → P1) y solicita S (flecha P1 → S)</li>
-<li><strong>P2</strong> tiene asignado S (flecha S → P2) y solicita R (flecha P2 → R)</li>
-<li>Ciclo cerrado: <strong>P1 → S → P2 → R → P1</strong></li>
-<li>Como R y S tienen <strong>solo 1 instancia</strong> cada uno → <strong>deadlock</strong> (nadie puede liberar)</li>
-</ul>
-<h3 id="lado-derecho--sin-deadlock-recurso-con-m%C3%BAltiples-instancias">Lado derecho — <strong>Sin deadlock</strong> (Recurso con múltiples instancias):</h3>
-<ul>
-<li><strong>P3</strong> tiene asignado T (flecha T → P3) y solicita U (flecha P3 → U)</li>
-<li><strong>P4</strong> tiene asignada <strong>una</strong> instancia de U (flecha U → P4) y solicita T (flecha P4 → T)</li>
-<li>Ciclo: <strong>P3 → T → P4 → U → P3</strong></li>
-<li>Pero <strong>U tiene 2 instancias</strong>. P4 solo tiene 1, la otra está libre</li>
-<li>P4 puede obtener la <strong>segunda instancia de U</strong>, completar su ejecución, liberar T → <strong>no hay deadlock</strong></li>
-</ul>
-<blockquote>
-<p><strong>Conclusión clave (Stallings, p. 330):</strong> un ciclo en el grafo es condición <strong>necesaria</strong> para deadlock, pero no <strong>suficiente</strong> cuando existen recursos con múltiples instancias.</p>
-</blockquote>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="estrategias-para-manejar-deadlocks"><strong>Estrategias para Manejar Deadlocks</strong></h1>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Estrategia</th>
+<th style="text-align:left">Descripción</th>
+<th style="text-align:center">Overhead</th>
+<th style="text-align:center">Utilización</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Prevención</strong></td>
+<td style="text-align:left">Negar una de las 4 condiciones</td>
+<td style="text-align:center">Alto</td>
+<td style="text-align:center">Baja</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Evitación</strong></td>
+<td style="text-align:left">Decidir si otorgar recursos (Banquero)</td>
+<td style="text-align:center">Medio</td>
+<td style="text-align:center">Media</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Detección + Recuperación</strong></td>
+<td style="text-align:left">Permitir deadlock, detectarlo y recuperarse</td>
+<td style="text-align:center">Medio</td>
+<td style="text-align:center">Alta</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Ignorar (Avestruz)</strong></td>
+<td style="text-align:left">Asumir que deadlock es extremadamente raro</td>
+<td style="text-align:center">Bajo</td>
+<td style="text-align:center">Máxima</td>
+</tr>
+</tbody>
+</table>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -2056,37 +2113,8 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="recursos-reutilizables-vs-consumibles"><strong>Recursos Reutilizables vs. Consumibles</strong></h1>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">Tipo</th>
-<th style="text-align:left">Descripción</th>
-<th style="text-align:left">Ejemplos</th>
-<th style="text-align:center">Deadlock potencial</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><strong>Reutilizables</strong></td>
-<td style="text-align:left">Se pueden usar y liberar sin consumirse</td>
-<td style="text-align:left">CPU, memoria, archivos, dispositivos</td>
-<td style="text-align:center">Sí — deadlock clásico</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Consumibles</strong></td>
-<td style="text-align:left">Se crean y destruyen durante su uso</td>
-<td style="text-align:left">Mensajes, buffers, señales, interrupciones</td>
-<td style="text-align:center">Sí — deadlock por pérdida</td>
-</tr>
-</tbody>
-</table>
-<h3 id="deadlock-con-recursos-consumibles-stallings-p-331">Deadlock con recursos consumibles (Stallings, p. 331):</h3>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>Proceso A: espera un mensaje de B → envía mensaje a B
-Proceso B: espera un mensaje de A → envía mensaje a A
-</code></pre>
-<p>Ambos esperan recibir antes de enviar → <strong>deadlock</strong>.</p>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<p><img src="img/deadlock_prevention.svg" alt="" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -2260,46 +2288,21 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="estrategias-para-manejar-deadlocks-stallings-secci%C3%B3n-62"><strong>Estrategias para Manejar Deadlocks (Stallings, Sección 6.2)</strong></h1>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">Estrategia</th>
-<th style="text-align:left">Descripción</th>
-<th style="text-align:center">Overhead</th>
-<th style="text-align:center">Utilización</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><strong>Prevención</strong></td>
-<td style="text-align:left">Negar una de las 4 condiciones</td>
-<td style="text-align:center">Alto</td>
-<td style="text-align:center">Baja</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Evitación</strong></td>
-<td style="text-align:left">Decidir si otorgar recursos (Banquero)</td>
-<td style="text-align:center">Medio</td>
-<td style="text-align:center">Media</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Detección + Recuperación</strong></td>
-<td style="text-align:left">Permitir deadlock, detectarlo y recuperarse</td>
-<td style="text-align:center">Medio</td>
-<td style="text-align:center">Alta</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Ignorar (Avestruz)</strong></td>
-<td style="text-align:left">Asumir que deadlock es extremadamente raro</td>
-<td style="text-align:center">Bajo</td>
-<td style="text-align:center">Máxima</td>
-</tr>
-</tbody>
-</table>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="ciclo-sin-deadlock--recursos-con-m%C3%BAltiples-instancias"><strong>Ciclo sin Deadlock — Recursos con Múltiples Instancias</strong></h1>
+<p>El lado derecho de la figura muestra un escenario donde <strong>no hay deadlock</strong> aunque existe un ciclo en el grafo:</p>
+<ul>
+<li><strong>P3</strong> tiene asignado T (flecha T → P3) y solicita U (flecha P3 → U)</li>
+<li><strong>P4</strong> tiene asignada <strong>una</strong> instancia de U (flecha U → P4) y solicita T (flecha P4 → T)</li>
+<li>Hay un ciclo: <strong>P3 → T → P4 → U → P3</strong></li>
+<li>Sin embargo, <strong>U tiene 2 instancias</strong>. P4 solo tiene 1, la segunda está libre</li>
+<li>P4 puede obtener la <strong>segunda instancia de U</strong>, completar y liberar T → <strong>no hay deadlock</strong></li>
+</ul>
+<blockquote>
+<p><strong>Conclusión clave (Stallings, p. 330):</strong> un ciclo en el grafo es condición <strong>necesaria</strong> para deadlock, pero no <strong>suficiente</strong> cuando existen recursos con múltiples instancias.</p>
+</blockquote>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="lead" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -2385,7 +2388,7 @@ img {
 .half img {
   max-width: 50%;
 }
-" lang="C" data-marpit-pagination="13" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
+" lang="C" class="lead" data-marpit-pagination="13" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:lead;--theme:default;--style:section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -2471,8 +2474,8 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<p><img src="img/deadlock_prevention.svg" alt="" /></p>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="2-prevenci%C3%B3n-de-deadlock"><strong>2. Prevención de Deadlock</strong></h1>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -2646,24 +2649,36 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="figura-63--explicaci%C3%B3n-de-las-estrategias-stallings-fig-63"><strong>Figura 6.3 — Explicación de las Estrategias (Stallings, Fig 6.3)</strong></h1>
-<p>La figura agrupa las 4 estrategias en dos categorías principales:</p>
-<h3 id="estrategias-preventivas-evitan-que-ocurra-deadlock"><strong>Estrategias preventivas</strong> (evitan que ocurra deadlock):</h3>
-<ol>
-<li><strong>Prevención (izquierda):</strong> bloquea una de las 4 condiciones de Coffman. Es el enfoque más restrictivo pero garantiza que deadlock nunca ocurra. Ejemplo: orden jerárquico de recursos.</li>
-<li><strong>Evitación (centro-izquierda):</strong> el SO evalúa cada solicitud de recursos usando el <strong>algoritmo del banquero</strong>. Solo aprueba si el estado resultante es seguro.</li>
-</ol>
-<h3 id="estrategias-reactivas-permiten-deadlock-y-act%C3%BAan-despu%C3%A9s"><strong>Estrategias reactivas</strong> (permiten deadlock y actúan después):</h3>
-<ol start="3">
-<li><strong>Detección + Recuperación (centro-derecha):</strong> permite que ocurra deadlock, lo detecta periódicamente y luego actúa (abortando procesos o desalojando recursos).</li>
-<li><strong>Ignorar (derecha):</strong> la &quot;estrategia del avestruz&quot; — asume que deadlock es tan raro que no vale la pena el overhead.</li>
-</ol>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="prevenci%C3%B3n--negar-la-exclusi%C3%B3n-mutua-stallings-p-335"><strong>Prevención — Negar la Exclusión Mutua (Stallings, p. 335)</strong></h1>
+<h3 id="objetivo-permitir-que-los-recursos-sean-compartibles">Objetivo: permitir que los recursos sean compartibles</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Condición</th>
+<th style="text-align:left">Estrategia</th>
+<th style="text-align:left">Problema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Exclusión Mutua</strong></td>
+<td style="text-align:left">Usar recursos compartibles (archivos de solo lectura)</td>
+<td style="text-align:left">Algunos recursos son <strong>inherentemente no compartibles</strong> (impresora, dispositivos de E/S)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Limitación fundamental:</strong> no todos los recursos pueden ser compartidos.</p>
+<ul>
+<li>Un archivo de solo lectura → sí puede ser compartido</li>
+<li>Una impresora → debe ser usada por un proceso a la vez</li>
+<li>Un recurso de E/S → por definición es de exclusión mutua</li>
+</ul>
 <blockquote>
-<p><strong>Trade-off fundamental (Stallings, p. 333):</strong> a medida que nos movemos de izquierda a derecha, el overhead disminuye pero aumenta el riesgo de que un deadlock afecte al sistema.</p>
+<p><strong>Conclusión:</strong> negar la exclusión mutua solo funciona para un subconjunto limitado de recursos.</p>
 </blockquote>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="lead" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -2749,7 +2764,7 @@ img {
 .half img {
   max-width: 50%;
 }
-" lang="C" class="lead" data-marpit-pagination="15" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:lead;--theme:default;--style:section {
+" lang="C" data-marpit-pagination="15" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -2835,8 +2850,19 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="2-prevenci%C3%B3n-de-deadlock"><strong>2. Prevención de Deadlock</strong></h1>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="prevenci%C3%B3n--negar-retener-y-esperar-stallings-p-335"><strong>Prevención — Negar &quot;Retener y Esperar&quot; (Stallings, p. 335)</strong></h1>
+<h3 id="dos-enfoques">Dos enfoques:</h3>
+<ol>
+<li><strong>Solicitud total inicial:</strong> el proceso solicita <strong>todos</strong> los recursos que necesitará antes de comenzar</li>
+<li><strong>Liberación antes de nueva solicitud:</strong> el proceso libera todos los recursos actuales antes de solicitar nuevos</li>
+</ol>
+<h3 id="problemas">Problemas:</h3>
+<ul>
+<li><strong>Baja utilización de recursos:</strong> los recursos están asignados aunque no se usen activamente</li>
+<li><strong>Planificación impredecible:</strong> el proceso no siempre sabe cuántos recursos necesitará al inicio</li>
+<li><strong>Posible inanición:</strong> un proceso que necesita muchos recursos puede esperar indefinidamente</li>
+</ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -3010,34 +3036,19 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="prevenci%C3%B3n--negar-la-exclusi%C3%B3n-mutua-stallings-p-335"><strong>Prevención — Negar la Exclusión Mutua (Stallings, p. 335)</strong></h1>
-<h3 id="objetivo-permitir-que-los-recursos-sean-compartibles">Objetivo: permitir que los recursos sean compartibles</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">Condición</th>
-<th style="text-align:left">Estrategia</th>
-<th style="text-align:left">Problema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><strong>Exclusión Mutua</strong></td>
-<td style="text-align:left">Usar recursos compartibles (archivos de solo lectura)</td>
-<td style="text-align:left">Algunos recursos son <strong>inherentemente no compartibles</strong> (impresora, dispositivos de E/S)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Limitación fundamental:</strong> no todos los recursos pueden ser compartidos.</p>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="prevenci%C3%B3n--negar-sin-desalojo-stallings-p-335"><strong>Prevención — Negar &quot;Sin Desalojo&quot; (Stallings, p. 335)</strong></h1>
+<h3 id="estrategias">Estrategias:</h3>
+<ol>
+<li><strong>Desalojo preventivo:</strong> si un proceso pide un recurso que no está disponible, el SO le <strong>quita</strong> todos los recursos que ya tiene</li>
+<li><strong>Desalojo con salvaguarda:</strong> el SO guarda el estado del proceso, desaloja los recursos, y los devuelve cuando estén todos disponibles</li>
+</ol>
+<h3 id="problemas-1">Problemas:</h3>
 <ul>
-<li>Un archivo de solo lectura → sí puede ser compartido</li>
-<li>Una impresora → debe ser usada por un proceso a la vez</li>
-<li>Un recurso de E/S → por definición es de exclusión mutua</li>
+<li>Costoso (guardar/restaurar estado)</li>
+<li>Complejo de implementar</li>
+<li>Algunos recursos no pueden ser desalojados</li>
 </ul>
-<blockquote>
-<p><strong>Conclusión:</strong> negar la exclusión mutua solo funciona para un subconjunto limitado de recursos.</p>
-</blockquote>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -3211,18 +3222,29 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="prevenci%C3%B3n--negar-retener-y-esperar-stallings-p-335"><strong>Prevención — Negar &quot;Retener y Esperar&quot; (Stallings, p. 335)</strong></h1>
-<h3 id="dos-enfoques">Dos enfoques:</h3>
-<ol>
-<li><strong>Solicitud total inicial:</strong> el proceso solicita <strong>todos</strong> los recursos que necesitará antes de comenzar</li>
-<li><strong>Liberación antes de nueva solicitud:</strong> el proceso libera todos los recursos actuales antes de solicitar nuevos</li>
-</ol>
-<h3 id="problemas">Problemas:</h3>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="prevenci%C3%B3n--negar-espera-circular-stallings-p-336"><strong>Prevención — Negar &quot;Espera Circular&quot; (Stallings, p. 336)</strong></h1>
+<h3 id="estrategia-ordenamiento-jer%C3%A1rquico-de-recursos">Estrategia: <strong>Ordenamiento jerárquico de recursos</strong></h3>
 <ul>
-<li><strong>Baja utilización de recursos:</strong> los recursos están asignados aunque no se usen activamente</li>
-<li><strong>Planificación impredecible:</strong> el proceso no siempre sabe cuántos recursos necesitará al inicio</li>
-<li><strong>Posible inanición:</strong> un proceso que necesita muchos recursos puede esperar indefinidamente</li>
+<li>Asignar un <strong>número único</strong> a cada recurso</li>
+<li>Los procesos deben solicitar recursos en <strong>orden ascendente</strong></li>
+<li>Si un proceso tiene el recurso <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span>, solo puede solicitar recursos <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>&gt;</mo><mi>i</mi></mrow><annotation encoding="application/x-tex">&gt; i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span></li>
+</ul>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code>// Orden de recursos: R1 &lt; R2 &lt; R3 &lt; ...
+// VÁLIDO: R1 → R2 → R3
+solicitar(R1);
+solicitar(R2);
+solicitar(R3);
+
+// INVÁLIDO: R1 → R3 → R2
+solicitar(R1);
+solicitar(R3);   // Válido hasta aquí (R3 &gt; R1)
+solicitar(R2);   // INVALIDO: R2 &lt; R3
+</code></pre>
+<h3 id="ventajas">Ventajas:</h3>
+<ul>
+<li>Simple de implementar</li>
+<li>Garantiza ausencia de espera circular</li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
@@ -3397,21 +3419,44 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="prevenci%C3%B3n--negar-sin-desalojo-stallings-p-335"><strong>Prevención — Negar &quot;Sin Desalojo&quot; (Stallings, p. 335)</strong></h1>
-<h3 id="estrategias">Estrategias:</h3>
-<ol>
-<li><strong>Desalojo preventivo:</strong> si un proceso pide un recurso que no está disponible, el SO le <strong>quita</strong> todos los recursos que ya tiene</li>
-<li><strong>Desalojo con salvaguarda:</strong> el SO guarda el estado del proceso, desaloja los recursos, y los devuelve cuando estén todos disponibles</li>
-</ol>
-<h3 id="problemas-1">Problemas:</h3>
-<ul>
-<li>Costoso (guardar/restaurar estado)</li>
-<li>Complejo de implementar</li>
-<li>Algunos recursos no pueden ser desalojados</li>
-</ul>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="resumen--prevenci%C3%B3n-de-deadlock-stallings-p-337"><strong>Resumen — Prevención de Deadlock (Stallings, p. 337)</strong></h1>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Condición negada</th>
+<th style="text-align:left">Estrategia</th>
+<th style="text-align:left">Desventaja principal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Exclusión Mutua</strong></td>
+<td style="text-align:left">Recursos compartibles</td>
+<td style="text-align:left">No aplicable a todos los recursos</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Retener y Esperar</strong></td>
+<td style="text-align:left">Solicitud total al inicio</td>
+<td style="text-align:left">Baja utilización, requiere predicción</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Sin Desalojo</strong></td>
+<td style="text-align:left">Desalojo forzoso</td>
+<td style="text-align:left">Costoso, no siempre posible</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Espera Circular</strong></td>
+<td style="text-align:left">Orden jerárquico</td>
+<td style="text-align:left">Requiere convención global</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Ninguna estrategia de prevención es ideal.</strong> Todas sacrifican eficiencia o flexibilidad.</p>
+</blockquote>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="lead" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -3497,7 +3542,7 @@ img {
 .half img {
   max-width: 50%;
 }
-" lang="C" data-marpit-pagination="19" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
+" lang="C" class="lead" data-marpit-pagination="19" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:lead;--theme:default;--style:section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -3583,30 +3628,8 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="prevenci%C3%B3n--negar-espera-circular-stallings-p-336"><strong>Prevención — Negar &quot;Espera Circular&quot; (Stallings, p. 336)</strong></h1>
-<h3 id="estrategia-ordenamiento-jer%C3%A1rquico-de-recursos">Estrategia: <strong>Ordenamiento jerárquico de recursos</strong></h3>
-<ul>
-<li>Asignar un <strong>número único</strong> a cada recurso</li>
-<li>Los procesos deben solicitar recursos en <strong>orden ascendente</strong></li>
-<li>Si un proceso tiene el recurso <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span>, solo puede solicitar recursos <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>&gt;</mo><mi>i</mi></mrow><annotation encoding="application/x-tex">&gt; i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span></li>
-</ul>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>// Orden de recursos: R1 &lt; R2 &lt; R3 &lt; ...
-// VÁLIDO: R1 → R2 → R3
-solicitar(R1);
-solicitar(R2);
-solicitar(R3);
-
-// INVÁLIDO: R1 → R3 → R2
-solicitar(R1);
-solicitar(R3);   // Válido hasta aquí (R3 &gt; R1)
-solicitar(R2);   // INVALIDO: R2 &lt; R3
-</code></pre>
-<h3 id="ventajas">Ventajas:</h3>
-<ul>
-<li>Simple de implementar</li>
-<li>Garantiza ausencia de espera circular</li>
-</ul>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="3-evitaci%C3%B3n-de-deadlock--algoritmo-del-banquero"><strong>3. Evitación de Deadlock — Algoritmo del Banquero</strong></h1>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -3780,44 +3803,38 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="resumen--prevenci%C3%B3n-de-deadlock-stallings-p-337"><strong>Resumen — Prevención de Deadlock (Stallings, p. 337)</strong></h1>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="algoritmo-del-banquero-dijkstra-1965--stallings-p-337"><strong>Algoritmo del Banquero (Dijkstra, 1965) — Stallings, p. 337</strong></h1>
+<h3 id="idea-central">Idea central:</h3>
+<p>El SO decide si prestar recursos (aprobar una solicitud) basándose en si el estado resultante es <strong>seguro</strong>.</p>
+<h3 id="definiciones">Definiciones:</h3>
 <table>
 <thead>
 <tr>
-<th style="text-align:left">Condición negada</th>
-<th style="text-align:left">Estrategia</th>
-<th style="text-align:left">Desventaja principal</th>
+<th style="text-align:left">Término</th>
+<th style="text-align:left">Descripción</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left"><strong>Exclusión Mutua</strong></td>
-<td style="text-align:left">Recursos compartibles</td>
-<td style="text-align:left">No aplicable a todos los recursos</td>
+<td style="text-align:left"><strong>Estado seguro</strong></td>
+<td style="text-align:left">Existe al menos una secuencia de procesos que pueden completarse exitosamente</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Retener y Esperar</strong></td>
-<td style="text-align:left">Solicitud total al inicio</td>
-<td style="text-align:left">Baja utilización, requiere predicción</td>
+<td style="text-align:left"><strong>Estado inseguro</strong></td>
+<td style="text-align:left">No hay garantía de que todos los procesos puedan completarse (posible deadlock)</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Sin Desalojo</strong></td>
-<td style="text-align:left">Desalojo forzoso</td>
-<td style="text-align:left">Costoso, no siempre posible</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Espera Circular</strong></td>
-<td style="text-align:left">Orden jerárquico</td>
-<td style="text-align:left">Requiere convención global</td>
+<td style="text-align:left"><strong>Secuencia segura</strong></td>
+<td style="text-align:left">Orden de ejecución donde cada proceso puede obtener todos sus recursos</td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p><strong>Ninguna estrategia de prevención es ideal.</strong> Todas sacrifican eficiencia o flexibilidad.</p>
+<p><strong>Regla del banquero:</strong> solo aprueba un préstamo si el estado resultante es seguro. Si es inseguro, rechaza la solicitud (aunque haya recursos disponibles).</p>
 </blockquote>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="lead" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -3903,7 +3920,7 @@ img {
 .half img {
   max-width: 50%;
 }
-" lang="C" class="lead" data-marpit-pagination="21" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:lead;--theme:default;--style:section {
+" lang="C" data-marpit-pagination="21" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -3989,8 +4006,8 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="3-evitaci%C3%B3n-de-deadlock--algoritmo-del-banquero"><strong>3. Evitación de Deadlock — Algoritmo del Banquero</strong></h1>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<p><img src="img/banker_algorithm.svg" alt="" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -4164,35 +4181,43 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="algoritmo-del-banquero-dijkstra-1965--stallings-p-337"><strong>Algoritmo del Banquero (Dijkstra, 1965) — Stallings, p. 337</strong></h1>
-<h3 id="idea-central">Idea central:</h3>
-<p>El SO decide si prestar recursos (aprobar una solicitud) basándose en si el estado resultante es <strong>seguro</strong>.</p>
-<h3 id="definiciones">Definiciones:</h3>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="estructuras-de-datos-stallings-p-338"><strong>Estructuras de Datos (Stallings, p. 338)</strong></h1>
+<p>El algoritmo del banquero utiliza 4 matrices/vectores:</p>
+<h3 id="para-procesos-y-tipos-de-recursos">Para <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> procesos y <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> tipos de recursos:</h3>
 <table>
 <thead>
 <tr>
-<th style="text-align:left">Término</th>
-<th style="text-align:left">Descripción</th>
+<th style="text-align:left">Estructura</th>
+<th style="text-align:center">Tipo</th>
+<th style="text-align:left">Significado</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left"><strong>Estado seguro</strong></td>
-<td style="text-align:left">Existe al menos una secuencia de procesos que pueden completarse exitosamente</td>
+<td style="text-align:left"><code>Available[j]</code></td>
+<td style="text-align:center">Vector de <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span></td>
+<td style="text-align:left">Recursos disponibles del tipo <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi></mrow><annotation encoding="application/x-tex">j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.854em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span></span></span></span></td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Estado inseguro</strong></td>
-<td style="text-align:left">No hay garantía de que todos los procesos puedan completarse (posible deadlock)</td>
+<td style="text-align:left"><code>Max[i, j]</code></td>
+<td style="text-align:center">Matriz <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>×</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">m \times n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span></td>
+<td style="text-align:left">Demanda máxima del proceso <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> para recurso <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi></mrow><annotation encoding="application/x-tex">j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.854em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span></span></span></span></td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Secuencia segura</strong></td>
-<td style="text-align:left">Orden de ejecución donde cada proceso puede obtener todos sus recursos</td>
+<td style="text-align:left"><code>Allocation[i, j]</code></td>
+<td style="text-align:center">Matriz <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>×</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">m \times n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span></td>
+<td style="text-align:left">Recursos actualmente asignados al proceso <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> del tipo <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi></mrow><annotation encoding="application/x-tex">j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.854em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span></span></span></span></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>Need[i, j]</code></td>
+<td style="text-align:center">Matriz <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>×</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">m \times n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span></td>
+<td style="text-align:left">Recursos que aún necesita el proceso <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span>: <strong>Need = Max - Allocation</strong></td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p><strong>Regla del banquero:</strong> solo aprueba un préstamo si el estado resultante es seguro. Si es inseguro, rechaza la solicitud (aunque haya recursos disponibles).</p>
+<p><strong>Precondición:</strong> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>a</mi><mi>x</mi><mo stretchy="false">[</mo><mi>i</mi><mo separator="true">,</mo><mi>j</mi><mo stretchy="false">]</mo><mo>≤</mo><mi>T</mi><mi>o</mi><mi>t</mi><mi>a</mi><mi>l</mi><mo stretchy="false">[</mo><mi>j</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">Max[i, j] \leq Total[j]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.109em;">M</span><span class="mord mathnormal">a</span><span class="mord mathnormal">x</span><span class="mopen">[</span><span class="mord mathnormal">i</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="mord mathnormal">o</span><span class="mord mathnormal">t</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.0197em;">l</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span><span class="mclose">]</span></span></span></span> — ningún proceso puede demandar más del total disponible del sistema.</p>
 </blockquote>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
@@ -4367,8 +4392,40 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<p><img src="img/banker_algorithm.svg" alt="" /></p>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="algoritmo-de-verificaci%C3%B3n-de-estado-seguro-stallings-p-339"><strong>Algoritmo de Verificación de Estado Seguro (Stallings, p. 339)</strong></h1>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code>bool is_safe(Process processes[], int avail[], int max[][], int alloc[][]) {
+    int work[n];  // Copia de available
+    bool finish[m] = {false};
+
+    for (int j = 0; j &lt; n; j++) work[j] = avail[j];
+
+    // Buscar un proceso que pueda completarse
+    for (int k = 0; k &lt; m; k++) {
+        bool found = false;
+        for (int i = 0; i &lt; m; i++) {
+            if (!finish[i]) {
+                bool can_run = true;
+                for (int j = 0; j &lt; n; j++) {
+                    if (need[i][j] &gt; work[j]) {
+                        can_run = false;
+                        break;
+                    }
+                }
+                if (can_run) {
+                    // Proceso i puede completarse
+                    for (int j = 0; j &lt; n; j++)
+                        work[j] += alloc[i][j];
+                    finish[i] = true;
+                    found = true;
+                }
+            }
+        }
+        if (!found) break;
+    }
+    return all(finish);  // Seguro si todos terminan
+}
+</code></pre>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -4542,44 +4599,59 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="estructuras-de-datos-stallings-p-338"><strong>Estructuras de Datos (Stallings, p. 338)</strong></h1>
-<p>El algoritmo del banquero utiliza 4 matrices/vectores:</p>
-<h3 id="para-procesos-y-tipos-de-recursos">Para <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> procesos y <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> tipos de recursos:</h3>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="ejemplo-del-algoritmo-del-banquero-stallings-p-340"><strong>Ejemplo del Algoritmo del Banquero (Stallings, p. 340)</strong></h1>
+<p><strong>Sistema con 5 procesos (P0-P4) y 3 recursos (A:10, B:5, C:7):</strong></p>
 <table>
 <thead>
 <tr>
-<th style="text-align:left">Estructura</th>
-<th style="text-align:center">Tipo</th>
-<th style="text-align:left">Significado</th>
+<th style="text-align:center">Proceso</th>
+<th style="text-align:center">Allocation</th>
+<th style="text-align:center">Max</th>
+<th style="text-align:center">Need</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left"><code>Available[j]</code></td>
-<td style="text-align:center">Vector de <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span></td>
-<td style="text-align:left">Recursos disponibles del tipo <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi></mrow><annotation encoding="application/x-tex">j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.854em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span></span></span></span></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">A B C</td>
+<td style="text-align:center">A B C</td>
+<td style="text-align:center">A B C</td>
 </tr>
 <tr>
-<td style="text-align:left"><code>Max[i, j]</code></td>
-<td style="text-align:center">Matriz <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>×</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">m \times n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span></td>
-<td style="text-align:left">Demanda máxima del proceso <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> para recurso <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi></mrow><annotation encoding="application/x-tex">j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.854em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span></span></span></span></td>
+<td style="text-align:center"><strong>P0</strong></td>
+<td style="text-align:center">0 1 0</td>
+<td style="text-align:center">7 5 3</td>
+<td style="text-align:center">7 4 3</td>
 </tr>
 <tr>
-<td style="text-align:left"><code>Allocation[i, j]</code></td>
-<td style="text-align:center">Matriz <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>×</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">m \times n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span></td>
-<td style="text-align:left">Recursos actualmente asignados al proceso <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> del tipo <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi></mrow><annotation encoding="application/x-tex">j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.854em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span></span></span></span></td>
+<td style="text-align:center"><strong>P1</strong></td>
+<td style="text-align:center">2 0 0</td>
+<td style="text-align:center">3 2 2</td>
+<td style="text-align:center">1 2 2</td>
 </tr>
 <tr>
-<td style="text-align:left"><code>Need[i, j]</code></td>
-<td style="text-align:center">Matriz <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>×</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">m \times n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span></td>
-<td style="text-align:left">Recursos que aún necesita el proceso <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span>: <strong>Need = Max - Allocation</strong></td>
+<td style="text-align:center"><strong>P2</strong></td>
+<td style="text-align:center">3 0 2</td>
+<td style="text-align:center">9 0 2</td>
+<td style="text-align:center">6 0 0</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>P3</strong></td>
+<td style="text-align:center">2 1 1</td>
+<td style="text-align:center">2 2 2</td>
+<td style="text-align:center">0 1 1</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>P4</strong></td>
+<td style="text-align:center">0 0 2</td>
+<td style="text-align:center">4 3 3</td>
+<td style="text-align:center">4 3 1</td>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p><strong>Precondición:</strong> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>a</mi><mi>x</mi><mo stretchy="false">[</mo><mi>i</mi><mo separator="true">,</mo><mi>j</mi><mo stretchy="false">]</mo><mo>≤</mo><mi>T</mi><mi>o</mi><mi>t</mi><mi>a</mi><mi>l</mi><mo stretchy="false">[</mo><mi>j</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">Max[i, j] \leq Total[j]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.109em;">M</span><span class="mord mathnormal">a</span><span class="mord mathnormal">x</span><span class="mopen">[</span><span class="mord mathnormal">i</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="mord mathnormal">o</span><span class="mord mathnormal">t</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.0197em;">l</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span><span class="mclose">]</span></span></span></span> — ningún proceso puede demandar más del total disponible del sistema.</p>
-</blockquote>
+<p><strong>Available: (3, 3, 2)</strong></p>
+<p><strong>¿Es seguro?</strong> Sí. Secuencia segura: <strong>P1 → P3 → P0 → P2 → P4</strong></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -4753,40 +4825,50 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="algoritmo-de-verificaci%C3%B3n-de-estado-seguro-stallings-p-339"><strong>Algoritmo de Verificación de Estado Seguro (Stallings, p. 339)</strong></h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>bool is_safe(Process processes[], int avail[], int max[][], int alloc[][]) {
-    int work[n];  // Copia de available
-    bool finish[m] = {false};
-
-    for (int j = 0; j &lt; n; j++) work[j] = avail[j];
-
-    // Buscar un proceso que pueda completarse
-    for (int k = 0; k &lt; m; k++) {
-        bool found = false;
-        for (int i = 0; i &lt; m; i++) {
-            if (!finish[i]) {
-                bool can_run = true;
-                for (int j = 0; j &lt; n; j++) {
-                    if (need[i][j] &gt; work[j]) {
-                        can_run = false;
-                        break;
-                    }
-                }
-                if (can_run) {
-                    // Proceso i puede completarse
-                    for (int j = 0; j &lt; n; j++)
-                        work[j] += alloc[i][j];
-                    finish[i] = true;
-                    found = true;
-                }
-            }
-        }
-        if (!found) break;
-    }
-    return all(finish);  // Seguro si todos terminan
-}
-</code></pre>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="ejemplo--solicitud-de-recursos"><strong>Ejemplo — Solicitud de Recursos</strong></h1>
+<p><strong>¿Qué pasa si P1 solicita (1, 0, 2)?</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Proceso</th>
+<th style="text-align:center">Allocation (nuevo)</th>
+<th style="text-align:center">Need (nuevo)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>P0</strong></td>
+<td style="text-align:center">0 1 0</td>
+<td style="text-align:center">7 4 3</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>P1</strong></td>
+<td style="text-align:center"><strong>3 0 2</strong></td>
+<td style="text-align:center"><strong>0 2 0</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>P2</strong></td>
+<td style="text-align:center">3 0 2</td>
+<td style="text-align:center">6 0 0</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>P3</strong></td>
+<td style="text-align:center">2 1 1</td>
+<td style="text-align:center">0 1 1</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>P4</strong></td>
+<td style="text-align:center">0 0 2</td>
+<td style="text-align:center">4 3 1</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Available (nuevo): (2, 3, 0)</strong></p>
+<p><strong>¿Estado seguro?</strong> Sí. Secuencia: <strong>P1 → P3 → P0 → P2 → P4</strong></p>
+<blockquote>
+<p><strong>El banquero aprueba</strong> la solicitud.</p>
+</blockquote>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -4960,59 +5042,25 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="ejemplo-del-algoritmo-del-banquero-stallings-p-340"><strong>Ejemplo del Algoritmo del Banquero (Stallings, p. 340)</strong></h1>
-<p><strong>Sistema con 5 procesos (P0-P4) y 3 recursos (A:10, B:5, C:7):</strong></p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">Proceso</th>
-<th style="text-align:center">Allocation</th>
-<th style="text-align:center">Max</th>
-<th style="text-align:center">Need</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:center">A B C</td>
-<td style="text-align:center">A B C</td>
-<td style="text-align:center">A B C</td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>P0</strong></td>
-<td style="text-align:center">0 1 0</td>
-<td style="text-align:center">7 5 3</td>
-<td style="text-align:center">7 4 3</td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>P1</strong></td>
-<td style="text-align:center">2 0 0</td>
-<td style="text-align:center">3 2 2</td>
-<td style="text-align:center">1 2 2</td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>P2</strong></td>
-<td style="text-align:center">3 0 2</td>
-<td style="text-align:center">9 0 2</td>
-<td style="text-align:center">6 0 0</td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>P3</strong></td>
-<td style="text-align:center">2 1 1</td>
-<td style="text-align:center">2 2 2</td>
-<td style="text-align:center">0 1 1</td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>P4</strong></td>
-<td style="text-align:center">0 0 2</td>
-<td style="text-align:center">4 3 3</td>
-<td style="text-align:center">4 3 1</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Available: (3, 3, 2)</strong></p>
-<p><strong>¿Es seguro?</strong> Sí. Secuencia segura: <strong>P1 → P3 → P0 → P2 → P4</strong></p>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="ejemplo--solicitud-que-lleva-a-estado-inseguro"><strong>Ejemplo — Solicitud que Lleva a Estado Inseguro</strong></h1>
+<p><strong>¿Qué pasa si P4 solicita (3, 3, 0)?</strong></p>
+<p>Si se otorga:</p>
+<ul>
+<li>Available = (0, 0, 2)</li>
+<li>Need(P4) = (1, 0, 1)</li>
+</ul>
+<p><strong>¿Estado seguro?</strong> <strong>NO.</strong> Ningún proceso puede ejecutarse:</p>
+<ul>
+<li>P0 necesita (7,4,3) → no hay recursos</li>
+<li>P1 necesita (1,2,2) → necesita recurso A</li>
+<li>P2 necesita (6,0,0) → necesita recurso A</li>
+<li>P3 necesita (0,1,1) → necesita recurso B</li>
+<li>P4 necesita (1,0,1) → necesita recurso A y C</li>
+</ul>
+<blockquote>
+<p><strong>El banquero rechaza</strong> la solicitud.</p>
+</blockquote>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -5186,52 +5234,39 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="ejemplo--solicitud-de-recursos"><strong>Ejemplo — Solicitud de Recursos</strong></h1>
-<p><strong>¿Qué pasa si P1 solicita (1, 0, 2)?</strong></p>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="limitaciones-del-algoritmo-del-banquero-stallings-p-342"><strong>Limitaciones del Algoritmo del Banquero (Stallings, p. 342)</strong></h1>
 <table>
 <thead>
 <tr>
-<th style="text-align:center">Proceso</th>
-<th style="text-align:center">Allocation (nuevo)</th>
-<th style="text-align:center">Need (nuevo)</th>
+<th style="text-align:left">Limitación</th>
+<th style="text-align:left">Descripción</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:center"><strong>P0</strong></td>
-<td style="text-align:center">0 1 0</td>
-<td style="text-align:center">7 4 3</td>
+<td style="text-align:left"><strong>Conocimiento previo</strong></td>
+<td style="text-align:left">Los procesos deben declarar su máximo de recursos <strong>por adelantado</strong></td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>P1</strong></td>
-<td style="text-align:center"><strong>3 0 2</strong></td>
-<td style="text-align:center"><strong>0 2 0</strong></td>
+<td style="text-align:left"><strong>Número fijo de procesos</strong></td>
+<td style="text-align:left">No se adapta bien a procesos que crean/destruyen procesos hijos</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>P2</strong></td>
-<td style="text-align:center">3 0 2</td>
-<td style="text-align:center">6 0 0</td>
+<td style="text-align:left"><strong>Recursos fijos</strong></td>
+<td style="text-align:left">Asume que los recursos no se añaden/eliminan dinámicamente</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>P3</strong></td>
-<td style="text-align:center">2 1 1</td>
-<td style="text-align:center">0 1 1</td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>P4</strong></td>
-<td style="text-align:center">0 0 2</td>
-<td style="text-align:center">4 3 1</td>
+<td style="text-align:left"><strong>Overhead</strong></td>
+<td style="text-align:left">El algoritmo es O(m² × n) por cada solicitud (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> procesos, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> recursos)</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Available (nuevo): (2, 3, 0)</strong></p>
-<p><strong>¿Estado seguro?</strong> Sí. Secuencia: <strong>P1 → P3 → P0 → P2 → P4</strong></p>
 <blockquote>
-<p><strong>El banquero aprueba</strong> la solicitud.</p>
+<p>El algoritmo del banquero se emplea principalmente en <strong>sistemas de bases de datos</strong> y sistemas <strong>embebidos de tiempo real</strong>.</p>
 </blockquote>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="lead" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -5317,7 +5352,7 @@ img {
 .half img {
   max-width: 50%;
 }
-" lang="C" data-marpit-pagination="28" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
+" lang="C" class="lead" data-marpit-pagination="28" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:lead;--theme:default;--style:section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -5403,25 +5438,8 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="ejemplo--solicitud-que-lleva-a-estado-inseguro"><strong>Ejemplo — Solicitud que Lleva a Estado Inseguro</strong></h1>
-<p><strong>¿Qué pasa si P4 solicita (3, 3, 0)?</strong></p>
-<p>Si se otorga:</p>
-<ul>
-<li>Available = (0, 0, 2)</li>
-<li>Need(P4) = (1, 0, 1)</li>
-</ul>
-<p><strong>¿Estado seguro?</strong> <strong>NO.</strong> Ningún proceso puede ejecutarse:</p>
-<ul>
-<li>P0 necesita (7,4,3) → no hay recursos</li>
-<li>P1 necesita (1,2,2) → necesita recurso A</li>
-<li>P2 necesita (6,0,0) → necesita recurso A</li>
-<li>P3 necesita (0,1,1) → necesita recurso B</li>
-<li>P4 necesita (1,0,1) → necesita recurso A y C</li>
-</ul>
-<blockquote>
-<p><strong>El banquero rechaza</strong> la solicitud.</p>
-</blockquote>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="4-detecci%C3%B3n-de-deadlock"><strong>4. Detección de Deadlock</strong></h1>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="29" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -5595,39 +5613,22 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="limitaciones-del-algoritmo-del-banquero-stallings-p-342"><strong>Limitaciones del Algoritmo del Banquero (Stallings, p. 342)</strong></h1>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">Limitación</th>
-<th style="text-align:left">Descripción</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><strong>Conocimiento previo</strong></td>
-<td style="text-align:left">Los procesos deben declarar su máximo de recursos <strong>por adelantado</strong></td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Número fijo de procesos</strong></td>
-<td style="text-align:left">No se adapta bien a procesos que crean/destruyen procesos hijos</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Recursos fijos</strong></td>
-<td style="text-align:left">Asume que los recursos no se añaden/eliminan dinámicamente</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Overhead</strong></td>
-<td style="text-align:left">El algoritmo es O(m² × n) por cada solicitud (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> procesos, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> recursos)</td>
-</tr>
-</tbody>
-</table>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="detecci%C3%B3n-de-deadlock--un-solo-recurso-de-cada-tipo-stallings-p-343"><strong>Detección de Deadlock — Un solo recurso de cada tipo (Stallings, p. 343)</strong></h1>
+<p><strong>Algoritmo:</strong> buscar <strong>ciclos</strong> en el grafo de asignación de recursos.</p>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code>Algoritmo de detección (DFS):
+1. Para cada proceso P en el grafo:
+   a. Realizar DFS desde P
+   b. Si se encuentra un ciclo → deadlock detectado
+   c. Si no hay ciclo desde P → continuar con siguiente proceso
+
+Complejidad: O(n + e) donde n = número de nodos, e = número de aristas
+</code></pre>
 <blockquote>
-<p>El algoritmo del banquero se emplea principalmente en <strong>sistemas de bases de datos</strong> y sistemas <strong>embebidos de tiempo real</strong>.</p>
+<p><strong>Caso especial:</strong> si cada recurso tiene una sola instancia, un ciclo en el grafo es condición suficiente y necesaria para deadlock.</p>
 </blockquote>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="30" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="lead" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="30" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -5713,7 +5714,7 @@ img {
 .half img {
   max-width: 50%;
 }
-" lang="C" class="lead" data-marpit-pagination="30" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:lead;--theme:default;--style:section {
+" lang="C" data-marpit-pagination="30" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -5799,8 +5800,49 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="4-detecci%C3%B3n-de-deadlock"><strong>4. Detección de Deadlock</strong></h1>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="detecci%C3%B3n--m%C3%BAltiples-recursos-de-cada-tipo-stallings-p-344"><strong>Detección — Múltiples recursos de cada tipo (Stallings, p. 344)</strong></h1>
+<p>Similar al algoritmo del banquero, pero sin necesidad de conocer <code>Max</code>:</p>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code>bool detect_deadlock(int avail[], int alloc[][], int request[][]) {
+    int work[n];          // Copia de available
+    bool finish[m];       // false si proceso en deadlock
+
+    // Inicializar: procesos sin recursos asignados terminan
+    for (int i = 0; i &lt; m; i++) {
+        bool allocated = false;
+        for (int j = 0; j &lt; n; j++)
+            if (alloc[i][j] &gt; 0) { allocated = true; break; }
+        finish[i] = !allocated;
+    }
+
+    for (int j = 0; j &lt; n; j++) work[j] = avail[j];
+
+    // Buscar proceso que pueda completarse
+    bool progress = true;
+    while (progress) {
+        progress = false;
+        for (int i = 0; i &lt; m; i++) {
+            if (!finish[i]) {
+                bool can_run = true;
+                for (int j = 0; j &lt; n; j++)
+                    if (request[i][j] &gt; work[j])
+                        { can_run = false; break; }
+                if (can_run) {
+                    for (int j = 0; j &lt; n; j++)
+                        work[j] += alloc[i][j];
+                    finish[i] = true;
+                    progress = true;
+                }
+            }
+        }
+    }
+
+    // Procesos en deadlock: finish[i] == false
+    for (int i = 0; i &lt; m; i++)
+        if (!finish[i]) printf(&quot;Proceso %d en deadlock\n&quot;, i);
+    return !all(finish);
+}
+</code></pre>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="31" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -5974,20 +6016,44 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="detecci%C3%B3n-de-deadlock--un-solo-recurso-de-cada-tipo-stallings-p-343"><strong>Detección de Deadlock — Un solo recurso de cada tipo (Stallings, p. 343)</strong></h1>
-<p><strong>Algoritmo:</strong> buscar <strong>ciclos</strong> en el grafo de asignación de recursos.</p>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>Algoritmo de detección (DFS):
-1. Para cada proceso P en el grafo:
-   a. Realizar DFS desde P
-   b. Si se encuentra un ciclo → deadlock detectado
-   c. Si no hay ciclo desde P → continuar con siguiente proceso
-
-Complejidad: O(n + e) donde n = número de nodos, e = número de aristas
-</code></pre>
-<blockquote>
-<p><strong>Caso especial:</strong> si cada recurso tiene una sola instancia, un ciclo en el grafo es condición suficiente y necesaria para deadlock.</p>
-</blockquote>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="tabla-de-comparaci%C3%B3n--detecci%C3%B3n-vs-banquero"><strong>Tabla de Comparación — Detección vs. Banquero</strong></h1>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Característica</th>
+<th style="text-align:center">Algoritmo del Banquero</th>
+<th style="text-align:center">Algoritmo de Detección</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Propósito</strong></td>
+<td style="text-align:center">Evitación (predecir)</td>
+<td style="text-align:center">Detección (diagnosticar)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Información requerida</strong></td>
+<td style="text-align:center">Max (necesidad futura)</td>
+<td style="text-align:center">Request (solicitud actual)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Uso</strong></td>
+<td style="text-align:center">Antes de cada solicitud</td>
+<td style="text-align:center">Periódicamente</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Efecto</strong></td>
+<td style="text-align:center">Evita estados inseguros</td>
+<td style="text-align:center">Permite deadlock y lo detecta</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Overhead</strong></td>
+<td style="text-align:center">Alto (cada solicitud)</td>
+<td style="text-align:center">Bajo (periódico)</td>
+</tr>
+</tbody>
+</table>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="32" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -6161,51 +6227,20 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="detecci%C3%B3n--m%C3%BAltiples-recursos-de-cada-tipo-stallings-p-344"><strong>Detección — Múltiples recursos de cada tipo (Stallings, p. 344)</strong></h1>
-<p>Similar al algoritmo del banquero, pero sin necesidad de conocer <code>Max</code>:</p>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>bool detect_deadlock(int avail[], int alloc[][], int request[][]) {
-    int work[n];          // Copia de available
-    bool finish[m];       // false si proceso en deadlock
-
-    // Inicializar: procesos sin recursos asignados terminan
-    for (int i = 0; i &lt; m; i++) {
-        bool allocated = false;
-        for (int j = 0; j &lt; n; j++)
-            if (alloc[i][j] &gt; 0) { allocated = true; break; }
-        finish[i] = !allocated;
-    }
-
-    for (int j = 0; j &lt; n; j++) work[j] = avail[j];
-
-    // Buscar proceso que pueda completarse
-    bool progress = true;
-    while (progress) {
-        progress = false;
-        for (int i = 0; i &lt; m; i++) {
-            if (!finish[i]) {
-                bool can_run = true;
-                for (int j = 0; j &lt; n; j++)
-                    if (request[i][j] &gt; work[j])
-                        { can_run = false; break; }
-                if (can_run) {
-                    for (int j = 0; j &lt; n; j++)
-                        work[j] += alloc[i][j];
-                    finish[i] = true;
-                    progress = true;
-                }
-            }
-        }
-    }
-
-    // Procesos en deadlock: finish[i] == false
-    for (int i = 0; i &lt; m; i++)
-        if (!finish[i]) printf(&quot;Proceso %d en deadlock\n&quot;, i);
-    return !all(finish);
-}
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="%C2%BFcu%C3%A1ndo-ejecutar-la-detecci%C3%B3n-stallings-p-346"><strong>¿Cuándo Ejecutar la Detección? (Stallings, p. 346)</strong></h1>
+<h3 id="opciones">Opciones:</h3>
+<ol>
+<li><strong>Cada vez que se deniega una solicitud</strong> — detección inmediata pero overhead alto</li>
+<li><strong>Periódicamente</strong> — basado en tiempo o uso de CPU</li>
+<li><strong>Bajo demanda</strong> — el administrador ejecuta la detección manualmente</li>
+</ol>
+<h3 id="trade-off">Trade-off:</h3>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code>Frecuencia alta → detección rápida → más overhead
+Frecuencia baja → menos overhead → deadlock persiste más tiempo
 </code></pre>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="33" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="33" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="lead" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -6291,7 +6326,7 @@ img {
 .half img {
   max-width: 50%;
 }
-" lang="C" data-marpit-pagination="33" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
+" lang="C" class="lead" data-marpit-pagination="33" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:lead;--theme:default;--style:section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -6377,44 +6412,8 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="tabla-de-comparaci%C3%B3n--detecci%C3%B3n-vs-banquero"><strong>Tabla de Comparación — Detección vs. Banquero</strong></h1>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">Característica</th>
-<th style="text-align:center">Algoritmo del Banquero</th>
-<th style="text-align:center">Algoritmo de Detección</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><strong>Propósito</strong></td>
-<td style="text-align:center">Evitación (predecir)</td>
-<td style="text-align:center">Detección (diagnosticar)</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Información requerida</strong></td>
-<td style="text-align:center">Max (necesidad futura)</td>
-<td style="text-align:center">Request (solicitud actual)</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Uso</strong></td>
-<td style="text-align:center">Antes de cada solicitud</td>
-<td style="text-align:center">Periódicamente</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Efecto</strong></td>
-<td style="text-align:center">Evita estados inseguros</td>
-<td style="text-align:center">Permite deadlock y lo detecta</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Overhead</strong></td>
-<td style="text-align:center">Alto (cada solicitud)</td>
-<td style="text-align:center">Bajo (periódico)</td>
-</tr>
-</tbody>
-</table>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="5-recuperaci%C3%B3n-de-deadlock"><strong>5. Recuperación de Deadlock</strong></h1>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="34" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -6588,367 +6587,7 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="%C2%BFcu%C3%A1ndo-ejecutar-la-detecci%C3%B3n-stallings-p-346"><strong>¿Cuándo Ejecutar la Detección? (Stallings, p. 346)</strong></h1>
-<h3 id="opciones">Opciones:</h3>
-<ol>
-<li><strong>Cada vez que se deniega una solicitud</strong> — detección inmediata pero overhead alto</li>
-<li><strong>Periódicamente</strong> — basado en tiempo o uso de CPU</li>
-<li><strong>Bajo demanda</strong> — el administrador ejecuta la detección manualmente</li>
-</ol>
-<h3 id="trade-off">Trade-off:</h3>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>Frecuencia alta → detección rápida → más overhead
-Frecuencia baja → menos overhead → deadlock persiste más tiempo
-</code></pre>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="35" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="lead" data-theme="default" data-style="section {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  padding: 40px 60px;
-  background: #ffffff;
-  color: #1e1e2e;
-}
-h1 {
-  color: #0055b3;
-  font-size: 2em;
-  border-bottom: 3px solid #0055b3;
-  padding-bottom: 10px;
-}
-h2 {
-  color: #0055b3;
-  font-size: 1.5em;
-}
-h3 {
-  color: #0077cc;
-  font-size: 1.1em;
-  margin-bottom: 4px;
-}
-h4 {
-  color: #555;
-}
-ul, ol {
-  margin-top: 8px;
-}
-li {
-  margin-bottom: 6px;
-  font-size: 0.88em;
-}
-code {
-  background: #e8f0fe;
-  color: #0055b3;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.85em;
-}
-pre {
-  background: #f4f6f8;
-  border: 1px solid #d0d7de;
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 0.7em;
-  line-height: 1.4;
-}
-table {
-  border-collapse: collapse;
-  font-size: 0.75em;
-  width: 100%;
-}
-th {
-  background: #0055b3;
-  color: white;
-  padding: 8px;
-}
-td {
-  border: 1px solid #d0d7de;
-  padding: 6px;
-}
-img {
-  max-width: 90%;
-  max-height: 420px;
-  display: block;
-  margin: 0 auto;
-}
-.columns {
-  display: flex;
-  gap: 20px;
-}
-.col {
-  flex: 1;
-}
-.small-code pre {
-  font-size: 0.55em;
-}
-.compact li {
-  margin-bottom: 3px;
-  font-size: 0.8em;
-}
-.compact p {
-  margin: 4px 0;
-}
-.half img {
-  max-width: 50%;
-}
-" lang="C" class="lead" data-marpit-pagination="35" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:lead;--theme:default;--style:section {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  padding: 40px 60px;
-  background: #ffffff;
-  color: #1e1e2e;
-}
-h1 {
-  color: #0055b3;
-  font-size: 2em;
-  border-bottom: 3px solid #0055b3;
-  padding-bottom: 10px;
-}
-h2 {
-  color: #0055b3;
-  font-size: 1.5em;
-}
-h3 {
-  color: #0077cc;
-  font-size: 1.1em;
-  margin-bottom: 4px;
-}
-h4 {
-  color: #555;
-}
-ul, ol {
-  margin-top: 8px;
-}
-li {
-  margin-bottom: 6px;
-  font-size: 0.88em;
-}
-code {
-  background: #e8f0fe;
-  color: #0055b3;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.85em;
-}
-pre {
-  background: #f4f6f8;
-  border: 1px solid #d0d7de;
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 0.7em;
-  line-height: 1.4;
-}
-table {
-  border-collapse: collapse;
-  font-size: 0.75em;
-  width: 100%;
-}
-th {
-  background: #0055b3;
-  color: white;
-  padding: 8px;
-}
-td {
-  border: 1px solid #d0d7de;
-  padding: 6px;
-}
-img {
-  max-width: 90%;
-  max-height: 420px;
-  display: block;
-  margin: 0 auto;
-}
-.columns {
-  display: flex;
-  gap: 20px;
-}
-.col {
-  flex: 1;
-}
-.small-code pre {
-  font-size: 0.55em;
-}
-.compact li {
-  margin-bottom: 3px;
-  font-size: 0.8em;
-}
-.compact p {
-  margin: 4px 0;
-}
-.half img {
-  max-width: 50%;
-}
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="5-recuperaci%C3%B3n-de-deadlock"><strong>5. Recuperación de Deadlock</strong></h1>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="36" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  padding: 40px 60px;
-  background: #ffffff;
-  color: #1e1e2e;
-}
-h1 {
-  color: #0055b3;
-  font-size: 2em;
-  border-bottom: 3px solid #0055b3;
-  padding-bottom: 10px;
-}
-h2 {
-  color: #0055b3;
-  font-size: 1.5em;
-}
-h3 {
-  color: #0077cc;
-  font-size: 1.1em;
-  margin-bottom: 4px;
-}
-h4 {
-  color: #555;
-}
-ul, ol {
-  margin-top: 8px;
-}
-li {
-  margin-bottom: 6px;
-  font-size: 0.88em;
-}
-code {
-  background: #e8f0fe;
-  color: #0055b3;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.85em;
-}
-pre {
-  background: #f4f6f8;
-  border: 1px solid #d0d7de;
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 0.7em;
-  line-height: 1.4;
-}
-table {
-  border-collapse: collapse;
-  font-size: 0.75em;
-  width: 100%;
-}
-th {
-  background: #0055b3;
-  color: white;
-  padding: 8px;
-}
-td {
-  border: 1px solid #d0d7de;
-  padding: 6px;
-}
-img {
-  max-width: 90%;
-  max-height: 420px;
-  display: block;
-  margin: 0 auto;
-}
-.columns {
-  display: flex;
-  gap: 20px;
-}
-.col {
-  flex: 1;
-}
-.small-code pre {
-  font-size: 0.55em;
-}
-.compact li {
-  margin-bottom: 3px;
-  font-size: 0.8em;
-}
-.compact p {
-  margin: 4px 0;
-}
-.half img {
-  max-width: 50%;
-}
-" lang="C" data-marpit-pagination="36" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  padding: 40px 60px;
-  background: #ffffff;
-  color: #1e1e2e;
-}
-h1 {
-  color: #0055b3;
-  font-size: 2em;
-  border-bottom: 3px solid #0055b3;
-  padding-bottom: 10px;
-}
-h2 {
-  color: #0055b3;
-  font-size: 1.5em;
-}
-h3 {
-  color: #0077cc;
-  font-size: 1.1em;
-  margin-bottom: 4px;
-}
-h4 {
-  color: #555;
-}
-ul, ol {
-  margin-top: 8px;
-}
-li {
-  margin-bottom: 6px;
-  font-size: 0.88em;
-}
-code {
-  background: #e8f0fe;
-  color: #0055b3;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.85em;
-}
-pre {
-  background: #f4f6f8;
-  border: 1px solid #d0d7de;
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 0.7em;
-  line-height: 1.4;
-}
-table {
-  border-collapse: collapse;
-  font-size: 0.75em;
-  width: 100%;
-}
-th {
-  background: #0055b3;
-  color: white;
-  padding: 8px;
-}
-td {
-  border: 1px solid #d0d7de;
-  padding: 6px;
-}
-img {
-  max-width: 90%;
-  max-height: 420px;
-  display: block;
-  margin: 0 auto;
-}
-.columns {
-  display: flex;
-  gap: 20px;
-}
-.col {
-  flex: 1;
-}
-.small-code pre {
-  font-size: 0.55em;
-}
-.compact li {
-  margin-bottom: 3px;
-  font-size: 0.8em;
-}
-.compact p {
-  margin: 4px 0;
-}
-.half img {
-  max-width: 50%;
-}
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
 <h1 id="recuperaci%C3%B3n--una-vez-detectado-el-deadlock-stallings-p-347"><strong>Recuperación — Una vez detectado el deadlock (Stallings, p. 347)</strong></h1>
 <h3 id="opci%C3%B3n-1-abortar-procesos">Opción 1: <strong>Abortar procesos</strong></h3>
 <ul>
@@ -6992,6 +6631,393 @@ img {
 </tr>
 </tbody>
 </table>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="35" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 0.7em;
+  line-height: 1.4;
+}
+table {
+  border-collapse: collapse;
+  font-size: 0.75em;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: white;
+  padding: 8px;
+}
+td {
+  border: 1px solid #d0d7de;
+  padding: 6px;
+}
+img {
+  max-width: 90%;
+  max-height: 420px;
+  display: block;
+  margin: 0 auto;
+}
+.columns {
+  display: flex;
+  gap: 20px;
+}
+.col {
+  flex: 1;
+}
+.small-code pre {
+  font-size: 0.55em;
+}
+.compact li {
+  margin-bottom: 3px;
+  font-size: 0.8em;
+}
+.compact p {
+  margin: 4px 0;
+}
+.half img {
+  max-width: 50%;
+}
+" lang="C" data-marpit-pagination="35" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 0.7em;
+  line-height: 1.4;
+}
+table {
+  border-collapse: collapse;
+  font-size: 0.75em;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: white;
+  padding: 8px;
+}
+td {
+  border: 1px solid #d0d7de;
+  padding: 6px;
+}
+img {
+  max-width: 90%;
+  max-height: 420px;
+  display: block;
+  margin: 0 auto;
+}
+.columns {
+  display: flex;
+  gap: 20px;
+}
+.col {
+  flex: 1;
+}
+.small-code pre {
+  font-size: 0.55em;
+}
+.compact li {
+  margin-bottom: 3px;
+  font-size: 0.8em;
+}
+.compact p {
+  margin: 4px 0;
+}
+.half img {
+  max-width: 50%;
+}
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="criterios-para-elegir-un-proceso-v%C3%ADctima-stallings-p-348"><strong>Criterios para Elegir un Proceso Víctima (Stallings, p. 348)</strong></h1>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Criterio</th>
+<th style="text-align:left">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Prioridad del proceso</strong></td>
+<td style="text-align:left">Menor prioridad → más probable de ser víctima</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Tiempo de cómputo restante</strong></td>
+<td style="text-align:left">Menos tiempo restante → menos pérdida</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Recursos asignados</strong></td>
+<td style="text-align:left">Menos recursos → menos costo de desalojo</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Recursos necesarios</strong></td>
+<td style="text-align:left">Más recursos necesarios → más difícil de satisfacer</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Número de procesos hijos</strong></td>
+<td style="text-align:left">Menos hijos → menos impacto</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Tipo de proceso</strong></td>
+<td style="text-align:left">Batch vs interactivo (interactivo tiene prioridad)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Ningún criterio es universal.</strong> La elección depende del sistema y la carga de trabajo.</p>
+</blockquote>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="36" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="lead" data-theme="default" data-style="section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 0.7em;
+  line-height: 1.4;
+}
+table {
+  border-collapse: collapse;
+  font-size: 0.75em;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: white;
+  padding: 8px;
+}
+td {
+  border: 1px solid #d0d7de;
+  padding: 6px;
+}
+img {
+  max-width: 90%;
+  max-height: 420px;
+  display: block;
+  margin: 0 auto;
+}
+.columns {
+  display: flex;
+  gap: 20px;
+}
+.col {
+  flex: 1;
+}
+.small-code pre {
+  font-size: 0.55em;
+}
+.compact li {
+  margin-bottom: 3px;
+  font-size: 0.8em;
+}
+.compact p {
+  margin: 4px 0;
+}
+.half img {
+  max-width: 50%;
+}
+" lang="C" class="lead" data-marpit-pagination="36" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:lead;--theme:default;--style:section {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 40px 60px;
+  background: #ffffff;
+  color: #1e1e2e;
+}
+h1 {
+  color: #0055b3;
+  font-size: 2em;
+  border-bottom: 3px solid #0055b3;
+  padding-bottom: 10px;
+}
+h2 {
+  color: #0055b3;
+  font-size: 1.5em;
+}
+h3 {
+  color: #0077cc;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+h4 {
+  color: #555;
+}
+ul, ol {
+  margin-top: 8px;
+}
+li {
+  margin-bottom: 6px;
+  font-size: 0.88em;
+}
+code {
+  background: #e8f0fe;
+  color: #0055b3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 0.7em;
+  line-height: 1.4;
+}
+table {
+  border-collapse: collapse;
+  font-size: 0.75em;
+  width: 100%;
+}
+th {
+  background: #0055b3;
+  color: white;
+  padding: 8px;
+}
+td {
+  border: 1px solid #d0d7de;
+  padding: 6px;
+}
+img {
+  max-width: 90%;
+  max-height: 420px;
+  display: block;
+  margin: 0 auto;
+}
+.columns {
+  display: flex;
+  gap: 20px;
+}
+.col {
+  flex: 1;
+}
+.small-code pre {
+  font-size: 0.55em;
+}
+.compact li {
+  margin-bottom: 3px;
+  font-size: 0.8em;
+}
+.compact p {
+  margin: 4px 0;
+}
+.half img {
+  max-width: 50%;
+}
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="6-el-problema-de-la-cena-de-los-fil%C3%B3sofos"><strong>6. El Problema de la Cena de los Filósofos</strong></h1>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="37" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -7165,47 +7191,24 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="criterios-para-elegir-un-proceso-v%C3%ADctima-stallings-p-348"><strong>Criterios para Elegir un Proceso Víctima (Stallings, p. 348)</strong></h1>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">Criterio</th>
-<th style="text-align:left">Descripción</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><strong>Prioridad del proceso</strong></td>
-<td style="text-align:left">Menor prioridad → más probable de ser víctima</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Tiempo de cómputo restante</strong></td>
-<td style="text-align:left">Menos tiempo restante → menos pérdida</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Recursos asignados</strong></td>
-<td style="text-align:left">Menos recursos → menos costo de desalojo</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Recursos necesarios</strong></td>
-<td style="text-align:left">Más recursos necesarios → más difícil de satisfacer</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Número de procesos hijos</strong></td>
-<td style="text-align:left">Menos hijos → menos impacto</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Tipo de proceso</strong></td>
-<td style="text-align:left">Batch vs interactivo (interactivo tiene prioridad)</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p><strong>Ningún criterio es universal.</strong> La elección depende del sistema y la carga de trabajo.</p>
-</blockquote>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="el-problema-de-la-cena-de-los-fil%C3%B3sofos-stallings-p-349"><strong>El Problema de la Cena de los Filósofos (Stallings, p. 349)</strong></h1>
+<h3 id="escenario">Escenario:</h3>
+<ul>
+<li>5 filósofos en una mesa redonda</li>
+<li>Cada filósofo alterna entre <strong>pensar</strong> y <strong>comer</strong></li>
+<li>Hay 5 tenedores, <strong>uno entre cada par de filósofos</strong></li>
+<li>Para comer, un filósofo necesita <strong>ambos</strong> tenedores (izquierdo y derecho)</li>
+</ul>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code>     F0
+   P0   P1
+ F4     F1
+   P4   P2
+     F3   F2
+     P3
+</code></pre>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="38" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="lead" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="38" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -7291,7 +7294,7 @@ img {
 .half img {
   max-width: 50%;
 }
-" lang="C" class="lead" data-marpit-pagination="38" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:lead;--theme:default;--style:section {
+" lang="C" data-marpit-pagination="38" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -7377,8 +7380,22 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="6-el-problema-de-la-cena-de-los-fil%C3%B3sofos"><strong>6. El Problema de la Cena de los Filósofos</strong></h1>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="soluci%C3%B3n-ingenua--deadlock-garantizado"><strong>Solución Ingenua — Deadlock Garantizado</strong></h1>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code>semaphore tenedor[5] = {1, 1, 1, 1, 1};
+
+void filosofo(int i) {
+    while (true) {
+        pensar();
+        semWait(tenedor[i]);               // Tenedor izquierdo
+        semWait(tenedor[(i + 1) % 5]);     // Tenedor derecho
+        comer();
+        semSignal(tenedor[i]);
+        semSignal(tenedor[(i + 1) % 5]);
+    }
+}
+</code></pre>
+<p><strong>Resultado:</strong> si todos los filósofos toman el tenedor izquierdo al mismo tiempo → <strong>¡Deadlock!</strong></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="39" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -7552,22 +7569,14 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="el-problema-de-la-cena-de-los-fil%C3%B3sofos-stallings-p-349"><strong>El Problema de la Cena de los Filósofos (Stallings, p. 349)</strong></h1>
-<h3 id="escenario">Escenario:</h3>
-<ul>
-<li>5 filósofos en una mesa redonda</li>
-<li>Cada filósofo alterna entre <strong>pensar</strong> y <strong>comer</strong></li>
-<li>Hay 5 tenedores, <strong>uno entre cada par de filósofos</strong></li>
-<li>Para comer, un filósofo necesita <strong>ambos</strong> tenedores (izquierdo y derecho)</li>
-</ul>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>     F0
-   P0   P1
- F4     F1
-   P4   P2
-     F3   F2
-     P3
-</code></pre>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="soluciones-al-problema-stallings-p-350"><strong>Soluciones al Problema (Stallings, p. 350)</strong></h1>
+<h3 id="1-l%C3%ADmite-de-comensales--m%C3%A1ximo-4-fil%C3%B3sofos-a-la-vez">1. <strong>Límite de comensales</strong> — Máximo 4 filósofos a la vez</h3>
+<p>Solución más simple: un semáforo <code>room = 4</code> limita cuántos pueden competir por tenedores.</p>
+<h3 id="2-orden-jer%C3%A1rquico--tenedores-numerados-tomar-en-orden-ascendente">2. <strong>Orden jerárquico</strong> — Tenedores numerados, tomar en orden ascendente</h3>
+<p>Los filósofos impares toman izquierdo primero, los pares toman derecho primero.</p>
+<h3 id="3-monitor--usar-variables-de-condici%C3%B3n">3. <strong>Monitor</strong> — Usar variables de condición</h3>
+<p>Implementar con monitor que verifique disponibilidad de ambos tenedores.</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="40" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -7741,22 +7750,27 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="soluci%C3%B3n-ingenua--deadlock-garantizado"><strong>Solución Ingenua — Deadlock Garantizado</strong></h1>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="soluci%C3%B3n-1--m%C3%A1ximo-4-fil%C3%B3sofos"><strong>Solución 1 — Máximo 4 Filósofos</strong></h1>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code>semaphore tenedor[5] = {1, 1, 1, 1, 1};
+semaphore room = 4;  // Máximo 4 filósofos a la vez
 
 void filosofo(int i) {
     while (true) {
         pensar();
-        semWait(tenedor[i]);               // Tenedor izquierdo
-        semWait(tenedor[(i + 1) % 5]);     // Tenedor derecho
+        semWait(room);
+        semWait(tenedor[i]);
+        semWait(tenedor[(i+1)%5]);
         comer();
         semSignal(tenedor[i]);
-        semSignal(tenedor[(i + 1) % 5]);
+        semSignal(tenedor[(i+1)%5]);
+        semSignal(room);
     }
 }
 </code></pre>
-<p><strong>Resultado:</strong> si todos los filósofos toman el tenedor izquierdo al mismo tiempo → <strong>¡Deadlock!</strong></p>
+<blockquote>
+<p><strong>¿Por qué funciona?</strong> Con 4 filósofos, al menos uno podrá tomar ambos tenedores (el quinto tenedor está libre). Esto rompe la espera circular.</p>
+</blockquote>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="41" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -7930,14 +7944,29 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="soluciones-al-problema-stallings-p-350"><strong>Soluciones al Problema (Stallings, p. 350)</strong></h1>
-<h3 id="1-l%C3%ADmite-de-comensales--m%C3%A1ximo-4-fil%C3%B3sofos-a-la-vez">1. <strong>Límite de comensales</strong> — Máximo 4 filósofos a la vez</h3>
-<p>Solución más simple: un semáforo <code>room = 4</code> limita cuántos pueden competir por tenedores.</p>
-<h3 id="2-orden-jer%C3%A1rquico--tenedores-numerados-tomar-en-orden-ascendente">2. <strong>Orden jerárquico</strong> — Tenedores numerados, tomar en orden ascendente</h3>
-<p>Los filósofos impares toman izquierdo primero, los pares toman derecho primero.</p>
-<h3 id="3-monitor--usar-variables-de-condici%C3%B3n">3. <strong>Monitor</strong> — Usar variables de condición</h3>
-<p>Implementar con monitor que verifique disponibilidad de ambos tenedores.</p>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="soluci%C3%B3n-2--orden-jer%C3%A1rquico-asim%C3%A9trica"><strong>Solución 2 — Orden Jerárquico (Asimétrica)</strong></h1>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code>semaphore tenedor[5] = {1, 1, 1, 1, 1};
+
+void filosofo(int i) {
+    while (true) {
+        pensar();
+        if (i % 2 == 0) {  // Pares: izquierdo primero
+            semWait(tenedor[i]);
+            semWait(tenedor[(i + 1) % 5]);
+        } else {           // Impares: derecho primero
+            semWait(tenedor[(i + 1) % 5]);
+            semWait(tenedor[i]);
+        }
+        comer();
+        semSignal(tenedor[i]);
+        semSignal(tenedor[(i + 1) % 5]);
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong>¿Por qué funciona?</strong> Rompe la espera circular. El filósofo 0 toma 0→1, el filósofo 1 toma 2→1 (invierte). El ciclo se rompe.</p>
+</blockquote>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="42" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -8111,29 +8140,40 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="soluci%C3%B3n-1--m%C3%A1ximo-4-fil%C3%B3sofos"><strong>Solución 1 — Máximo 4 Filósofos</strong></h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>semaphore tenedor[5] = {1, 1, 1, 1, 1};
-semaphore room = 4;  // Máximo 4 filósofos a la vez
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="soluci%C3%B3n-3--monitor-stallings-p-351"><strong>Solución 3 — Monitor (Stallings, p. 351)</strong></h1>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code>monitor CenaFilosofos {
+    enum {PENSANDO, HAMBRIENTO, COMIENDO} estado[5];
+    cond puede_comer[5];
 
-void filosofo(int i) {
-    while (true) {
-        pensar();
-        semWait(room);
-        semWait(tenedor[i]);
-        semWait(tenedor[(i+1)%5]);
-        comer();
-        semSignal(tenedor[i]);
-        semSignal(tenedor[(i+1)%5]);
-        semSignal(room);
+    void prueba(int i) {
+        if (estado[i] == HAMBRIENTO &amp;&amp;
+            estado[(i+4)%5] != COMIENDO &amp;&amp;
+            estado[(i+1)%5] != COMIENDO) {
+            estado[i] = COMIENDO;
+            csignal(puede_comer[i]);
+        }
+    }
+
+    void tomar_tenedores(int i) {
+        estado[i] = HAMBRIENTO;
+        prueba(i);
+        if (estado[i] != COMIENDO)
+            cwait(puede_comer[i]);
+    }
+
+    void dejar_tenedores(int i) {
+        estado[i] = PENSANDO;
+        prueba((i+4)%5);  // Verificar vecino izquierdo
+        prueba((i+1)%5);  // Verificar vecino derecho
     }
 }
 </code></pre>
 <blockquote>
-<p><strong>¿Por qué funciona?</strong> Con 4 filósofos, al menos uno podrá tomar ambos tenedores (el quinto tenedor está libre). Esto rompe la espera circular.</p>
+<p><strong>Ventaja:</strong> encapsula toda la lógica de sincronización. <strong>Sin deadlock, sin inanición.</strong></p>
 </blockquote>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="43" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="43" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="lead" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -8219,7 +8259,7 @@ img {
 .half img {
   max-width: 50%;
 }
-" lang="C" data-marpit-pagination="43" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
+" lang="C" class="lead" data-marpit-pagination="43" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:lead;--theme:default;--style:section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -8305,29 +8345,8 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="soluci%C3%B3n-2--orden-jer%C3%A1rquico-asim%C3%A9trica"><strong>Solución 2 — Orden Jerárquico (Asimétrica)</strong></h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>semaphore tenedor[5] = {1, 1, 1, 1, 1};
-
-void filosofo(int i) {
-    while (true) {
-        pensar();
-        if (i % 2 == 0) {  // Pares: izquierdo primero
-            semWait(tenedor[i]);
-            semWait(tenedor[(i + 1) % 5]);
-        } else {           // Impares: derecho primero
-            semWait(tenedor[(i + 1) % 5]);
-            semWait(tenedor[i]);
-        }
-        comer();
-        semSignal(tenedor[i]);
-        semSignal(tenedor[(i + 1) % 5]);
-    }
-}
-</code></pre>
-<blockquote>
-<p><strong>¿Por qué funciona?</strong> Rompe la espera circular. El filósofo 0 toma 0→1, el filósofo 1 toma 2→1 (invierte). El ciclo se rompe.</p>
-</blockquote>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="7-inanici%C3%B3n-starvation"><strong>7. Inanición (Starvation)</strong></h1>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="44" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -8501,40 +8520,44 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="soluci%C3%B3n-3--monitor-stallings-p-351"><strong>Solución 3 — Monitor (Stallings, p. 351)</strong></h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>monitor CenaFilosofos {
-    enum {PENSANDO, HAMBRIENTO, COMIENDO} estado[5];
-    cond puede_comer[5];
-
-    void prueba(int i) {
-        if (estado[i] == HAMBRIENTO &amp;&amp;
-            estado[(i+4)%5] != COMIENDO &amp;&amp;
-            estado[(i+1)%5] != COMIENDO) {
-            estado[i] = COMIENDO;
-            csignal(puede_comer[i]);
-        }
-    }
-
-    void tomar_tenedores(int i) {
-        estado[i] = HAMBRIENTO;
-        prueba(i);
-        if (estado[i] != COMIENDO)
-            cwait(puede_comer[i]);
-    }
-
-    void dejar_tenedores(int i) {
-        estado[i] = PENSANDO;
-        prueba((i+4)%5);  // Verificar vecino izquierdo
-        prueba((i+1)%5);  // Verificar vecino derecho
-    }
-}
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="inanici%C3%B3n--definici%C3%B3n-y-comparaci%C3%B3n-stallings-p-353"><strong>Inanición — Definición y Comparación (Stallings, p. 353)</strong></h1>
+<p><strong>Inanición (starvation):</strong> un proceso es <strong>pospuesto indefinidamente</strong> aunque no esté en deadlock.</p>
+<h3 id="comparaci%C3%B3n-de-problemas-de-concurrencia">Comparación de problemas de concurrencia:</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Problema</th>
+<th style="text-align:center">¿Progresan otros?</th>
+<th style="text-align:left">Estado de los procesos</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Deadlock</strong></td>
+<td style="text-align:center">No</td>
+<td style="text-align:left">Todos bloqueados</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Inanición</strong></td>
+<td style="text-align:center">Sí</td>
+<td style="text-align:left">Uno espera, otros progresan</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Livelock</strong></td>
+<td style="text-align:center">No</td>
+<td style="text-align:left">Activos pero sin progresar</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ejemplo-de-inanici%C3%B3n">Ejemplo de inanición:</h3>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code>Planificador: procesos con prioridades
+P1: prioridad alta (ejecuta siempre que está listo)
+P2: prioridad baja (nunca recibe CPU si P1 siempre está listo)
 </code></pre>
-<blockquote>
-<p><strong>Ventaja:</strong> encapsula toda la lógica de sincronización. <strong>Sin deadlock, sin inanición.</strong></p>
-</blockquote>
+<p><strong>P2 sufre inanición</strong> — aunque no hay deadlock, P2 nunca se ejecuta.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="45" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="lead" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="45" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -8620,7 +8643,7 @@ img {
 .half img {
   max-width: 50%;
 }
-" lang="C" class="lead" data-marpit-pagination="45" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:lead;--theme:default;--style:section {
+" lang="C" data-marpit-pagination="45" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -8706,8 +8729,25 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="7-inanici%C3%B3n-starvation"><strong>7. Inanición (Starvation)</strong></h1>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="causas-de-inanici%C3%B3n-stallings-p-353"><strong>Causas de Inanición (Stallings, p. 353)</strong></h1>
+<h3 id="1-planificaci%C3%B3n-injusta">1. <strong>Planificación injusta</strong></h3>
+<ul>
+<li>Prioridades fijas → procesos de baja prioridad nunca se ejecutan</li>
+</ul>
+<h3 id="2-mecanismos-de-sincronizaci%C3%B3n">2. <strong>Mecanismos de sincronización</strong></h3>
+<ul>
+<li><strong>Semáforos débiles:</strong> orden de desbloqueo no especificado → algunos procesos pueden ser &quot;saltados&quot; repetidamente</li>
+<li><strong>Lectores prioritarios:</strong> si siempre hay lectores, los escritores nunca escriben</li>
+</ul>
+<h3 id="3-algoritmos-de-evitaci%C3%B3n-de-deadlock">3. <strong>Algoritmos de evitación de deadlock</strong></h3>
+<ul>
+<li>El algoritmo del banquero puede causar inanición si rechaza consistentemente a un proceso</li>
+</ul>
+<h3 id="4-colas-fifo-mal-implementadas">4. <strong>Colas FIFO mal implementadas</strong></h3>
+<ul>
+<li>Si la cola permite inserción por prioridad, los procesos de baja prioridad pueden esperar indefinidamente</li>
+</ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="46" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -8881,42 +8921,35 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="inanici%C3%B3n--definici%C3%B3n-y-comparaci%C3%B3n-stallings-p-353"><strong>Inanición — Definición y Comparación (Stallings, p. 353)</strong></h1>
-<p><strong>Inanición (starvation):</strong> un proceso es <strong>pospuesto indefinidamente</strong> aunque no esté en deadlock.</p>
-<h3 id="comparaci%C3%B3n-de-problemas-de-concurrencia">Comparación de problemas de concurrencia:</h3>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="inanici%C3%B3n-en-lectoresescritores-cap%C3%ADtulo-5"><strong>Inanición en Lectores/Escritores (Capítulo 5)</strong></h1>
+<h3 id="prioridad-a-lectores-%E2%86%92-inanici%C3%B3n-de-escritores">Prioridad a lectores → <strong>Inanición de escritores</strong></h3>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code>L1 lee (t1) → L2 lee (t2) → E1 espera (t3) → L3 llega y lee (t4)
+→ L4 llega y lee (t5) → ... → E1 nunca escribe
+</code></pre>
+<h3 id="soluciones">Soluciones:</h3>
 <table>
 <thead>
 <tr>
-<th style="text-align:left">Problema</th>
-<th style="text-align:center">¿Progresan otros?</th>
-<th style="text-align:left">Estado de los procesos</th>
+<th style="text-align:left">Estrategia</th>
+<th style="text-align:left">Descripción</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left"><strong>Deadlock</strong></td>
-<td style="text-align:center">No</td>
-<td style="text-align:left">Todos bloqueados</td>
+<td style="text-align:left"><strong>Cola FIFO</strong></td>
+<td style="text-align:left">Atender solicitudes en orden de llegada (sin prioridad)</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Inanición</strong></td>
-<td style="text-align:center">Sí</td>
-<td style="text-align:left">Uno espera, otros progresan</td>
+<td style="text-align:left"><strong>Envejecimiento (aging)</strong></td>
+<td style="text-align:left">Aumentar prioridad del proceso que más espera</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Livelock</strong></td>
-<td style="text-align:center">No</td>
-<td style="text-align:left">Activos pero sin progresar</td>
+<td style="text-align:left"><strong>Tiempo límite</strong></td>
+<td style="text-align:left">Forzar ejecución después de un tiempo máximo de espera</td>
 </tr>
 </tbody>
 </table>
-<h3 id="ejemplo-de-inanici%C3%B3n">Ejemplo de inanición:</h3>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>Planificador: procesos con prioridades
-P1: prioridad alta (ejecuta siempre que está listo)
-P2: prioridad baja (nunca recibe CPU si P1 siempre está listo)
-</code></pre>
-<p><strong>P2 sufre inanición</strong> — aunque no hay deadlock, P2 nunca se ejecuta.</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="47" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -9090,25 +9123,37 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="causas-de-inanici%C3%B3n-stallings-p-353"><strong>Causas de Inanición (Stallings, p. 353)</strong></h1>
-<h3 id="1-planificaci%C3%B3n-injusta">1. <strong>Planificación injusta</strong></h3>
-<ul>
-<li>Prioridades fijas → procesos de baja prioridad nunca se ejecutan</li>
-</ul>
-<h3 id="2-mecanismos-de-sincronizaci%C3%B3n">2. <strong>Mecanismos de sincronización</strong></h3>
-<ul>
-<li><strong>Semáforos débiles:</strong> orden de desbloqueo no especificado → algunos procesos pueden ser &quot;saltados&quot; repetidamente</li>
-<li><strong>Lectores prioritarios:</strong> si siempre hay lectores, los escritores nunca escriben</li>
-</ul>
-<h3 id="3-algoritmos-de-evitaci%C3%B3n-de-deadlock">3. <strong>Algoritmos de evitación de deadlock</strong></h3>
-<ul>
-<li>El algoritmo del banquero puede causar inanición si rechaza consistentemente a un proceso</li>
-</ul>
-<h3 id="4-colas-fifo-mal-implementadas">4. <strong>Colas FIFO mal implementadas</strong></h3>
-<ul>
-<li>Si la cola permite inserción por prioridad, los procesos de baja prioridad pueden esperar indefinidamente</li>
-</ul>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="estrategias-contra-la-inanici%C3%B3n-stallings-p-354"><strong>Estrategias contra la Inanición (Stallings, p. 354)</strong></h1>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Estrategia</th>
+<th style="text-align:left">Cómo funciona</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Envejecimiento (Aging)</strong></td>
+<td style="text-align:left">Incrementar la prioridad del proceso con el tiempo</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Cola FIFO estricta</strong></td>
+<td style="text-align:left">Primer solicitante, primer servido</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Prioridades dinámicas</strong></td>
+<td style="text-align:left">Ajustar prioridades según historial de ejecución</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Tiempo límite</strong></td>
+<td style="text-align:left">Garantizar tiempo máximo de espera</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>El envejecimiento (aging)</strong> es la técnica más común. Cada cierto tiempo, la prioridad de los procesos en espera aumenta gradualmente hasta que se ejecutan.</p>
+</blockquote>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="48" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -9282,32 +9327,47 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="inanici%C3%B3n-en-lectoresescritores-cap%C3%ADtulo-5"><strong>Inanición en Lectores/Escritores (Capítulo 5)</strong></h1>
-<h3 id="prioridad-a-lectores-%E2%86%92-inanici%C3%B3n-de-escritores">Prioridad a lectores → <strong>Inanición de escritores</strong></h3>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>L1 lee (t1) → L2 lee (t2) → E1 espera (t3) → L3 llega y lee (t4)
-→ L4 llega y lee (t5) → ... → E1 nunca escribe
-</code></pre>
-<h3 id="soluciones">Soluciones:</h3>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="tabla-deadlock-vs-inanici%C3%B3n-vs-livelock"><strong>Tabla: Deadlock vs. Inanición vs. Livelock</strong></h1>
 <table>
 <thead>
 <tr>
-<th style="text-align:left">Estrategia</th>
-<th style="text-align:left">Descripción</th>
+<th style="text-align:left">Aspecto</th>
+<th style="text-align:center"><strong>Deadlock</strong></th>
+<th style="text-align:center"><strong>Inanición</strong></th>
+<th style="text-align:center"><strong>Livelock</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left"><strong>Cola FIFO</strong></td>
-<td style="text-align:left">Atender solicitudes en orden de llegada (sin prioridad)</td>
+<td style="text-align:left"><strong>Estado</strong></td>
+<td style="text-align:center">Todos bloqueados</td>
+<td style="text-align:center">Uno bloqueado, otros progresan</td>
+<td style="text-align:center">Todos activos</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Envejecimiento (aging)</strong></td>
-<td style="text-align:left">Aumentar prioridad del proceso que más espera</td>
+<td style="text-align:left"><strong>Consumo de CPU</strong></td>
+<td style="text-align:center">Cero (bloqueados)</td>
+<td style="text-align:center">Cero (el que espera)</td>
+<td style="text-align:center">Alto (todos ejecutan)</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Tiempo límite</strong></td>
-<td style="text-align:left">Forzar ejecución después de un tiempo máximo de espera</td>
+<td style="text-align:left"><strong>Progreso</strong></td>
+<td style="text-align:center">Ninguno</td>
+<td style="text-align:center">Selectivo (solo algunos)</td>
+<td style="text-align:center">Ninguno (falso progreso)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Detección</strong></td>
+<td style="text-align:center">Difícil</td>
+<td style="text-align:center">Fácil</td>
+<td style="text-align:center">Difícil</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Solución</strong></td>
+<td style="text-align:center">Abortar, desalojar, prevenir</td>
+<td style="text-align:center">Envejecimiento, colas justas</td>
+<td style="text-align:center">Backoff exponencial</td>
 </tr>
 </tbody>
 </table>
@@ -9484,37 +9544,46 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="estrategias-contra-la-inanici%C3%B3n-stallings-p-354"><strong>Estrategias contra la Inanición (Stallings, p. 354)</strong></h1>
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
+<h1 id="resumen-del-cap%C3%ADtulo-6"><strong>Resumen del Capítulo 6</strong></h1>
 <table>
 <thead>
 <tr>
-<th style="text-align:left">Estrategia</th>
-<th style="text-align:left">Cómo funciona</th>
+<th style="text-align:left">Tema</th>
+<th style="text-align:left">Conceptos clave</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left"><strong>Envejecimiento (Aging)</strong></td>
-<td style="text-align:left">Incrementar la prioridad del proceso con el tiempo</td>
+<td style="text-align:left"><strong>Principios de Deadlock</strong></td>
+<td style="text-align:left">4 condiciones de Coffman, grafos de asignación de recursos</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Cola FIFO estricta</strong></td>
-<td style="text-align:left">Primer solicitante, primer servido</td>
+<td style="text-align:left"><strong>Prevención</strong></td>
+<td style="text-align:left">Negar una de las 4 condiciones (costoso)</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Prioridades dinámicas</strong></td>
-<td style="text-align:left">Ajustar prioridades según historial de ejecución</td>
+<td style="text-align:left"><strong>Evitación</strong></td>
+<td style="text-align:left">Algoritmo del banquero (estados seguro/inseguro)</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Tiempo límite</strong></td>
-<td style="text-align:left">Garantizar tiempo máximo de espera</td>
+<td style="text-align:left"><strong>Detección</strong></td>
+<td style="text-align:left">Búsqueda de ciclos en grafos, algoritmo de detección</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Recuperación</strong></td>
+<td style="text-align:left">Abortar procesos, desalojar recursos</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Cena de los Filósofos</strong></td>
+<td style="text-align:left">Deadlock clásico y 3 soluciones</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Inanición</strong></td>
+<td style="text-align:left">Proceso pospuesto indefinidamente, envejecimiento, colas justas</td>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p><strong>El envejecimiento (aging)</strong> es la técnica más común. Cada cierto tiempo, la prioridad de los procesos en espera aumenta gradualmente hasta que se ejecutan.</p>
-</blockquote>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="50" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -9688,437 +9757,7 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="tabla-deadlock-vs-inanici%C3%B3n-vs-livelock"><strong>Tabla: Deadlock vs. Inanición vs. Livelock</strong></h1>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">Aspecto</th>
-<th style="text-align:center"><strong>Deadlock</strong></th>
-<th style="text-align:center"><strong>Inanición</strong></th>
-<th style="text-align:center"><strong>Livelock</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><strong>Estado</strong></td>
-<td style="text-align:center">Todos bloqueados</td>
-<td style="text-align:center">Uno bloqueado, otros progresan</td>
-<td style="text-align:center">Todos activos</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Consumo de CPU</strong></td>
-<td style="text-align:center">Cero (bloqueados)</td>
-<td style="text-align:center">Cero (el que espera)</td>
-<td style="text-align:center">Alto (todos ejecutan)</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Progreso</strong></td>
-<td style="text-align:center">Ninguno</td>
-<td style="text-align:center">Selectivo (solo algunos)</td>
-<td style="text-align:center">Ninguno (falso progreso)</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Detección</strong></td>
-<td style="text-align:center">Difícil</td>
-<td style="text-align:center">Fácil</td>
-<td style="text-align:center">Difícil</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Solución</strong></td>
-<td style="text-align:center">Abortar, desalojar, prevenir</td>
-<td style="text-align:center">Envejecimiento, colas justas</td>
-<td style="text-align:center">Backoff exponencial</td>
-</tr>
-</tbody>
-</table>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="51" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  padding: 40px 60px;
-  background: #ffffff;
-  color: #1e1e2e;
-}
-h1 {
-  color: #0055b3;
-  font-size: 2em;
-  border-bottom: 3px solid #0055b3;
-  padding-bottom: 10px;
-}
-h2 {
-  color: #0055b3;
-  font-size: 1.5em;
-}
-h3 {
-  color: #0077cc;
-  font-size: 1.1em;
-  margin-bottom: 4px;
-}
-h4 {
-  color: #555;
-}
-ul, ol {
-  margin-top: 8px;
-}
-li {
-  margin-bottom: 6px;
-  font-size: 0.88em;
-}
-code {
-  background: #e8f0fe;
-  color: #0055b3;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.85em;
-}
-pre {
-  background: #f4f6f8;
-  border: 1px solid #d0d7de;
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 0.7em;
-  line-height: 1.4;
-}
-table {
-  border-collapse: collapse;
-  font-size: 0.75em;
-  width: 100%;
-}
-th {
-  background: #0055b3;
-  color: white;
-  padding: 8px;
-}
-td {
-  border: 1px solid #d0d7de;
-  padding: 6px;
-}
-img {
-  max-width: 90%;
-  max-height: 420px;
-  display: block;
-  margin: 0 auto;
-}
-.columns {
-  display: flex;
-  gap: 20px;
-}
-.col {
-  flex: 1;
-}
-.small-code pre {
-  font-size: 0.55em;
-}
-.compact li {
-  margin-bottom: 3px;
-  font-size: 0.8em;
-}
-.compact p {
-  margin: 4px 0;
-}
-.half img {
-  max-width: 50%;
-}
-" lang="C" data-marpit-pagination="51" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  padding: 40px 60px;
-  background: #ffffff;
-  color: #1e1e2e;
-}
-h1 {
-  color: #0055b3;
-  font-size: 2em;
-  border-bottom: 3px solid #0055b3;
-  padding-bottom: 10px;
-}
-h2 {
-  color: #0055b3;
-  font-size: 1.5em;
-}
-h3 {
-  color: #0077cc;
-  font-size: 1.1em;
-  margin-bottom: 4px;
-}
-h4 {
-  color: #555;
-}
-ul, ol {
-  margin-top: 8px;
-}
-li {
-  margin-bottom: 6px;
-  font-size: 0.88em;
-}
-code {
-  background: #e8f0fe;
-  color: #0055b3;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.85em;
-}
-pre {
-  background: #f4f6f8;
-  border: 1px solid #d0d7de;
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 0.7em;
-  line-height: 1.4;
-}
-table {
-  border-collapse: collapse;
-  font-size: 0.75em;
-  width: 100%;
-}
-th {
-  background: #0055b3;
-  color: white;
-  padding: 8px;
-}
-td {
-  border: 1px solid #d0d7de;
-  padding: 6px;
-}
-img {
-  max-width: 90%;
-  max-height: 420px;
-  display: block;
-  margin: 0 auto;
-}
-.columns {
-  display: flex;
-  gap: 20px;
-}
-.col {
-  flex: 1;
-}
-.small-code pre {
-  font-size: 0.55em;
-}
-.compact li {
-  margin-bottom: 3px;
-  font-size: 0.8em;
-}
-.compact p {
-  margin: 4px 0;
-}
-.half img {
-  max-width: 50%;
-}
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
-<h1 id="resumen-del-cap%C3%ADtulo-6"><strong>Resumen del Capítulo 6</strong></h1>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">Tema</th>
-<th style="text-align:left">Conceptos clave</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><strong>Principios de Deadlock</strong></td>
-<td style="text-align:left">4 condiciones de Coffman, grafos de asignación de recursos</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Prevención</strong></td>
-<td style="text-align:left">Negar una de las 4 condiciones (costoso)</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Evitación</strong></td>
-<td style="text-align:left">Algoritmo del banquero (estados seguro/inseguro)</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Detección</strong></td>
-<td style="text-align:left">Búsqueda de ciclos en grafos, algoritmo de detección</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Recuperación</strong></td>
-<td style="text-align:left">Abortar procesos, desalojar recursos</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Cena de los Filósofos</strong></td>
-<td style="text-align:left">Deadlock clásico y 3 soluciones</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Inanición</strong></td>
-<td style="text-align:left">Proceso pospuesto indefinidamente, envejecimiento, colas justas</td>
-</tr>
-</tbody>
-</table>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="52" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-theme="default" data-style="section {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  padding: 40px 60px;
-  background: #ffffff;
-  color: #1e1e2e;
-}
-h1 {
-  color: #0055b3;
-  font-size: 2em;
-  border-bottom: 3px solid #0055b3;
-  padding-bottom: 10px;
-}
-h2 {
-  color: #0055b3;
-  font-size: 1.5em;
-}
-h3 {
-  color: #0077cc;
-  font-size: 1.1em;
-  margin-bottom: 4px;
-}
-h4 {
-  color: #555;
-}
-ul, ol {
-  margin-top: 8px;
-}
-li {
-  margin-bottom: 6px;
-  font-size: 0.88em;
-}
-code {
-  background: #e8f0fe;
-  color: #0055b3;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.85em;
-}
-pre {
-  background: #f4f6f8;
-  border: 1px solid #d0d7de;
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 0.7em;
-  line-height: 1.4;
-}
-table {
-  border-collapse: collapse;
-  font-size: 0.75em;
-  width: 100%;
-}
-th {
-  background: #0055b3;
-  color: white;
-  padding: 8px;
-}
-td {
-  border: 1px solid #d0d7de;
-  padding: 6px;
-}
-img {
-  max-width: 90%;
-  max-height: 420px;
-  display: block;
-  margin: 0 auto;
-}
-.columns {
-  display: flex;
-  gap: 20px;
-}
-.col {
-  flex: 1;
-}
-.small-code pre {
-  font-size: 0.55em;
-}
-.compact li {
-  margin-bottom: 3px;
-  font-size: 0.8em;
-}
-.compact p {
-  margin: 4px 0;
-}
-.half img {
-  max-width: 50%;
-}
-" lang="C" data-marpit-pagination="52" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--theme:default;--style:section {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  padding: 40px 60px;
-  background: #ffffff;
-  color: #1e1e2e;
-}
-h1 {
-  color: #0055b3;
-  font-size: 2em;
-  border-bottom: 3px solid #0055b3;
-  padding-bottom: 10px;
-}
-h2 {
-  color: #0055b3;
-  font-size: 1.5em;
-}
-h3 {
-  color: #0077cc;
-  font-size: 1.1em;
-  margin-bottom: 4px;
-}
-h4 {
-  color: #555;
-}
-ul, ol {
-  margin-top: 8px;
-}
-li {
-  margin-bottom: 6px;
-  font-size: 0.88em;
-}
-code {
-  background: #e8f0fe;
-  color: #0055b3;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.85em;
-}
-pre {
-  background: #f4f6f8;
-  border: 1px solid #d0d7de;
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 0.7em;
-  line-height: 1.4;
-}
-table {
-  border-collapse: collapse;
-  font-size: 0.75em;
-  width: 100%;
-}
-th {
-  background: #0055b3;
-  color: white;
-  padding: 8px;
-}
-td {
-  border: 1px solid #d0d7de;
-  padding: 6px;
-}
-img {
-  max-width: 90%;
-  max-height: 420px;
-  display: block;
-  margin: 0 auto;
-}
-.columns {
-  display: flex;
-  gap: 20px;
-}
-.col {
-  flex: 1;
-}
-.small-code pre {
-  font-size: 0.55em;
-}
-.compact li {
-  margin-bottom: 3px;
-  font-size: 0.8em;
-}
-.compact p {
-  margin: 4px 0;
-}
-.half img {
-  max-width: 50%;
-}
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
 <h1 id="t%C3%A9rminos-clave"><strong>Términos Clave</strong></h1>
 <table>
 <thead>
@@ -10167,7 +9806,7 @@ img {
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="53" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="lead" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="51" data-paginate="true" data-background-color="#ffffff" data-color="#1e1e2e" data-class="lead" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -10253,7 +9892,7 @@ img {
 .half img {
   max-width: 50%;
 }
-" lang="C" class="lead" data-marpit-pagination="53" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:lead;--theme:default;--style:section {
+" lang="C" class="lead" data-marpit-pagination="51" style="--paginate:true;--background-color:#ffffff;--color:#1e1e2e;--class:lead;--theme:default;--style:section {
   font-family: 'Segoe UI', Arial, sans-serif;
   padding: 40px 60px;
   background: #ffffff;
@@ -10339,7 +9978,7 @@ img {
 .half img {
   max-width: 50%;
 }
-;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="53">
+;color:#1e1e2e;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="51">
 <h1 id="fin-del-cap%C3%ADtulo-6"><strong>Fin del Capítulo 6</strong></h1>
 <h2 id="deadlock-e-inanici%C3%B3n-principios-prevenci%C3%B3n-evitaci%C3%B3n-y-recuperaci%C3%B3n">Deadlock e Inanición: Principios, Prevención, Evitación y Recuperación</h2>
 <h3 id="william-stallings--operating-systems-internals-and-design-principles-9%C2%AA-ed-1">William Stallings — Operating Systems: Internals and Design Principles (9ª Ed.)</h3>
@@ -10351,9 +9990,9 @@ Un deadlock ocurre cuando un conjunto de procesos está bloqueado permanentement
 **Diferencia con otros bloqueos:**
 - **Deadlock:** todos los procesos involucrados están bloqueados
 - **Starvation:** solo un proceso está bloqueado (los otros progresan)
-- **Livelock:** los procesos están activos pero no progresan (cambian de estado sin avanzar)</p></div><div class="bespoke-marp-note" data-index="10" tabindex="0"><p>**Recursos reutilizables:** un recurso físico que puede ser usado por un proceso a la vez. Después de usarlo, el proceso lo libera y puede ser reasignado.
+- **Livelock:** los procesos están activos pero no progresan (cambian de estado sin avanzar)</p></div><div class="bespoke-marp-note" data-index="8" tabindex="0"><p>**Recursos reutilizables:** un recurso físico que puede ser usado por un proceso a la vez. Después de usarlo, el proceso lo libera y puede ser reasignado.
 
-**Recursos consumibles:** un recurso que se consume al usarlo. El proceso &quot;crea&quot; el recurso (send) y otro lo &quot;consume&quot; (receive).</p></div><div class="bespoke-marp-note" data-index="17" tabindex="0"><p>**Recursos desalojables vs no desalojables (Stallings, p. 336):**
+**Recursos consumibles:** un recurso que se consume al usarlo. El proceso &quot;crea&quot; el recurso (send) y otro lo &quot;consume&quot; (receive).</p></div><div class="bespoke-marp-note" data-index="15" tabindex="0"><p>**Recursos desalojables vs no desalojables (Stallings, p. 336):**
 
 **Desalojables:** CPU (cambio de contexto), memoria.
 **No desalojables:** impresora (no se puede quitar un trabajo a medio imprimir), archivo en escritura (pérdida de datos), regiones críticas.
@@ -10363,24 +10002,24 @@ Un deadlock ocurre cuando un conjunto de procesos está bloqueado permanentement
 2. Liberar recursos
 3. Asignar recursos al proceso solicitante
 4. Cuando todos los recursos del proceso original estén disponibles, restaurar estado
-5. Reanudar el proceso original</p></div><div class="bespoke-marp-note" data-index="18" tabindex="0"><p>**Demostración (Stallings, p. 336):**
+5. Reanudar el proceso original</p></div><div class="bespoke-marp-note" data-index="16" tabindex="0"><p>**Demostración (Stallings, p. 336):**
 
 Supongamos que existe una espera circular: P0 → R0 → P1 → R1 → ... → Pn → Rn → P0.
 Por la regla de orden, si Pi tiene Ri y solicita R{i+1}:
 - Ri &lt; R{i+1} (por la regla de orden)
 Pero entonces R0 &lt; R1 &lt; ... &lt; Rn &lt; R0, lo que implica R0 &lt; R0 → **contradicción**.
 
-**No puede existir espera circular bajo ordenamiento jerárquico.**</p></div><div class="bespoke-marp-note" data-index="25" tabindex="0"><p>**Verificación paso a paso:**
+**No puede existir espera circular bajo ordenamiento jerárquico.**</p></div><div class="bespoke-marp-note" data-index="23" tabindex="0"><p>**Verificación paso a paso:**
 
 1. **P1:** Need(1,2,2) ≤ Available(3,3,2) → ejecuta → libera(2,0,0) → Available(5,3,2)
 2. **P3:** Need(0,1,1) ≤ Available(5,3,2) → ejecuta → libera(2,1,1) → Available(7,4,3)
 3. **P0:** Need(7,4,3) ≤ Available(7,4,3) → ejecuta → libera(0,1,0) → Available(7,5,3)
 4. **P2:** Need(6,0,0) ≤ Available(7,5,3) → ejecuta → libera(3,0,2) → Available(10,5,5)
-5. **P4:** Need(4,3,1) ≤ Available(10,5,5) → ejecuta → libera(0,0,2) → Available(10,5,7)</p></div><div class="bespoke-marp-note" data-index="31" tabindex="0"><p>**Diferencia con el algoritmo del banquero:**
+5. **P4:** Need(4,3,1) ≤ Available(10,5,5) → ejecuta → libera(0,0,2) → Available(10,5,7)</p></div><div class="bespoke-marp-note" data-index="29" tabindex="0"><p>**Diferencia con el algoritmo del banquero:**
 - El algoritmo de detección usa `request[i][j]` (solicitudes **actuales** pendientes)
 - El algoritmo del banquero usa `need[i][j]` (necesidades **futuras** máximas)
 - La detección es más permisiva: solo verifica si las solicitudes actuales pueden ser satisfechas
-- El banquero es más conservador: verifica si las necesidades máximas futuras pueden ser satisfechas</p></div><div class="bespoke-marp-note" data-index="38" tabindex="0"><p>**Importancia del problema:** es el ejemplo clásico que demuestra cómo un diseño aparentemente correcto puede llevar a deadlock. Combina exclusión mutua (tenedores), espera circular y condiciones de carrera.</p></div><div class="bespoke-marp-note" data-index="39" tabindex="0"><p>**Escenario de deadlock:**
+- El banquero es más conservador: verifica si las necesidades máximas futuras pueden ser satisfechas</p></div><div class="bespoke-marp-note" data-index="36" tabindex="0"><p>**Importancia del problema:** es el ejemplo clásico que demuestra cómo un diseño aparentemente correcto puede llevar a deadlock. Combina exclusión mutua (tenedores), espera circular y condiciones de carrera.</p></div><div class="bespoke-marp-note" data-index="37" tabindex="0"><p>**Escenario de deadlock:**
 1. P0 toma tenedor 0, P1 toma tenedor 1, ..., P4 toma tenedor 4
 2. Cada filósofo espera el tenedor derecho (que tiene el vecino)
 3. **Deadlock** — nadie puede comer, nadie suelta su tenedor

@@ -140,7 +140,7 @@ style: |
 
 > Un deadlock es el **abrazo mortal** donde ninguno puede avanzar porque todos esperan a los demás.
 
-### Ejemplo clásico — Dos procesos y dos recursos (Stallings, Fig 6.1):
+### Ejemplo clásico — Dos procesos y dos recursos:
 ```
 P1: Tiene el recurso A, espera el recurso B
 P2: Tiene el recurso B, espera el recurso A
@@ -174,10 +174,6 @@ Un deadlock ocurre cuando un conjunto de procesos está bloqueado permanentement
 
 ---
 
-![](img/deadlock_conditions.svg)
-
----
-
 # **Modelado con Grafos de Asignación de Recursos**
 
 **Elementos del grafo:**
@@ -195,26 +191,16 @@ Un deadlock ocurre cuando un conjunto de procesos está bloqueado permanentement
 
 ---
 
-![](img/resource_allocation_graph.svg)
+# **Ejemplo de Deadlock con Grafos de Asignación**
 
----
+El grafo de asignación de recursos permite visualizar cuándo ocurre deadlock:
 
-# **Figura 6.2 — Explicación del Grafo de Asignación de Recursos (Stallings, Fig 6.2)**
-
-### Lado izquierdo — **Deadlock** (Recursos con 1 instancia):
 - **P1** tiene asignado R (flecha R → P1) y solicita S (flecha P1 → S)
 - **P2** tiene asignado S (flecha S → P2) y solicita R (flecha P2 → R)
-- Ciclo cerrado: **P1 → S → P2 → R → P1**
-- Como R y S tienen **solo 1 instancia** cada uno → **deadlock** (nadie puede liberar)
+- Se forma un ciclo: **P1 → S → P2 → R → P1**
+- Como R y S tienen **solo 1 instancia** cada uno → **deadlock inevitable**
 
-### Lado derecho — **Sin deadlock** (Recurso con múltiples instancias):
-- **P3** tiene asignado T (flecha T → P3) y solicita U (flecha P3 → U)
-- **P4** tiene asignada **una** instancia de U (flecha U → P4) y solicita T (flecha P4 → T)
-- Ciclo: **P3 → T → P4 → U → P3**
-- Pero **U tiene 2 instancias**. P4 solo tiene 1, la otra está libre
-- P4 puede obtener la **segunda instancia de U**, completar su ejecución, liberar T → **no hay deadlock**
-
-> **Conclusión clave (Stallings, p. 330):** un ciclo en el grafo es condición **necesaria** para deadlock, pero no **suficiente** cuando existen recursos con múltiples instancias.
+> **Conclusión:** un ciclo en el grafo donde cada recurso tiene una sola instancia indica deadlock.
 
 ---
 
@@ -240,7 +226,7 @@ Ambos esperan recibir antes de enviar → **deadlock**.
 
 ---
 
-# **Estrategias para Manejar Deadlocks (Stallings, Sección 6.2)**
+# **Estrategias para Manejar Deadlocks**
 
 | Estrategia | Descripción | Overhead | Utilización |
 |:-----------|:------------|:--------:|:-----------:|
@@ -255,19 +241,17 @@ Ambos esperan recibir antes de enviar → **deadlock**.
 
 ---
 
-# **Figura 6.3 — Explicación de las Estrategias (Stallings, Fig 6.3)**
+# **Ciclo sin Deadlock — Recursos con Múltiples Instancias**
 
-La figura agrupa las 4 estrategias en dos categorías principales:
+El lado derecho de la figura muestra un escenario donde **no hay deadlock** aunque existe un ciclo en el grafo:
 
-### **Estrategias preventivas** (evitan que ocurra deadlock):
-1. **Prevención (izquierda):** bloquea una de las 4 condiciones de Coffman. Es el enfoque más restrictivo pero garantiza que deadlock nunca ocurra. Ejemplo: orden jerárquico de recursos.
-2. **Evitación (centro-izquierda):** el SO evalúa cada solicitud de recursos usando el **algoritmo del banquero**. Solo aprueba si el estado resultante es seguro.
+- **P3** tiene asignado T (flecha T → P3) y solicita U (flecha P3 → U)
+- **P4** tiene asignada **una** instancia de U (flecha U → P4) y solicita T (flecha P4 → T)
+- Hay un ciclo: **P3 → T → P4 → U → P3**
+- Sin embargo, **U tiene 2 instancias**. P4 solo tiene 1, la segunda está libre
+- P4 puede obtener la **segunda instancia de U**, completar y liberar T → **no hay deadlock**
 
-### **Estrategias reactivas** (permiten deadlock y actúan después):
-3. **Detección + Recuperación (centro-derecha):** permite que ocurra deadlock, lo detecta periódicamente y luego actúa (abortando procesos o desalojando recursos).
-4. **Ignorar (derecha):** la "estrategia del avestruz" — asume que deadlock es tan raro que no vale la pena el overhead.
-
-> **Trade-off fundamental (Stallings, p. 333):** a medida que nos movemos de izquierda a derecha, el overhead disminuye pero aumenta el riesgo de que un deadlock afecte al sistema.
+> **Conclusión clave (Stallings, p. 330):** un ciclo en el grafo es condición **necesaria** para deadlock, pero no **suficiente** cuando existen recursos con múltiples instancias.
 
 ---
 
