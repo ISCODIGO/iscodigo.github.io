@@ -23,16 +23,12 @@ has_mermaid: true
 
 - [Objetivo](#objetivo)
 - [Preparación del entorno](#preparación-del-entorno)
-- [Ejercicio 1 — Identificación: PID vs TID en Windows](#ejercicio-1--identificación-pid-vs-tid-en-windows)
-- [Ejercicio 2 — Creación de procesos con `CreateProcess()`](#ejercicio-2--creación-de-procesos-con-createprocess)
-- [Ejercicio 3 — Creación de hilos con `CreateThread()`](#ejercicio-3--creación-de-hilos-con-createthread)
-- [Ejercicio 4 — El ejercicio clave: memoria compartida (hilos) vs. separada (procesos)](#ejercicio-4--el-ejercicio-clave-memoria-compartida-hilos-vs-separada-procesos)
-- [Ejercicio 5 — Estados de hilo en Windows](#ejercicio-5--estados-de-hilo-en-windows)
-- [Ejercicio 6 — Objeto Proceso vs. Objeto Hilo en Windows](#ejercicio-6--objeto-proceso-vs-objeto-hilo-en-windows)
-- [Ejercicio 7 — Hilos en el sistema: exploración con herramientas](#ejercicio-7--hilos-en-el-sistema-exploración-con-herramientas)
-- [Resumen del laboratorio](#resumen-del-laboratorio)
-
----
+- [Ejercicio 1 — PID vs TID, y creación de procesos con `CreateProcess()`](#ejercicio-1--pid-vs-tid-y-creación-de-procesos-con-createprocess)
+- [Ejercicio 2 — Creación de hilos con `CreateThread()`](#ejercicio-2--creación-de-hilos-con-createthread)
+- [Ejercicio 3 — El ejercicio clave: memoria compartida (hilos) vs. separada (procesos)](#ejercicio-3--el-ejercicio-clave-memoria-compartida-hilos-vs-separada-procesos)
+- [Ejercicio 4 — Estados de hilo en Windows](#ejercicio-4--estados-de-hilo-en-windows)
+- [Ejercicio 5 — Objeto Proceso vs. Objeto Hilo en Windows](#ejercicio-5--objeto-proceso-vs-objeto-hilo-en-windows)
+- [Ejercicio 6 — Hilos en el sistema: exploración con herramientas](#ejercicio-6--hilos-en-el-sistema-exploración-con-herramientas)
 
 ## Objetivo
 
@@ -112,9 +108,11 @@ cd %USERPROFILE%\lab-hilos-windows
 
 ---
 
-## Ejercicio 1 — Identificación: PID vs TID en Windows
+## Ejercicio 1 — PID vs TID, y creación de procesos con `CreateProcess()`
 
-### Conceptos relacionados (Stallings § 4.4)
+### Parte A — Identificación: PID vs TID
+
+#### Conceptos relacionados (Stallings § 4.4)
 
 En Windows, cada proceso tiene un **PID** y cada hilo tiene un **TID**. A diferencia de Linux, donde el hilo principal tiene `gettid() == getpid()`, en Windows **PID y TID son numéricamente diferentes** porque cada hilo es un `THREAD_OBJECT` independiente del `PROCESS_OBJECT`.
 
@@ -123,7 +121,7 @@ En Windows, cada proceso tiene un **PID** y cada hilo tiene un **TID**. A difere
 | `GetCurrentProcessId()` | PID del proceso | Todo el sistema |
 | `GetCurrentThreadId()` | TID del hilo actual | Todo el sistema |
 
-### Código — `w1_identidad.c`
+#### Código — `w1_identidad.c`
 
 ```c
 #include <stdio.h>
@@ -166,14 +164,14 @@ int main(void) {
 }
 ```
 
-### Compilación y ejecución
+#### Compilación y ejecución
 
 ```cmd
 gcc -o w1_identidad.exe w1_identidad.c
 w1_identidad.exe
 ```
 
-### Salida esperada
+#### Salida esperada
 
 ```
 [main]   TID = 22548  PID = 22548
@@ -184,17 +182,15 @@ w1_identidad.exe
 
 > Observa que el TID del hilo principal y el PID solo coinciden numéricamente por casualidad en algunos sistemas. En Windows, `GetCurrentProcessId()` y `GetCurrentThreadId()` llaman a funciones del sistema que consultan objetos del kernel diferentes (`EPROCESS` vs `ETHREAD`). En Linux, en cambio, el hilo principal es simplemente `task_struct` con `pid == tgid`.
 
-### Preguntas de análisis
+#### Preguntas de análisis
 
 1. ¿Por qué `PID` es el mismo en el hilo principal y en los hilos creados? (Relaciona con el concepto de `PROCESS_OBJECT` en Stallings § 4.4).
 2. Ejecuta el programa varias veces. ¿El TID del hilo principal coincide numéricamente con el PID del proceso en todas las ejecuciones? ¿Qué conclusión obtienes sobre la relación entre `GetCurrentProcessId()` y `GetCurrentThreadId()` en Windows?
 3. Compara con el laboratorio de Linux Ejercicio 1: allá `gettid()` del hilo principal coincide con `getpid()`. ¿Por qué en Windows esto puede ser diferente?
 
----
+### Parte B — Creación de procesos con `CreateProcess()`
 
-## Ejercicio 2 — Creación de procesos con `CreateProcess()`
-
-### Conceptos relacionados (Stallings § 4.4)
+#### Conceptos relacionados (Stallings § 4.4)
 
 A diferencia de UNIX, donde `fork()` crea un clon y `exec()` carga una nueva imagen (dos pasos), en Windows **`CreateProcess()`** hace ambas operaciones en una sola llamada.
 
@@ -211,7 +207,7 @@ flowchart LR
 
 > **Referencia:** Stallings § 4.4 — *Process Creation in Windows*. "When a process is created, a process object is created and a thread object is also created."
 
-### Código — `w2_createprocess.c`
+#### Código — `w2_createprocess.c`
 
 **Programa hijo (`w2_child.c`):**
 
@@ -282,7 +278,7 @@ int main(void) {
 }
 ```
 
-### Compilación y ejecución
+#### Compilación y ejecución
 
 ```cmd
 gcc -o w2_child.exe w2_child.c
@@ -290,7 +286,7 @@ gcc -o w2_createprocess.exe w2_createprocess.c
 w2_createprocess.exe
 ```
 
-### Verificar independencia de memoria
+#### Verificar independencia de memoria
 
 Abre una segunda terminal mientras el programa se ejecuta:
 
@@ -298,7 +294,7 @@ Abre una segunda terminal mientras el programa se ejecuta:
 Get-Process -Name w2_createprocess, w2_child
 ```
 
-### Salida esperada
+#### Salida esperada
 
 ```
 [PADRE] PID = 24560 — Creando proceso hijo...
@@ -313,7 +309,7 @@ Get-Process -Name w2_createprocess, w2_child
 [PADRE] Fin
 ```
 
-### Preguntas de análisis
+#### Preguntas de análisis
 
 1. ¿Qué diferencia fundamental observas entre `CreateProcess()` de Windows y `fork()` + `exec()` de UNIX? (Stallings § 4.4 vs. § 4.6).
 2. El hijo se ejecuta en un **espacio de direcciones separado**. Si el hijo modificara una variable global, ¿el padre la vería cambiada? ¿Por qué?
@@ -321,7 +317,7 @@ Get-Process -Name w2_createprocess, w2_child
 
 ---
 
-## Ejercicio 3 — Creación de hilos con `CreateThread()`
+## Ejercicio 2 — Creación de hilos con `CreateThread()`
 
 ### Conceptos relacionados (Stallings § 4.4)
 
@@ -447,7 +443,7 @@ w3_createthread.exe
 
 ---
 
-## Ejercicio 4 — El ejercicio clave: memoria compartida (hilos) vs. separada (procesos)
+## Ejercicio 3 — El ejercicio clave: memoria compartida (hilos) vs. separada (procesos)
 
 ### Conceptos relacionados (Stallings § 4.1, § 4.4)
 
@@ -584,7 +580,7 @@ CONCLUSIÓN:
 
 ---
 
-## Ejercicio 5 — Estados de hilo en Windows (Stallings § 4.4)
+## Ejercicio 4 — Estados de hilo en Windows (Stallings § 4.4)
 
 ### Conceptos relacionados
 
@@ -787,7 +783,7 @@ Estados observados:
 
 ---
 
-## Ejercicio 6 — Objeto Proceso vs. Objeto Hilo en Windows (Stallings § 4.4)
+## Ejercicio 5 — Objeto Proceso vs. Objeto Hilo en Windows (Stallings § 4.4)
 
 ### Conceptos relacionados
 
@@ -1002,7 +998,7 @@ RESUMEN:
 
 ---
 
-## Ejercicio 7 — Hilos en el sistema: exploración con herramientas
+## Ejercicio 6 — Hilos en el sistema: exploración con herramientas
 
 ### Conceptos relacionados (Stallings § 4.4)
 

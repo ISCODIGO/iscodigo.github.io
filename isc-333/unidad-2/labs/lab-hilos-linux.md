@@ -1,12 +1,3 @@
----
-layout: default
-title: "Lab: Hilos en Linux con GCC"
-parent: "Unidad I: Introducción a SO y Control de Procesos"
-grand_parent: "ISC-333 Sistemas Operativos I"
-nav_order: 6
-has_mermaid: true
----
-
 # Laboratorio: Hilos en Linux con GCC
 
 **Plataforma:** GNU/Linux (Ubuntu / Debian)  
@@ -14,8 +5,6 @@ has_mermaid: true
 **Referencias:**
 - Tanenbaum & Bos, *Modern Operating Systems*, 4.ª Ed., Sección 2.2
 - Stallings, *Operating Systems: Internals and Design Principles*, 9.ª Ed., Cap. 4 (esp. 4.6)
-
----
 
 ## Contenido
 
@@ -25,12 +14,9 @@ has_mermaid: true
 - [Ejercicio 1 — Identificación de un hilo](#ejercicio-1--identificación-de-un-hilo)
 - [Ejercicio 2 — Creación de hilos con `pthread_create()`](#ejercicio-2--creación-de-hilos-con-pthread_create)
 - [Ejercicio 3 — Memoria compartida y condición de carrera](#ejercicio-3--memoria-compartida-y-condición-de-carrera)
-- [Ejercicio 4 — Exclusión mutua con `pthread_mutex_t`](#ejercicio-4--exclusión-mutua-con-pthread_mutex_t)
-- [Ejercicio 5 — Sincronización: `pthread_join()` y `pthread_detach()`](#ejercicio-5--sincronización-pthread_join-y-pthread_detach)
-- [Ejercicio 6 — Variables de condición: productor-consumidor](#ejercicio-6--variables-de-condición-productor-consumidor)
-- [Resumen del laboratorio](#resumen-del-laboratorio)
-
----
+- [Ejercicio 4 — Estados de un hilo en Linux](#ejercicio-4--estados-de-un-hilo-en-linux)
+- [Ejercicio 5 — `task_struct`: proceso vs. hilo en Linux](#ejercicio-5--task_struct-proceso-vs-hilo-en-linux)
+- [Ejercicio 6 — Hilos en el sistema: exploración con herramientas](#ejercicio-6--hilos-en-el-sistema-exploración-con-herramientas)
 
 ## Objetivo
 
@@ -39,9 +25,9 @@ Observar en Linux los conceptos teóricos de los Capítulos 2 (MOS) y 4 (OSID):
 - Identificación de hilos: TID de kernel vs. identificador POSIX
 - Creación de hilos dentro de un proceso (`pthread_create`)
 - Memoria compartida y condición de carrera
-- Exclusión mutua con `pthread_mutex_t`
-- Espera de terminación con `pthread_join` y desligue con `pthread_detach`
-- Coordinación entre hilos con variables de condición
+- Estados de un hilo (`R`, `S`, `D`, `T`, `Z`) vistos en `/proc`
+- `task_struct` y TGID: cómo Linux representa proceso vs. hilo
+- Exploración de los hilos del sistema con herramientas estándar
 
 ---
 
@@ -380,63 +366,57 @@ El resultado cambia en cada ejecución y es siempre menor que el esperado — ev
 
 ---
 
-## Ejercicio 4 — Exclusión mutua con `pthread_mutex_t`
+## Ejercicio 4 — Estados de un hilo en Linux
 
 ### Conceptos relacionados
 
-Un **mutex** (*mutual exclusion*) garantiza que solo un hilo ejecute la **sección crítica** a la vez. El hilo que no puede adquirir el mutex pasa a estado `S (sleeping)` hasta que el hilo actual lo libere.
+Linux no distingue estados de hilo de los de proceso: cada hilo es un `task_struct` y expone el mismo conjunto de estados en `/proc/<PID>/task/<TID>/status`.
 
-```mermaid
-sequenceDiagram
-    participant A as Hilo A
-    participant M as mutex
-    participant B as Hilo B
+| Estado | Letra en `/proc` | Descripción |
+|--------|-------------------|-------------|
+| **Running/Runnable** | `R` | En CPU o listo en la cola de ejecución |
+| **Sleeping (interruptible)** | `S` | Bloqueado esperando E/S, señal, `sleep()`, mutex, etc. |
+| **Uninterruptible sleep** | `D` | Esperando E/S de disco; no puede interrumpirse con señales |
+| **Stopped** | `T` | Detenido por `SIGSTOP` o being traced (`ptrace`) |
+| **Zombie** | `Z` | Terminó pero nadie ha hecho `pthread_join`/`wait` sobre él |
 
-    A->>M: pthread_mutex_lock()
-    Note over M: mutex adquirido por A
-    B->>M: pthread_mutex_lock()
-    Note over B: B pasa a S (bloqueado)
-    A->>M: pthread_mutex_unlock()
-    Note over M: mutex liberado
-    M->>B: B despierta (Ready → Running)
-    B->>M: pthread_mutex_lock() — ahora adquiere
-```
+> **Referencia:** OSID § 4.6 — estados de proceso/hilo en Linux; `man proc` — formato de `/proc/[pid]/status`.
 
-> **Referencia:** MOS § 2.3.3 — *Mutexes*; OSID § 5.3 — *Semaphores / Mutex*.
-
-### Código — `t4_mutex.c`
+### Código — `t4_estados.c`
 
 ```c
 #include <stdio.h>
+#include <unistd.h>
 #include <pthread.h>
 
-#define N_HILOS    4
-#define ITERACIONES 1000000
+/* Demostración de estados de hilo: R (ocupado) y S (durmiendo). */
 
-static long contador = 0;
-static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+static void *hilo_ocupado(void *arg) {
+    printf("[ocupado]  TID = %d — bucle intensivo (→ R)\n", gettid());
+    volatile long suma = 0;
+    for (long i = 0; i < 3000000000L; i++)
+        suma += i;
+    printf("[ocupado]  fin, suma = %ld\n", suma);
+    return NULL;
+}
 
-static void *incrementar(void *arg) {
-    for (int i = 0; i < ITERACIONES; i++) {
-        pthread_mutex_lock(&mutex);
-        contador++;
-        pthread_mutex_unlock(&mutex);
-    }
+static void *hilo_durmiente(void *arg) {
+    printf("[durmiente] TID = %d — sleep(4) (→ S)\n", gettid());
+    sleep(4);
+    printf("[durmiente] desperté (→ R)\n");
     return NULL;
 }
 
 int main(void) {
-    pthread_t hilos[N_HILOS];
+    pthread_t h1, h2;
 
-    for (int i = 0; i < N_HILOS; i++)
-        pthread_create(&hilos[i], NULL, incrementar, NULL);
+    printf("[main] PID = %d\n", getpid());
+    pthread_create(&h1, NULL, hilo_ocupado, NULL);
+    pthread_create(&h2, NULL, hilo_durmiente, NULL);
 
-    for (int i = 0; i < N_HILOS; i++)
-        pthread_join(hilos[i], NULL);
-
-    pthread_mutex_destroy(&mutex);
-    printf("Resultado: %ld  (esperado: %d)\n",
-           contador, N_HILOS * ITERACIONES);
+    pthread_join(h1, NULL);
+    pthread_join(h2, NULL);
+    printf("[main] ambos hilos terminaron\n");
     return 0;
 }
 ```
@@ -444,99 +424,258 @@ int main(void) {
 ### Compilación y ejecución
 
 ```bash
-gcc -Wall -pthread -o t4_mutex t4_mutex.c
-./t4_mutex
-./t4_mutex
+gcc -Wall -pthread -o t4_estados t4_estados.c
+./t4_estados &
+PID=$!
+sleep 1
+ps -p $PID -L -o pid,lwp,state,comm
+# uno de los LWP debería verse en R y el otro en S
 ```
 
-### Observar el estado `S` de un hilo bloqueado en el mutex
+### Salida esperada
 
-Lanza en background y observa los hilos bloqueados:
+```
+[main] PID = 8341
+[ocupado]  TID = 8342 — bucle intensivo (→ R)
+[durmiente] TID = 8343 — sleep(4) (→ S)
+  PID   LWP S COMMAND
+ 8341  8341 S t4_estados
+ 8341  8342 R t4_estados
+ 8341  8343 S t4_estados
+[durmiente] desperté (→ R)
+[ocupado]  fin, suma = ...
+[main] ambos hilos terminaron
+```
+
+### Preguntas de análisis
+
+1. De los 5 estados de la tabla, ¿cuáles observaste directamente con `ps -L`? ¿Cuáles no, y por qué son difíciles de provocar aquí?
+2. ¿Qué diferencia hay entre `S` (interruptible) y `D` (uninterruptible)? ¿Por qué un hilo en `D` no responde a `Ctrl+C`?
+3. Compara con Windows Ejercicio 4: allá los 6 estados viven en el `THREAD_OBJECT` del kernel; en Linux, ¿dónde vive el estado de un hilo?
+
+---
+
+## Ejercicio 5 — `task_struct`: proceso vs. hilo en Linux
+
+### Conceptos relacionados
+
+A diferencia de Windows, que separa explícitamente `PROCESS_OBJECT` y `THREAD_OBJECT`, en Linux **todo es un `task_struct`** — incluido el hilo principal de un proceso. Lo que agrupa a varios `task_struct` como "el mismo proceso" es que comparten el mismo **TGID** (*Thread Group ID*, el valor que devuelve `getpid()`); cada uno conserva su propio **PID de kernel** (`gettid()`).
+
+| Concepto | Windows | Linux |
+|----------|---------|-------|
+| Unidad básica del kernel | `PROCESS_OBJECT` / `THREAD_OBJECT` distintos | Un único `task_struct` para todo |
+| Identificador de "proceso" | PID | TGID (== PID del hilo principal) |
+| Identificador de "hilo" | TID | PID de kernel (`gettid()`) |
+| Recursos compartidos entre hilos | Vía el `PROCESS_OBJECT` | Vía `mm_struct`, tabla de archivos y señales, compartidos por flags de `clone()` |
+
+> **Referencia:** OSID § 4.6 — *Linux tasks*: "Linux uses the term task ... to refer to a running program fragment; this term can refer to a process or to a thread within a process."
+
+### Código — `t5_objetos.c`
+
+```c
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <pthread.h>
+
+/*
+ * En Linux no hay PROCESS_OBJECT/THREAD_OBJECT: fork() crea un TGID
+ * nuevo con un solo task_struct; pthread_create() agrega task_struct
+ * adicionales al MISMO TGID.
+ */
+
+static void *hilo_generico(void *arg) {
+    printf("%s  Nuevo task_struct → TID = %d  (TGID = %d)\n",
+           (char *)arg, gettid(), getpid());
+    sleep(1);
+    return NULL;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc > 1 && strcmp(argv[1], "hijo") == 0) {
+        printf("[HIJO]  Nuevo TGID (PID) = %d\n", getpid());
+        printf("[HIJO]  Hilo principal: TID = %d\n", gettid());
+
+        pthread_t h[2];
+        for (int i = 0; i < 2; i++)
+            pthread_create(&h[i], NULL, hilo_generico, "[HIJO] ");
+        for (int i = 0; i < 2; i++)
+            pthread_join(h[i], NULL);
+
+        printf("[HIJO]  Terminando — TGID %d tuvo 3 task_struct en total\n", getpid());
+        return 42;
+    }
+
+    printf("=== task_struct: proceso vs. hilo en Linux ===\n\n");
+    printf("[PADRE] TGID (PID) = %d\n", getpid());
+    printf("[PADRE]   Hilo principal: TID = %d  (TID == TGID)\n", gettid());
+
+    printf("[PADRE] Creando 2 hilos adicionales en el MISMO TGID...\n");
+    pthread_t h[2];
+    for (int i = 0; i < 2; i++)
+        pthread_create(&h[i], NULL, hilo_generico, "[PADRE]");
+    for (int i = 0; i < 2; i++)
+        pthread_join(h[i], NULL);
+
+    printf("\n[PADRE] Creando un NUEVO proceso (fork + exec) — TGID nuevo...\n");
+    pid_t pid = fork();
+    if (pid == 0) {
+        execl("./t5_objetos", "t5_objetos", "hijo", (char *)NULL);
+        perror("execl");
+        exit(1);
+    }
+
+    int status;
+    waitpid(pid, &status, 0);
+    printf("[PADRE] Hijo (TGID=%d) terminó con código: %d\n", pid, WEXITSTATUS(status));
+
+    printf("\nRESUMEN:\n");
+    printf("  TGID %d agrupa varios task_struct (hilos) que comparten\n", getpid());
+    printf("  mm_struct, tabla de archivos y señales.\n");
+    printf("  fork() crea un TGID nuevo con un único task_struct inicial.\n");
+    return 0;
+}
+```
+
+### Compilación y ejecución
 
 ```bash
-./t4_mutex &
+gcc -Wall -pthread -o t5_objetos t5_objetos.c
+./t5_objetos
+```
+
+### Verificar TGID e hilos con `/proc`
+
+```bash
+./t5_objetos &
 PID=$!
 sleep 0.2
-ps -p $PID -L -o pid,lwp,state,comm
-# LWP en estado S = hilo bloqueado esperando el mutex
+cat /proc/$PID/status | grep -E "^(Pid|Tgid|Threads):"
 ```
 
 ### Salida esperada
 
 ```
-Resultado: 4000000  (esperado: 4000000)
-Resultado: 4000000  (esperado: 4000000)
-```
+=== task_struct: proceso vs. hilo en Linux ===
 
-El resultado es siempre correcto, pero el programa tarda más que sin mutex (el planificador serializa el acceso).
+[PADRE] TGID (PID) = 9120
+[PADRE]   Hilo principal: TID = 9120  (TID == TGID)
+[PADRE] Creando 2 hilos adicionales en el MISMO TGID...
+[PADRE] Nuevo task_struct → TID = 9121  (TGID = 9120)
+[PADRE] Nuevo task_struct → TID = 9122  (TGID = 9120)
+
+[PADRE] Creando un NUEVO proceso (fork + exec) — TGID nuevo...
+[HIJO]  Nuevo TGID (PID) = 9130
+[HIJO]  Hilo principal: TID = 9130
+[HIJO]  Nuevo task_struct → TID = 9131  (TGID = 9130)
+[HIJO]  Nuevo task_struct → TID = 9132  (TGID = 9130)
+[HIJO]  Terminando — TGID 9130 tuvo 3 task_struct en total
+[PADRE] Hijo (TGID=9130) terminó con código: 42
+
+RESUMEN:
+  TGID 9120 agrupa varios task_struct (hilos) que comparten
+  mm_struct, tabla de archivos y señales.
+  fork() crea un TGID nuevo con un único task_struct inicial.
+```
 
 ### Preguntas de análisis
 
-1. Compara el tiempo de ejecución de `t3_carrera` y `t4_mutex` con el comando `time ./t4_mutex`. ¿Cuánto más lento es la versión con mutex? ¿Por qué?
-2. ¿Qué sucede si un hilo llama a `pthread_mutex_lock()` dos veces seguidas sin llamar a `unlock()` entre medio?
-3. ¿Qué es la sección crítica en este programa? ¿Por qué debe ser lo más corta posible?
+1. ¿Qué reemplaza en Linux a la distinción `PROCESS_OBJECT`/`THREAD_OBJECT` de Windows?
+2. ¿Por qué el hilo principal de un proceso siempre cumple `gettid() == getpid()`?
+3. `fork()` crea un `task_struct` con TGID propio; `pthread_create()` agrega uno al TGID existente. ¿Qué recursos del `task_struct` comparten los hilos de un mismo TGID que **no** comparten dos procesos distintos?
 
 ---
 
-## Ejercicio 5 — Sincronización: `pthread_join()` y `pthread_detach()`
+## Ejercicio 6 — Hilos en el sistema: exploración con herramientas
 
 ### Conceptos relacionados
 
-Igual que los procesos necesitan `wait()` para que el padre recoja al hijo, los hilos necesitan `pthread_join()` para que el hilo que espera obtenga el valor de retorno y libere los recursos del hilo terminado.
+En Linux, cada proceso (TGID) tiene al menos un `task_struct` visible en `/proc/<PID>/task/`. Recorrer `/proc` permite ver, sin APIs especiales, que:
 
-| Función | Analogía con procesos | Descripción |
-|---------|----------------------|-------------|
-| `pthread_join(t, &ret)` | `wait(&status)` | Bloquea hasta que `t` termina; recoge el valor de retorno |
-| `pthread_detach(t)` | — | Marca el hilo como "fire-and-forget"; sus recursos se liberan automáticamente al terminar |
+- Un proceso **es** contenedor de recursos (TGID + `mm_struct` + tabla de archivos)
+- Un hilo **es** la unidad que realmente ejecuta (cada entrada bajo `task/`)
+- Un proceso "en ejecución" en realidad tiene uno o más hilos ejecutándose
 
-Un hilo que termina sin ser recogido (sin `join` y sin `detach`) se convierte en un **hilo zombie** — retiene recursos hasta que otro hilo haga `join`.
+### Exploración con `ps` y `htop`
 
-> **Referencia:** MOS § 2.2.3 — `pthread_join` / `pthread_detach`; OSID § 4.6 — estados de hilo en Linux.
+```bash
+# ¿Cuántos hilos hay en total en el sistema?
+ps -eL | tail -n +2 | wc -l
 
-### Código — `t5_join.c`
+# Los 10 procesos con más hilos
+ps -eLf | awk 'NR>1{print $2}' | sort | uniq -c | sort -rn | head -10
+
+# Hilos de un proceso específico
+ps -p <PID> -L -o pid,lwp,state,comm
+```
+
+En `htop`, presiona `H` para alternar la vista de hilos individuales dentro de cada proceso.
+
+### Código — `t6_explorar.c`
 
 ```c
 #include <stdio.h>
-#include <stdlib.h>
+#include <ctype.h>
+#include <dirent.h>
 #include <unistd.h>
-#include <pthread.h>
 
-static void *calcular(void *arg) {
-    int n = *(int *)arg;
-    printf("[hilo] recibí n=%d, calculando...\n", n);
-    sleep(1);
-    int *resultado = malloc(sizeof(int));
-    *resultado = n * n;
-    printf("[hilo] resultado listo: %d\n", *resultado);
-    return resultado;     /* retorna puntero al heap */
-}
+/*
+ * Explorar los hilos del sistema recorriendo /proc — equivalente a
+ * CreateToolhelp32Snapshot() en Windows o a `ps -eLf`.
+ */
 
-static void *tarea_detach(void *arg) {
-    printf("[detach] inicio — este hilo se auto-limpia al terminar\n");
-    sleep(2);
-    printf("[detach] fin\n");
-    return NULL;
+static int es_numerico(const char *s) {
+    for (; *s; s++)
+        if (!isdigit((unsigned char)*s)) return 0;
+    return 1;
 }
 
 int main(void) {
-    pthread_t h_join, h_detach;
-    int n = 7;
-    void *ret;
+    DIR *proc = opendir("/proc");
+    struct dirent *pentry;
+    long total_procesos = 0, total_hilos = 0;
+    int mostrados = 0;
 
-    /* hilo que se recoge con join */
-    pthread_create(&h_join, NULL, calcular, &n);
+    printf("=== Exploración de Hilos en el Sistema (Linux) ===\n\n");
+    printf("PID actual: %d\n\n", getpid());
+    printf("Los primeros 20 hilos encontrados:\n");
+    printf("%-10s %-10s\n", "PID", "TID");
+    printf("%-10s %-10s\n", "---", "---");
 
-    /* hilo detached — el sistema libera sus recursos automáticamente */
-    pthread_create(&h_detach, NULL, tarea_detach, NULL);
-    pthread_detach(h_detach);
+    while ((pentry = readdir(proc)) != NULL) {
+        if (!es_numerico(pentry->d_name)) continue;
+        total_procesos++;
 
-    printf("[main] esperando resultado con pthread_join...\n");
-    pthread_join(h_join, &ret);
-    printf("[main] resultado recogido: %d\n", *(int *)ret);
-    free(ret);
+        char ruta_task[64];
+        snprintf(ruta_task, sizeof(ruta_task), "/proc/%s/task", pentry->d_name);
+        DIR *task = opendir(ruta_task);
+        if (!task) continue;
 
-    sleep(3);   /* dar tiempo al hilo detached de terminar */
-    printf("[main] fin\n");
+        struct dirent *tentry;
+        while ((tentry = readdir(task)) != NULL) {
+            if (!es_numerico(tentry->d_name)) continue;
+            total_hilos++;
+            if (mostrados < 20) {
+                printf("%-10s %-10s\n", pentry->d_name, tentry->d_name);
+                mostrados++;
+            }
+        }
+        closedir(task);
+    }
+    closedir(proc);
+
+    printf("\n--- Resumen ---\n");
+    printf("Total procesos en el sistema: %ld\n", total_procesos);
+    printf("Total hilos en el sistema:    %ld\n", total_hilos);
+    printf("Promedio hilos por proceso:   %.1f\n",
+           (double)total_hilos / total_procesos);
+
+    printf("\nConclusión:\n");
+    printf("  Cada proceso (TGID) tiene 1+ hilos (task_struct en /proc/PID/task).\n");
+    printf("  Los hilos son las unidades reales de planificación del kernel.\n");
     return 0;
 }
 ```
@@ -544,207 +683,41 @@ int main(void) {
 ### Compilación y ejecución
 
 ```bash
-gcc -Wall -pthread -o t5_join t5_join.c
-./t5_join
-```
-
-### Observar hilos con `ps` y `/proc`
-
-```bash
-./t5_join &
-PID=$!
-sleep 0.5
-ps -p $PID -L -o pid,lwp,state,comm
-ls /proc/$PID/task
+gcc -Wall -o t6_explorar t6_explorar.c
+./t6_explorar
 ```
 
 ### Salida esperada
 
 ```
-[main] esperando resultado con pthread_join...
-[hilo] recibí n=7, calculando...
-[detach] inicio — este hilo se auto-limpia al terminar
-[hilo] resultado listo: 49
-[main] resultado recogido: 49
-[detach] fin
-[main] fin
-```
+=== Exploración de Hilos en el Sistema (Linux) ===
 
-### Preguntas de análisis
+PID actual: 9210
 
-1. ¿Qué ocurre si el hilo principal termina (`return` en `main`) mientras el hilo detached todavía está ejecutando?
-2. Modifica el programa para que el hilo retorne un `struct` con dos campos en lugar de un entero. ¿Cómo se recoge con `pthread_join`?
-3. ¿En qué se diferencia un hilo zombie de un proceso zombie en cuanto a los recursos que retienen?
-
----
-
-## Ejercicio 6 — Variables de condición: productor-consumidor
-
-### Conceptos relacionados
-
-Una **variable de condición** permite que un hilo espere de forma eficiente hasta que otra condición sea verdadera, sin hacer *busy-waiting* (espera activa). Se usa siempre junto a un mutex.
-
-```mermaid
-sequenceDiagram
-    participant P as Productor
-    participant B as Buffer (shared)
-    participant C as Consumidor
-
-    P->>B: mutex_lock()
-    P->>B: escribe ítem
-    P->>C: cond_signal() — "hay dato"
-    P->>B: mutex_unlock()
-
-    C->>B: mutex_lock()
-    Note over C: si buffer vacío → cond_wait() libera mutex y duerme
-    C->>B: lee ítem
-    C->>B: mutex_unlock()
-```
-
-> **Referencia:** MOS § 2.3.4 — *Condition Variables*; OSID § 5.7 — *Monitors*.
-
-### Código — `t6_prodcons.c`
-
-```c
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <pthread.h>
-
-#define CAPACIDAD  5
-#define N_ITEMS   12
-
-static int buffer[CAPACIDAD];
-static int cuenta = 0;        /* elementos actuales en el buffer */
-static int siguiente_w = 0;   /* índice de escritura */
-static int siguiente_r = 0;   /* índice de lectura */
-
-static pthread_mutex_t mutex    = PTHREAD_MUTEX_INITIALIZER;
-static pthread_cond_t  no_lleno  = PTHREAD_COND_INITIALIZER;  /* buffer tiene espacio */
-static pthread_cond_t  no_vacio  = PTHREAD_COND_INITIALIZER;  /* buffer tiene datos */
-
-static void *productor(void *arg) {
-    for (int i = 0; i < N_ITEMS; i++) {
-        pthread_mutex_lock(&mutex);
-
-        while (cuenta == CAPACIDAD)
-            pthread_cond_wait(&no_lleno, &mutex);  /* espera espacio */
-
-        buffer[siguiente_w] = i;
-        siguiente_w = (siguiente_w + 1) % CAPACIDAD;
-        cuenta++;
-        printf("[productor] produjo %2d  (buffer: %d/%d)\n", i, cuenta, CAPACIDAD);
-
-        pthread_cond_signal(&no_vacio);
-        pthread_mutex_unlock(&mutex);
-        usleep(100000);  /* 100 ms */
-    }
-    return NULL;
-}
-
-static void *consumidor(void *arg) {
-    for (int i = 0; i < N_ITEMS; i++) {
-        pthread_mutex_lock(&mutex);
-
-        while (cuenta == 0)
-            pthread_cond_wait(&no_vacio, &mutex);  /* espera datos */
-
-        int item = buffer[siguiente_r];
-        siguiente_r = (siguiente_r + 1) % CAPACIDAD;
-        cuenta--;
-        printf("[consumidor] consumió %2d  (buffer: %d/%d)\n", item, cuenta, CAPACIDAD);
-
-        pthread_cond_signal(&no_lleno);
-        pthread_mutex_unlock(&mutex);
-        usleep(250000);  /* 250 ms — más lento que el productor */
-    }
-    return NULL;
-}
-
-int main(void) {
-    pthread_t hprod, hcons;
-
-    pthread_create(&hprod, NULL, productor,  NULL);
-    pthread_create(&hcons, NULL, consumidor, NULL);
-
-    pthread_join(hprod, NULL);
-    pthread_join(hcons, NULL);
-
-    pthread_mutex_destroy(&mutex);
-    pthread_cond_destroy(&no_lleno);
-    pthread_cond_destroy(&no_vacio);
-    printf("[main] fin — %d ítems procesados\n", N_ITEMS);
-    return 0;
-}
-```
-
-### Compilación y ejecución
-
-```bash
-gcc -Wall -pthread -o t6_prodcons t6_prodcons.c
-./t6_prodcons
-```
-
-### Observar el hilo consumidor bloqueado
-
-Cuando el buffer está vacío, el consumidor queda en estado `S`:
-
-```bash
-./t6_prodcons &
-PID=$!
-sleep 0.1
-ps -p $PID -L -o pid,lwp,state,comm
-# al menos un hilo en estado S esperando en cond_wait
-```
-
-### Salida esperada (fragmento)
-
-```
-[productor] produjo  0  (buffer: 1/5)
-[productor] produjo  1  (buffer: 2/5)
-[consumidor] consumió  0  (buffer: 1/5)
-[productor] produjo  2  (buffer: 2/5)
-[productor] produjo  3  (buffer: 3/5)
+Los primeros 20 hilos encontrados:
+PID        TID
+---        ---
+1          1
+612        612
+612        615
+612        618
 ...
-[main] fin — 12 ítems procesados
+
+--- Resumen ---
+Total procesos en el sistema: 210
+Total hilos en el sistema:    780
+Promedio hilos por proceso:   3.7
+
+Conclusión:
+  Cada proceso (TGID) tiene 1+ hilos (task_struct en /proc/PID/task).
+  Los hilos son las unidades reales de planificación del kernel.
 ```
 
 ### Preguntas de análisis
 
-1. ¿Por qué `pthread_cond_wait()` debe llamarse dentro de un `while` y no de un `if`?
-2. ¿Qué ocurriría si el productor usara `cond_broadcast()` en lugar de `cond_signal()`? ¿Cambiaría el comportamiento con un solo consumidor?
-3. Modifica el programa para agregar un segundo consumidor y verifica que los 12 ítems siguen procesándose exactamente una vez cada uno.
-
----
-
-## Resumen del laboratorio
-
-### Llamadas al sistema y funciones utilizadas
-
-| Función | Propósito |
-|---------|-----------|
-| `pthread_create(t, attr, fn, arg)` | Crear un hilo nuevo dentro del proceso |
-| `pthread_self()` | Identificador POSIX del hilo actual |
-| `gettid()` | TID de kernel del hilo actual (Linux) |
-| `pthread_join(t, &ret)` | Esperar la terminación del hilo `t` y recoger su valor de retorno |
-| `pthread_detach(t)` | Marcar `t` como auto-limpiable al terminar |
-| `pthread_mutex_lock/unlock(m)` | Adquirir / liberar el mutex `m` |
-| `pthread_cond_wait(c, m)` | Liberar `m` y dormir hasta que `c` sea señalizada |
-| `pthread_cond_signal(c)` | Despertar a un hilo esperando en `c` |
-
-### Correspondencia con el laboratorio de procesos
-
-| Concepto en procesos | Equivalente en hilos |
-|----------------------|----------------------|
-| `fork()` | `pthread_create()` |
-| `wait()` / `waitpid()` | `pthread_join()` |
-| Proceso zombie | Hilo zombie (sin `join` ni `detach`) |
-| `pipe()` (canal unidireccional) | Variable global + mutex + cond_var |
-| Espacio de memoria separado (COW) | Espacio de memoria compartido |
-
-### Diferencia fundamental entre procesos e hilos (MOS § 2.2)
-
-> Un proceso es la **unidad de propiedad de recursos**; un hilo es la **unidad de ejecución**. Varios hilos dentro de un proceso comparten el mismo espacio de direcciones, archivos abiertos y señales — por eso la sincronización es indispensable.
+1. ¿Cuántos hilos tiene el proceso 1 (`init`/`systemd`)? ¿Por qué todo proceso tiene al menos un hilo?
+2. Compara el promedio de hilos por proceso que obtuviste con el de Windows Ejercicio 6 (~12). ¿Es distinto en Linux? ¿A qué se debe?
+3. ¿Qué proceso de tu sistema tiene más hilos? Investígalo con el segundo comando de `ps -eLf` de arriba.
 
 ---
 
