@@ -149,7 +149,7 @@ style: |
 
 ---
 
-## Conceptos fundamentales
+# Conceptos fundamentales
 
 | Término | Definición |
 |---------|-----------|
@@ -159,7 +159,24 @@ style: |
 
 ---
 
-## Cinco requisitos fundamentales
+```
+Memoria Secundaria (Disco)          Memoria Principal (RAM)
+┌─────────────────────────┐         ┌───────┬───────┐
+│  Segmento (long. variable)        │ Frame │ Frame │
+│  ┌──────┬──────┬──────┐ │  copia  │   0   │   1   │
+│  │Page 0│Page 1│Page 2│ │ ──────→ ├───────┼───────┤
+│  └──────┴──────┴──────┘ │         │ Frame │ Frame │
+└─────────────────────────┘         │   2   │   3   │
+                                    └───────┴───────┘
+
+Segment → puede copiarse completo, o dividirse en Pages
+Page    → bloque fijo que se copia a un Frame
+Frame   → bloque fijo de memoria principal
+```
+
+---
+
+# Cinco requisitos fundamentales
 
 | # | Requisito | Descripción |
 |---|-----------|-------------|
@@ -171,41 +188,35 @@ style: |
 
 ---
 
-# 7.1a — Relocación
+## 7.1a — Relocación
 
 **Problema:** No sabemos de antemano dónde se cargará un proceso en memoria.
 
 - Los procesos se intercambian (*swapping*) entre disco y RAM
 - Al recargar, pueden quedar en **diferentes direcciones físicas**
 
-```
-Disco                    Memoria Principal
-┌──────────┐            ┌──────────┬──────────┐
-│ Proceso  │  swap in→  │   SO     │ Proceso  │
-│          │            │          │ (nueva   │
-│          │  swap out← │          │  dir.)   │
-└──────────┘            └──────────┴──────────┘
-```
-
 **Solución:** Direcciones **relativas** (lógicas) traducidas a **absolutas** (físicas) por hardware en tiempo de ejecución.
+
+<!--
+En un sistema multiprogramado, la memoria principal se comparte entre varios procesos y el programador no puede saber de antemano qué otros programas estarán residentes al momento de ejecutar el suyo. Además, se necesita poder intercambiar (swap) procesos activos entre disco y RAM para maximizar el uso del procesador, lo que implica que un proceso puede volver a cargarse en una región de memoria distinta a la original. El SO conoce fácilmente las direcciones de control, pila y punto de entrada del proceso porque es quien lo carga en memoria; el verdadero desafío es que el procesador debe resolver las referencias a memoria dentro del propio código del programa sin conocer su ubicación final de antemano.
+-->
 
 ---
 
-# 7.1a — Soporte Hardware para Relocación
+![Relocación](img/fig_1_7.png)
 
-```
-                     ┌─────────────────┐
-    Dirección        │                 │
-    Relativa ───────→│     Adder       │────→ Dirección Absoluta
-                     │   (Sumador)     │
-                     └────────┬────────┘
-                              │
-                     ┌────────▼────────┐
-                     │   Base Register │
-                     │  (Dirección     │
-                     │   base en RAM)  │
-                     └─────────────────┘
-```
+<!--
+La figura muestra la imagen de un proceso en memoria. El SO ubica fácilmente el control, la pila y el punto de entrada, porque es quien carga el proceso. Lo difícil es otra cosa: las instrucciones de salto y de datos dentro del propio código traen direcciones, y el hardware (procesador) junto con el SO deben traducirlas a direcciones físicas reales según dónde quedó cargado el programa.
+-->
+
+---
+
+### 7.1a — Soporte Hardware para Relocación
+
+![Base + Límite](img/fig_hardware_support.svg)
+<!--
+Nota para el relator: Este es el soporte de hardware mínimo para la relocación dinámica. Cada dirección que genera el proceso es relativa (relativa al inicio de su propio programa, empieza en 0). El Base Register guarda la dirección física donde realmente inicia el proceso en RAM; el hardware (el sumador) suma automáticamente esa base a cada dirección relativa para obtener la dirección absoluta real, en el momento mismo de la ejecución (no antes). Esto es lo que permite mover un proceso de lugar en memoria (por swapping) sin tener que reescribir ni una sola dirección dentro de su código: basta con actualizar el valor del Base Register cuando el proceso se recarga en una posición distinta.
+-->
 
 ---
 
@@ -216,7 +227,7 @@ Disco                    Memoria Principal
 
 ---
 
-# 7.1a — Esquema de Base y Límite
+### 7.1a — Esquema de Base y Límite
 ```
 Proceso A en memoria (ejemplo):
 ┌─────────────────────────────────┐
@@ -231,6 +242,10 @@ Proceso A en memoria (ejemplo):
 └─────────────────────────────────┘
 ```
 
+<!--
+Nota para el relator: Este esquema muestra cómo luce la memoria física en un momento dado: el SO ocupa la parte baja, y el Proceso A ocupa un bloque contiguo que incluye su bloque de control (PCB), su código, sus datos y su pila. El Base Register apuntará al inicio de este bloque (donde comienza A) y el Bounds Register al final del mismo. Cualquier dirección relativa que genere el proceso A se traduce sumándole la base, y se valida contra el límite antes de permitir el acceso.
+-->
+
 ---
 
 ```
@@ -244,7 +259,7 @@ Proceso A en memoria (ejemplo):
 
 ---
 
-# 7.1b — Protección
+## 7.1b — Protección
 
 **Cada proceso debe estar aislado de los demás.**
 
@@ -263,7 +278,7 @@ Proceso A en memoria (ejemplo):
 
 ---
 
-# 7.1c — Compartición (*Sharing*)
+## 7.1c — Compartición (*Sharing*)
 
 **Varios procesos accediendo a la misma región de memoria.**
 
@@ -286,7 +301,7 @@ Proceso A en memoria (ejemplo):
 
 ---
 
-# 7.1d — Organización Lógica
+## 7.1d — Organización Lógica
 
 La memoria física es un espacio **lineal/unidimensional**, pero los programas son **modulares**:
 
@@ -314,7 +329,7 @@ Programa típico:
 
 ---
 
-# 7.1e — Organización Física
+## 7.1e — Organización Física
 
 **Dos niveles de memoria:**
 
@@ -361,6 +376,10 @@ Tres esquemas históricos:
 | **Partición Fija** | Tamaños predeterminados en boot | **Interna** (espacio desperdiciado dentro de la partición) |
 | **Partición Dinámica** | Tamaños según necesidad | **Externa** (huecos entre particiones) |
 | **Buddy System** | Bloques de tamaño $2^K$ | Híbrido (compromiso) |
+
+<!--
+Nota para el relator (Stallings, Cap. 7): Tanto la partición fija como la dinámica tienen desventajas: la fija limita el número de procesos activos y desperdicia espacio si no hay buen ajuste entre el tamaño de las particiones y el de los procesos (fragmentación interna); la dinámica es más compleja de mantener y añade el costo de la compactación (fragmentación externa). El Buddy System es un compromiso interesante entre ambas: mantiene bloques de tamaño 2^K, con 2^L como el bloque más pequeño asignable y 2^U como el bloque más grande (normalmente toda la memoria disponible). Al pedir memoria, se divide recursivamente el bloque más pequeño disponible en dos "compañeros" (buddies) iguales hasta llegar al tamaño necesario; al liberar, dos buddies libres se funden (coalescen) de nuevo en un bloque mayor. Es un compromiso razonable, aunque en sistemas modernos la memoria virtual (paginación/segmentación) lo supera; aun así se sigue usando, por ejemplo, en la asignación de memoria del kernel de UNIX.
+-->
 
 ---
 
