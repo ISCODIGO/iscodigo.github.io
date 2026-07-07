@@ -53,10 +53,45 @@ Observar en Windows la diferencia fundamental entre **procesos** e **hilos** usa
 
 | Opción | Instalación | Compilación |
 |--------|-------------|-------------|
-| **MinGW-w64** | `winget install --id=MSYS2.MSYS2` luego `pacman -S mingw-w64-ucrt-x86_64-gcc` | `gcc -o programa.exe fuente.c` |
-| **MSVC** | Visual Studio Build Tools 2022 | `cl /Fe:programa.exe fuente.c` |
+| **MinGW-w64** | Ver pasos detallados abajo | `gcc -o programa.exe fuente.c` |
+| **MSVC** | Visual Studio Build Tools 2022 | `cl /Fe:programa.exe fuente.c` (desde *Developer Command Prompt*) |
 
 > **Nota:** La API Win32 está disponible desde `<windows.h>`. No requiere enlaces adicionales (`-lpthread` como en Linux).
+
+#### Instalación paso a paso — MinGW-w64 (recomendado)
+
+```powershell
+winget install --id=MSYS2.MSYS2
+```
+
+1. Abre el menú Inicio y ejecuta la terminal **"MSYS2 UCRT64"** (no la ventana "MSYS2 MSYS" genérica — el toolchain UCRT64 es el que coincide con el runtime de Windows 10/11).
+2. Dentro de esa terminal, actualiza el sistema de paquetes y luego instala el compilador:
+
+   ```bash
+   pacman -Syu
+   pacman -S mingw-w64-ucrt-x86_64-gcc
+   ```
+
+3. Agrega `C:\msys64\ucrt64\bin` al `PATH` del sistema (Panel de control → Sistema → Variables de entorno, o con PowerShell como administrador):
+
+   ```powershell
+   [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\msys64\ucrt64\bin", "User")
+   ```
+
+4. **Cierra y vuelve a abrir PowerShell** (el `PATH` no se actualiza en sesiones ya abiertas) y verifica:
+
+   ```powershell
+   gcc --version
+   ```
+
+Si `gcc --version` no responde, la causa casi siempre es una de estas dos: abriste la terminal "MSYS2 MSYS" en vez de "MSYS2 UCRT64" en el paso 2, o no reiniciaste la ventana de PowerShell después de modificar el `PATH`.
+
+> **Diagnóstico — `C:\msys64\ucrt64\bin` está vacía:** Instalar MSYS2 con winget solo trae la base del sistema (bash, pacman), **no** el compilador. Si esa carpeta no tiene archivos, significa que falta el paso 2 (`pacman -S mingw-w64-ucrt-x86_64-gcc`). Corre `pacman -Syu` primero; si a mitad del proceso te pide cerrar la ventana, hazlo y vuelve a ejecutar `pacman -Syu` una segunda vez antes de instalar el compilador.
+
+#### Alternativa — MSVC
+
+1. Instala **Visual Studio Build Tools 2022** (workload "Desarrollo de escritorio con C++").
+2. `cl.exe` **no** está en el `PATH` de una PowerShell normal — debes usar la terminal **"Developer Command Prompt for VS 2022"** (o **"Developer PowerShell for VS 2022"**) que aparece en el menú Inicio tras la instalación.
 
 ### Instalar Process Explorer (recomendado)
 
@@ -80,7 +115,7 @@ procexp.exe
 | Herramienta | Comando / Uso | Descripción |
 |-------------|---------------|-------------|
 | **Task Manager** | `taskmgr.exe` → Detalles → columna "Hilos" | Conteo de hilos por proceso |
-| **PowerShell** | `Get-Process \| Select Name,Id,Threads.Count \| ft` | Conteo de hilos de todos los procesos |
+| **PowerShell** | `Get-Process \| Select Name,Id,@{N="Hilos";E={$_.Threads.Count}} \| ft` | Conteo de hilos de todos los procesos |
 | **PowerShell** | `Get-Process -Id <PID> \| Select -Expand Threads` | Lista los hilos (TIDs) de un proceso |
 | **Process Explorer** | `procexp.exe` | Hilos individuales, estados, pilas |
 | **`tasklist`** | `tasklist /FI "PID eq <PID>"` | Información del proceso |
@@ -100,6 +135,15 @@ procexp.exe
 ---
 
 ### Directorio de trabajo
+
+En **PowerShell**:
+
+```powershell
+mkdir $env:USERPROFILE\lab-hilos-windows
+cd $env:USERPROFILE\lab-hilos-windows
+```
+
+En **CMD** (si usas `cmd.exe` en vez de PowerShell):
 
 ```cmd
 mkdir %USERPROFILE%\lab-hilos-windows
@@ -244,7 +288,7 @@ int main(void) {
     si.cb = sizeof(si);
     ZeroMemory(&pi, sizeof(pi));
 
-    printf("[PADRE] PID = %lu — Creando proceso hijo...\n",
+    printf("[PADRE] PID = %lu - Creando proceso hijo...\n",
            GetCurrentProcessId());
 
     if (!CreateProcess(
@@ -297,7 +341,7 @@ Get-Process -Name w2_createprocess, w2_child
 #### Salida esperada
 
 ```
-[PADRE] PID = 24560 — Creando proceso hijo...
+[PADRE] PID = 24560 - Creando proceso hijo...
 [PADRE] Hijo creado: PID = 24588, TID principal = 24589
 [PADRE] Esperando al hijo...
 [HIJO]  PID = 24588
@@ -345,7 +389,7 @@ flowchart TD
 static DWORD WINAPI tarea_hilo(LPVOID lpParam) {
     int id = *(int *)lpParam;
 
-    printf("[hilo %d] inicio — TID = %lu (PID = %lu)\n",
+    printf("[hilo %d] inicio - TID = %lu (PID = %lu)\n",
            id, GetCurrentThreadId(), GetCurrentProcessId());
     /* Cada hilo duerme distinto para mostrar concurrencia */
     Sleep(id * 500);
@@ -418,10 +462,10 @@ w3_createthread.exe
 [main] Hilo 4 creado → TID = 16704
 
 [main] Esperando a que todos los hilos terminen...
-[hilo 1] inicio — TID = 15876 (PID = 14520)
-[hilo 2] inicio — TID = 16132 (PID = 14520)
-[hilo 3] inicio — TID = 16548 (PID = 14520)
-[hilo 4] inicio — TID = 16704 (PID = 14520)
+[hilo 1] inicio - TID = 15876 (PID = 14520)
+[hilo 2] inicio - TID = 16132 (PID = 14520)
+[hilo 3] inicio - TID = 16548 (PID = 14520)
+[hilo 4] inicio - TID = 16704 (PID = 14520)
 [hilo 1] fin
 [hilo 2] fin
 [hilo 3] fin
@@ -628,7 +672,7 @@ stateDiagram-v2
 static DWORD WINAPI hilo_trabajo(LPVOID lpParam) {
     int id = *(int *)lpParam;
 
-    printf("[hilo %d] INICIO (Running) — TID = %lu\n",
+    printf("[hilo %d] INICIO (Running) - TID = %lu\n",
            id, GetCurrentThreadId());
 
     /* El hilo entra en estado Waiting durante Sleep() */
@@ -674,7 +718,7 @@ int main(void) {
             return 1;
         }
 
-        printf("  Hilo %d creado (TID = %lu) — estado: SUSPENDED\n",
+        printf("  Hilo %d creado (TID = %lu) - estado: SUSPENDED\n",
                i + 1, ids[i]);
     }
 
@@ -736,9 +780,9 @@ Observa los hilos en la pestaña Threads.
 Creando 3 hilos en estado SUSPENDIDO...
 (Se activarán manualmente)
 
-  Hilo 1 creado (TID = 18240) — estado: SUSPENDED
-  Hilo 2 creado (TID = 18276) — estado: SUSPENDED
-  Hilo 3 creado (TID = 18312) — estado: SUSPENDED
+  Hilo 1 creado (TID = 18240) - estado: SUSPENDED
+  Hilo 2 creado (TID = 18276) - estado: SUSPENDED
+  Hilo 3 creado (TID = 18312) - estado: SUSPENDED
 
 [main] Observa en Process Explorer: los hilos aparecen.
 [main] Presiona Enter para reanudar los hilos...
@@ -749,9 +793,9 @@ Creando 3 hilos en estado SUSPENDIDO...
   Hilo 3 reanudado (TID = 18312)
 
 [main] Esperando a que terminen...
-[hilo 1] INICIO (Running) — TID = 18240
-[hilo 2] INICIO (Running) — TID = 18276
-[hilo 3] INICIO (Running) — TID = 18312
+[hilo 1] INICIO (Running) - TID = 18240
+[hilo 2] INICIO (Running) - TID = 18276
+[hilo 3] INICIO (Running) - TID = 18312
 [hilo 1] Sleeping 3 s (→ Waiting)...
 [hilo 2] Sleeping 3 s (→ Waiting)...
 [hilo 3] Sleeping 3 s (→ Waiting)...
@@ -836,6 +880,9 @@ Este ejercicio crea un proceso y explora la relación proceso ↔ hilos centrali
  * El programa se ejecuta a sí mismo como hijo.
  */
 
+static DWORD WINAPI hilo_padre(LPVOID lpParam);
+static DWORD WINAPI hilo_hijo(LPVOID lpParam);
+
 int main(int argc, char *argv[]) {
     /* Modo hijo */
     if (argc > 1 && strcmp(argv[1], "child") == 0) {
@@ -858,7 +905,7 @@ int main(int argc, char *argv[]) {
         WaitForMultipleObjects(2, h_hijo, TRUE, INFINITE);
         for (int i = 0; i < 2; i++) CloseHandle(h_hijo[i]);
 
-        printf("[HIJO]  Terminando — el PROCESS_OBJECT y sus 3 THREAD_OBJECT\n");
+        printf("[HIJO]  Terminando - el PROCESS_OBJECT y sus 3 THREAD_OBJECT\n");
         return 42;
     }
 
@@ -947,6 +994,8 @@ static DWORD WINAPI hilo_hijo(LPVOID lpParam) {
 }
 ```
 
+> **Nota de compilación:** `hilo_padre` e `hilo_hijo` se usan como argumentos de `CreateThread()` antes de su definición al final del archivo, por lo que necesitan las declaraciones adelantadas (`static DWORD WINAPI hilo_padre(LPVOID);` etc.) mostradas arriba. Sin ellas, `gcc` falla con `error: 'hilo_hijo' undeclared`.
+
 ### Compilación y ejecución
 
 ```cmd
@@ -972,12 +1021,12 @@ w6_objetos.exe
 [PADRE] Nuevo PROCESS_OBJECT creado:
 [PADRE]   PID del hijo = 18240
 [PADRE]   TID del hilo principal del hijo = 18241
-[HUO]  PID (PROCESS_OBJECT) = 18240
-[HUO]  TID (THREAD_OBJECT)  = 18241
-[HUO]  Creando 2 hilos propios...
-[HUO]  Nuevo THREAD_OBJECT 1 → TID = 18312
-[HUO]  Nuevo THREAD_OBJECT 2 → TID = 18376
-[HUO]  Terminando — el PROCESS_OBJECT y sus 3 THREAD_OBJECT
+[HIJO]  PID (PROCESS_OBJECT) = 18240
+[HIJO]  TID (THREAD_OBJECT)  = 18241
+[HIJO]  Creando 2 hilos propios...
+[HIJO]  Nuevo THREAD_OBJECT 1 → TID = 18312
+[HIJO]  Nuevo THREAD_OBJECT 2 → TID = 18376
+[HIJO]  Terminando — el PROCESS_OBJECT y sus 3 THREAD_OBJECT
 [PADRE] Hijo terminó con código: 42
 
 RESUMEN:
@@ -1015,8 +1064,8 @@ En Windows, cada proceso tiene al menos un hilo. Algunos procesos del sistema ti
 (Get-Process | ForEach-Object { $_.Threads.Count } | Measure-Object -Sum).Sum
 
 # Los 10 procesos con más hilos
-Get-Process | Sort-Object -Property Threads.Count -Descending |
-    Select-Object -First 10 Name, Id, @{N="Hilos";E={$_.Threads.Count}} | Format-Table
+Get-Process | Select-Object Name, Id, @{N="Hilos";E={$_.Threads.Count}} |
+    Sort-Object -Property Hilos -Descending | Select-Object -First 10 | Format-Table
 
 # Hilos de un proceso específico (explorer)
 Get-Process -Name explorer | Select-Object -ExpandProperty Threads |
@@ -1159,49 +1208,6 @@ Conclusión (Stallings § 4.4):
 1. ¿Cuántos hilos tiene el proceso `System Idle Process` (PID 0)? ¿Por qué siempre hay al menos un hilo en cada proceso?
 2. Según Stallings § 4.4, un proceso es "unidad de propiedad de recursos" y un hilo es "unidad de planificación". ¿Cómo se refleja esto en los conteos que obtuviste (promedio ~12 hilos por proceso)?
 3. ¿Qué proceso tiene más hilos en tu sistema? ¿Por qué crees que ese proceso necesita tantos hilos?
-
----
-
-## Resumen del laboratorio
-
-### Funciones Win32 utilizadas
-
-| Función | Propósito | Analogía POSIX/Linux |
-|---------|-----------|----------------------|
-| `CreateProcess()` | Crear un nuevo proceso con su propio espacio de direcciones | `fork()` + `exec()` |
-| `CreateThread()` | Crear un nuevo hilo dentro del proceso actual | `pthread_create()` |
-| `GetCurrentProcessId()` | Obtener el PID del proceso actual | `getpid()` |
-| `GetCurrentThreadId()` | Obtener el TID del hilo actual | `gettid()` |
-| `WaitForSingleObject()` | Esperar por un handle (hilo o proceso) | `pthread_join()` / `wait()` |
-| `ResumeThread()` | Reanudar un hilo suspendido | — |
-| `GetExitCodeThread()` | Obtener el valor de retorno de un hilo | Valor de `pthread_join()` |
-| `GetExitCodeProcess()` | Obtener el código de salida de un proceso | Macros `WIFEXITED`/`WEXITSTATUS` |
-| `CloseHandle()` | Cerrar un handle del kernel | `close()` |
-
-### Correspondencia con el laboratorio de hilos en Linux
-
-| Concepto en Linux (pthreads) | Equivalente en Windows (Win32) |
-|------------------------------|--------------------------------|
-| `pthread_create()` | `CreateThread()` |
-| `pthread_join()` | `WaitForSingleObject()` + `GetExitCodeThread()` |
-| `fork()` + `exec()` | `CreateProcess()` |
-| `wait()` / `waitpid()` | `WaitForSingleObject(proceso)` |
-| `gettid()` | `GetCurrentThreadId()` |
-| Espacio de direcciones compartido | Hilos comparten el espacio del proceso |
-| Espacio separado (fork) | Procesos con espacios separados |
-
-### Diferencia fundamental (Stallings § 4.1, 4.4)
-
-| | Proceso (PROCESS_OBJECT) | Hilo (THREAD_OBJECT) |
-|---|---|---|
-| **Rol** | Unidad de propiedad de recursos | Unidad de planificación/ejecución |
-| **Espacio de direcciones** | Propio (tabla de páginas) | Compartido con el proceso |
-| **Creación** | `CreateProcess()` | `CreateThread()` |
-| **Aislamiento** | Alto (espacio separado) | Bajo (misma memoria) |
-| **Comunicación** | Explícita (IPC) | Directa (variables globales) |
-| **¿Puede ejecutar solo?** | No (necesita ≥1 hilo) | Sí (es la unidad de ejecución) |
-
-> **Stallings § 4.4:** *"In Windows, the separation between process (resource ownership) and thread (execution unit) is more explicit than in Linux. A process cannot execute without at least one thread. The process object owns resources; the thread object executes code."*
 
 ---
 
