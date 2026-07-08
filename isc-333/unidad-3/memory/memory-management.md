@@ -140,6 +140,8 @@ style: |
 
 > La administración de memoria es la tarea dinámica de subdividir la memoria de usuario para acomodar múltiples procesos en un sistema multiprogramado.
 
+<!-- Nota para el relator (Stallings, §7.1): Esta cita captura la esencia del capítulo. La cita subraya que la memoria es el recurso más disputado en multiprogramación: todos los procesos quieren espacio, y el SO debe arbitrar quién lo obtiene, dónde y por cuánto tiempo. Este capítulo trata específicamente de esquemas donde el proceso completo debe estar en RAM; la memoria virtual (Cap. 8 de Stallings) elimina esa restricción. -->
+
 ---
 
 <!-- _class: titulo -->
@@ -157,9 +159,12 @@ style: |
 | **Page** (Página) | Bloque de datos de longitud fija que reside en **memoria secundaria** (como un disco). Una página de datos puede copiarse temporalmente a un frame de memoria principal. |
 | **Segment** (Segmento) | Bloque de datos de **longitud variable** que reside en memoria secundaria. Un segmento completo puede copiarse a una región disponible de memoria principal (segmentación), o dividirse en páginas que pueden copiarse individualmente (segmentación y paginación combinadas). |
 
+<!-- Nota para el relator (Stallings, §7.1): Stallings aclara desde el principio los tres términos fundamentales. Frame y page son el mismo tamaño (bloques fijos), pero el frame está en RAM y la page en disco. El segmento es un concepto distinto: su tamaño varía porque agrupa código o datos con significado lógico para el programador. Esta distinción reaparece en §7.3 y §7.4. -->
+
 ---
 
 ```
+
 Memoria Secundaria (Disco)          Memoria Principal (RAM)
 ┌─────────────────────────┐         ┌───────┬───────┐
 │  Segmento (long. variable)        │ Frame │ Frame │
@@ -186,7 +191,8 @@ Frame   → bloque fijo de memoria principal
 | 4 | **Organización Lógica** | Soporte para programas modulares (segmentos) |
 | 5 | **Organización Física** | Gestión del flujo entre memoria principal y secundaria |
 
----
+<!-- Nota para el relator (Stallings, §7.1): Estos cinco requisitos son las restricciones que cualquier esquema de administración de memoria debe resolver. Sin relocación, no hay multiprogramación real. Sin protección, un proceso malicioso podría leer los datos de otro. La compartición permite eficiencia (una sola copia de una biblioteca). La organización lógica refleja que los programas no son un solo bloque monolítico sino módulos con distintos permisos. La organización física es jerárquica porque la RAM es cara y volátil, mientras que el disco es barato y persistente. -->
+
 
 ## 7.1a — Relocación
 
@@ -276,7 +282,10 @@ Nota para el relator: Este esquema muestra cómo luce la memoria física en un m
 
 > La protección debe ser implementada por el **procesador**, no por el SO, porque el SO no puede anticipar todas las referencias que hará un programa.
 
+<!-- Nota para el relator (Stallings, §7.1): La cita es clave: el SO solo puede establecer límites al cambiar contexto, pero no puede meterse en cada instrucción que ejecuta el proceso. Por eso el hardware (MMU) verifica cada acceso a memoria en tiempo real. En la práctica, los bits de modo (kernel/user) del procesador son los que determinan si una instrucción como acceso a E/S o cambio de registros de memoria es legal. Si un proceso en modo usuario intenta acceder a una dirección fuera de su rango, el hardware lanza una excepción (page fault / segmentation fault) y el SO toma el control. -->
+
 ---
+
 
 ## 7.1c — Compartición (*Sharing*)
 
@@ -299,7 +308,10 @@ Nota para el relator: Este esquema muestra cómo luce la memoria física en un m
 
 **Requisito:** Mecanismos de protección **flexibles** que permitan acceso compartido controlado.
 
+<!-- Nota para el relator (Stallings, §7.1): La compartición parece contradictoria con la protección, pero en realidad son complementarias. Stallings destaca que el desafío es permitir acceso controlado a regiones comunes sin violar el aislamiento. Ejemplo clásico: varios procesos usan la misma biblioteca de matemáticas en RAM (una copia), pero no pueden escribir sobre ella. Esto se logra con permisos por segmento/página (lectura vs. lectura/escritura). -->
+
 ---
+
 
 ## 7.1d — Organización Lógica
 
@@ -327,9 +339,12 @@ Programa típico:
 - Diferentes niveles de protección (solo lectura, solo ejecución)
 - Compartición a nivel de **módulo** (más natural para el usuario)
 
+<!-- Nota para el relator (Stallings, §7.1): La organización lógica anticipa la segmentación (§7.4). Stallings señala que los programas no se escriben como un solo bloque; se escriben en módulos (main, funciones, datos) que el compilador produce por separado. Idealmente, cada módulo debería poder tener su propia protección y ser compartible de forma independiente. -->
+
 ---
 
 ## 7.1e — Organización Física
+
 
 **Dos niveles de memoria:**
 
@@ -511,9 +526,12 @@ Solicitud de 16M:
 - ...crea muchos **fragmentos pequeños** que no sirven para nada
 - Obliga a compactar **más frecuentemente**
 
+<!-- Nota para el relator (Stallings, §7.2): La conclusión de que Best-Fit es el peor es contraintuitiva. Stallings cita estudios que muestran que, aunque Best-Fit minimiza el desperdicio en cada asignación, a largo plazo genera demasiados fragmentos pequeños inutilizables. First-Fit gana porque encuentra el primer bloque disponible sin buscar el "mejor ajuste", lo que lo hace más rápido y produce menos fragmentación total. Next-Fit, que reanuda desde la última posición asignada, tiende a concentrar la fragmentación al final de la memoria. -->
+
 ---
 
 # 7.2c — Buddy System (Sistema de Compañeros)
+
 
 **Compromiso entre partición fija y dinámica.**
 
@@ -622,7 +640,10 @@ Proceso en disco:                    Memoria Principal:
 
 **Ventaja:** No hay fragmentación externa. Solo fragmentación interna en la última página.
 
+<!-- Nota para el relator (Stallings, §7.3): La paginación es un salto conceptual: el proceso ya no necesita estar contiguo en RAM. Sus páginas se esparcen por frames libres. Esto elimina la fragmentación externa que atormentaba a la partición dinámica. La fragmentación interna persiste porque la última página rara vez se llena por completo. El tamaño de página típico (4 KB en x86) es un compromiso: páginas pequeñas desperdician menos pero agrandan las tablas; páginas grandes ahorran tablas pero aumentan la fragmentación interna. -->
+
 ---
+
 
 # 7.3 — Asignación de Procesos a Frames (Fig. 7.9)
 
@@ -752,7 +773,10 @@ Dirección relativa: 1502 = 0000010111011110
 
 > La paginación simple requiere que **todas** las páginas de un proceso estén en memoria para ejecutarse. La **memoria virtual** (Cap. 8) elimina esta limitación.
 
+<!-- Nota para el relator (Stallings, §7.3): La paginación simple es el paso previo a la memoria virtual. Aquí todas las páginas deben estar en RAM para ejecutar. El problema del "doble acceso" se resuelve con el TLB (Translation Lookaside Buffer, Cap. 8 de Stallings), una caché dentro de la CPU que almacena las traducciones más recientes. Sin TLB, cada referencia a memoria costaría el doble de tiempo. -->
+
 ---
+
 
 <!-- _class: titulo -->
 
@@ -783,9 +807,12 @@ Programa:
 
 **Dirección lógica:** (segmento #, offset)
 
+<!-- Nota para el relator (Stallings, §7.4): Stallings contrasta la segmentación con la paginación: mientras la paginación es invisible para el programador, la segmentación es explícita. El programador ve y maneja segmentos (main, datos, pila) como unidades lógicas. Cada segmento tiene su propia protección y puede compartirse independientemente. La desventaja es que los segmentos son de tamaño variable y sufren fragmentación externa, igual que la partición dinámica. -->
+
 ---
 
 # 7.4 — Segmentación vs. Partición Dinámica vs. Paginación
+
 
 | Característica | Paginación | Segmentación | Partición Dinámica |
 |---------------|------------|-------------|-------------------|
@@ -1008,9 +1035,12 @@ Proceso en Memoria (ejecución)
 - Dependencia de la presencia de las DLLs/.so
 - Posible fragmentación de versiones (*DLL Hell*)
 
+<!-- Nota para el relator (Stallings, Ap. 7A): El enlace dinámico es fundamental en sistemas modernos. Permite que múltiples procesos compartan una sola copia física de una biblioteca (como libc.so en Linux o kernel32.dll en Windows). Esto ahorra RAM, pero introduce el "DLL Hell": si dos programas requieren versiones distintas de la misma biblioteca, ocurren conflictos. En Linux, los enlaces simbólicos con número de versión (libc.so.6) mitigan este problema. -->
+
 ---
 
 # Ap. 7A — Tipos de Carga
+
 
 | Tipo | Descripción |
 |------|-------------|
