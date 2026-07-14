@@ -193,6 +193,7 @@ Frame   → bloque fijo de memoria principal
 
 <!-- Nota para el relator (Stallings, §7.1): Estos cinco requisitos son las restricciones que cualquier esquema de administración de memoria debe resolver. Sin relocación, no hay multiprogramación real. Sin protección, un proceso malicioso podría leer los datos de otro. La compartición permite eficiencia (una sola copia de una biblioteca). La organización lógica refleja que los programas no son un solo bloque monolítico sino módulos con distintos permisos. La organización física es jerárquica porque la RAM es cara y volátil, mientras que el disco es barato y persistente. -->
 
+---
 
 ## 7.1a — Relocación
 
@@ -541,6 +542,8 @@ Solicitud de 16M:
 - Al solicitar: dividir el bloque más pequeño que quepa
 - Al liberar: **coalescer** (fusionar) si ambos "compañeros" (*buddies*) están libres
 
+---
+
 ```
 Ejemplo con 1 MB inicial:
            ┌───────────────────────────────┐
@@ -567,16 +570,30 @@ Ejemplo con 1 MB inicial:
 ```
 Secuencia de asignaciones/liberaciones en 1 MB:
 
-1. Solicitud A=100K → asigna 128K       ┌─128K─┬─128K─┬─256K─┬─────512K─────┐
-2. Solicitud B=240K → asigna 256K       ┌─128K─┬─128K─┬─256K─┬─────512K─────┐
-                                          A=128K         B=256K
-3. Solicitud C=64K  → asigna 64K        ┌──64K──┬─64K──┬─256K─┬─────512K────┐
-                                          C=64K
-4. Solicitud D=256K → asigna 256K       ┌──64K──┬─64K──┬─256K─┬─256K─┬─256K─┐
-                                          C=64K         B=256K D=256K
-5. Libera B → coalesce 256K + 256K=512K ┌──64K──┬─64K──┬─────────512K────────┐
-                                          C=64K                 D=256K
-6. Solicitud E=75K → asigna 128K...
+1. Solicitud A=100K → asigna 128K
+   ┌──128K──┬──128K──┬──────256K──────┬──────────512K──────────┐
+    A=128K    libre         libre                libre
+
+2. Solicitud B=240K → asigna 256K (ya había un bloque libre de 256K exacto)
+   ┌──128K──┬──128K──┬──────256K──────┬──────────512K──────────┐
+    A=128K    libre        B=256K                libre
+
+3. Solicitud C=64K → asigna 64K (se divide el 128K libre, buddy de A)
+   ┌──128K──┬─64K─┬─64K─┬──────256K──────┬──────────512K──────────┐
+    A=128K   C=64K libre       B=256K                libre
+
+4. Solicitud D=256K → asigna 256K (se divide el 512K libre)
+   ┌──128K──┬─64K─┬─64K─┬──────256K──────┬──256K──┬──────256K──────┐
+    A=128K   C=64K libre       B=256K       D=256K       libre
+
+5. Libera B → NO fusiona: su buddy (el bloque de 256K donde están A y C)
+   no está completamente libre, así que B queda libre y aislado
+   ┌──128K──┬─64K─┬─64K─┬──────256K──────┬──256K──┬──────256K──────┐
+    A=128K   C=64K libre       libre        D=256K       libre
+
+6. Solicitud E=75K → asigna 128K (se divide uno de los bloques libres de 256K)
+   ┌──128K──┬─64K─┬─64K─┬─128K─┬─128K─┬──256K──┬──────256K──────┐
+    A=128K   C=64K libre  E=128K libre    D=256K       libre
 ```
 
 **Aplicación:** Usado en kernels UNIX para asignación de memoria del kernel.
@@ -587,8 +604,8 @@ Secuencia de asignaciones/liberaciones en 1 MB:
 
 ```
        ┌─────────────┐
-       │  Dirección   │
-       │  Relativa    │────┐
+       │  Dirección  │
+       │  Relativa   │────┐
        └─────────────┘    │
                           ▼
                   ┌───────────────┐
@@ -625,18 +642,15 @@ Secuencia de asignaciones/liberaciones en 1 MB:
 
 **Idea central:** Dividir la memoria en fragmentos pequeños de **tamaño fijo**.
 
-```
-Proceso en disco:                    Memoria Principal:
-┌──────┐ Page 0                     ┌──┬──┬──┬──┬──┬──┬──┬──┐
-│ Pág 0│─────┐                     │  │A0│  │A1│  │A2│  │A3│
-├──────┤     │                     ├──┼──┼──┼──┼──┼──┼──┼──┤
-│ Pág 1│     └────────────────────→│0 │1 │2 │3 │4 │5 │6 │7 │
-├──────┤                           └──┴──┴──┴──┴──┴──┴──┴──┘
-│ Pág 2│─────→ Frame 4
-├──────┤
-│ Pág 3│─────→ Frame 6
-└──────┘
-```
+---
+
+![bg ](img/fig_7_9_a.png)
+
+---
+
+![bg fit](img/fig_7_9_b.png)
+
+---
 
 **Ventaja:** No hay fragmentación externa. Solo fragmentación interna en la última página.
 
@@ -644,132 +658,64 @@ Proceso en disco:                    Memoria Principal:
 
 ---
 
-
-# 7.3 — Asignación de Procesos a Frames (Fig. 7.9)
-
-```
-(a) 15 frames libres    (b) Carga A (4 págs)     (c) Carga B (3 págs)
-
-┌──┬──┬──┬──┬──┬──┐    ┌──┬──┬──┬──┬──┬──┐    ┌──┬──┬──┬──┬──┬──┐
-│0 │1 │2 │3 │4 │5 │    │A0│A1│A2│A3│  │  │    │A0│A1│A2│A3│B0│B1│
-├──┼──┼──┼──┼──┼──┤    ├──┼──┼──┼──┼──┼──┤    ├──┼──┼──┼──┼──┼──┤
-│6 │7 │8 │9 │10│11│    │  │  │  │  │  │  │    │B2│  │  │  │  │  │
-├──┼──┼──┼──┼──┼──┤    ├──┼──┼──┼──┼──┼──┤    ├──┼──┼──┼──┼──┼──┤
-│12│13│14│  │  │  │    │  │  │  │  │  │  │    │  │  │  │  │  │  │
-└──┴──┴──┴──┴──┴──┘    └──┴──┴──┴──┴──┴──┘    └──┴──┴──┴──┴──┴──┘
-
-(d) Carga C (4 págs)    (e) Swap out B           (f) Carga D (5 págs)
-
-┌──┬──┬──┬──┬──┬──┐    ┌──┬──┬──┬──┬──┬──┐    ┌──┬──┬──┬──┬──┬──┐
-│A0│A1│A2│A3│B0│B1│    │A0│A1│A2│A3│  │  │    │A0│A1│A2│A3│D0│D1│
-├──┼──┼──┼──┼──┼──┤    ├──┼──┼──┼──┼──┼──┤    ├──┼──┼──┼──┼──┼──┤
-│B2│C0│C1│C2│C3│  │    │  │C0│C1│C2│C3│  │    │D2│C0│C1│C2│C3│  │
-├──┼──┼──┼──┼──┼──┤    ├──┼──┼──┼──┼──┼──┤    ├──┼──┼──┼──┼──┼──┤
-│  │  │  │  │  │  │    │  │  │  │  │  │  │    │D3│D4│  │  │  │  │
-└──┴──┴──┴──┴──┴──┘    └──┴──┴──┴──┴──┴──┘    └──┴──┴──┴──┴──┴──┘
-```
-
-**Observación:** Las páginas de un proceso NO necesitan estar en frames contiguos.
-
----
-
 # 7.3 — Tabla de Páginas (Figura 7.10)
 
 **Cada proceso tiene su propia tabla de páginas.**
 
-```
-Proceso A (4 págs)          Proceso D (5 págs)
-┌──────┬───────┐            ┌──────┬───────┐
-│ Pág  │ Frame │            │ Pág  │ Frame │
-├──────┼───────┤            ├──────┼───────┤
-│  0   │   0   │            │  0   │   4   │
-│  1   │   1   │            │  1   │   5   │
-│  2   │   2   │            │  2   │   6   │
-│  3   │   3   │            │  3   │  11   │
-└──────┴───────┘            │  4   │  12   │
-                            └──────┴───────┘
-Lista de frames libres: [13, 14, ...]
-```
+![](img/fig_7_10.png)
 
-**Traducción de dirección lógica:**
-```
-Dirección lógica = (página 1, offset 478)
-  → Buscar página 1 en la tabla → frame 5
-  → Dirección física = frame 5 + offset 478
-```
+**Tabla de páginas:** una entrada por cada página del proceso, indexada por número de página. Cada entrada indica el marco (frame) de memoria principal que contiene esa página, si la tiene asignada. El SO mantiene además una única lista de marcos libres, con todos los marcos disponibles para asignar.
 
 ---
 
 # 7.3 — Dirección Lógica en Paginación
 
-**El tamaño de página debe ser potencia de 2.**
+![](img/fig_7_11.png)
 
-```
-Ejemplo: direcciones de 16 bits, página de 1K = 1024 bytes = 2^10
-
-Dirección relativa: 1502 = 0000010111011110
-
-  6 bits             10 bits
-┌──────────┐    ┌──────────────┐
-│ Página 1 │    │ Offset 478   │
-│ (000001) │    │ (0111011110) │
-└──────────┘    └──────────────┘
-```
-
-**Traducción (Figura 7.12a):**
-```
-  Logical: 000001 0111011110
-           ↓       ↓
-  Pág 1 → Frame 6 (000110)
-           ↓       ↓
-  Physical: 000110 0111011110 = Frame 6, offset 478
-```
+<!-- Nota para el relator: La Figura 7.11 muestra dos vistas de la misma dirección lógica. (a) el formato general: una dirección de n+m bits partida en número de página (n bits, izquierda) y offset (m bits, derecha) — el m sale de log2(tamaño de página). (b) el ejemplo concreto de 16 bits con páginas de 1K: 6 bits de página + 10 bits de offset. Conviene señalar que esta partición es puramente posicional (no hay cálculo, solo "cortar" la dirección en dos campos), y que es la tabla de páginas la que traduce el campo izquierdo (número de página) a un número de marco; el campo derecho (offset) pasa intacto a la dirección física. -->
 
 ---
 
-# 7.3 — Traducción de Direcciones (Paginación)
+**Ejemplo:** Se usan direcciones de 16 bits y un tamaño de página de 1K = 1024 bytes. La dirección relativa 1502 en forma binaria es `0000010111011110`. Con un tamaño de página de 1K, se necesita un campo de offset de 10 bits, dejando 6 bits para el número de página. Así, un programa puede consistir en un máximo de $2^6 = 64$ páginas de 1 Kbyte cada una. Como muestra la Figura 7.11b, la dirección relativa 1502 corresponde a un offset de 478 (`0111011110`) en la página 1 (`000001`), lo que produce el mismo número de 16 bits: `0000010111011110`.
 
-```
-        Dirección Lógica (n+m bits)
-        ┌──────────────────────┐
-        │  Page #  │  Offset   │
-        │  (n bits)│  (m bits) │
-        └─────┬────┴─────┬────┘
-              │          │
-              ▼          │
-        ┌──────────┐     │
-        │Page Table│     │
-        │[pág]→frame│    │
-        └─────┬────┘     │
-              │          │
-       Frame  │          │  Offset
-         #    │          │
-              ▼          ▼
-        ┌──────────────────────┐
-        │  Dirección Física    │
-        │  Frame #  |  Offset  │
-        └──────────────────────┘
-```
+<!-- Nota para el relator: El offset es simplemente el resto de dividir la dirección relativa por el tamaño de página (1502 / 1024 = 1 página, resto 478), y el número de página es el cociente entero de esa división. Por eso, con tamaños de página potencia de 2, esa división se resuelve solo "partiendo" la dirección en bits: los m bits bajos son el offset y los n bits altos son el número de página, sin necesidad de calcular nada en hardware. Punto clave para despejar confusiones: el offset NUNCA cambia entre la dirección lógica y la física — es la posición dentro de la página/marco, que mide lo mismo en ambos casos. Lo único que la MMU traduce es el número de página al número de marco; el offset se copia tal cual al resultado final. -->
 
-**Pasos:**
-1. Extraer #página (bits más significativos)
-2. Indexar en la tabla de páginas → obtener #frame
-3. Concatenar frame + offset = dirección física
+---
+
+**Consecuencias de usar un tamaño de página potencia de 2:**
+
+1. **Transparencia.** El esquema de direccionamiento lógico es transparente para el programador, el ensamblador y el enlazador. Cada dirección lógica (número de página, offset) de un programa es idéntica a su dirección relativa.
+
+2. **Traducción eficiente en hardware.** Es relativamente fácil implementar una función en hardware para realizar la traducción dinámica de direcciones en tiempo de ejecución. Considere una dirección de $n + m$ bits, donde los $n$ bits más a la izquierda son el número de página y los $m$ bits más a la derecha son el offset. 
+
+---
+
+En nuestro ejemplo (Figura 7.11b), $n = 6$ y $m = 10$. Se necesitan los siguientes pasos para la traducción de direcciones:
+
+   **Paso 1:** Extraer el número de página como los $n$ bits más a la izquierda de la dirección lógica.
+
+   **Paso 2:** Usar el número de página como índice en la tabla de páginas del proceso para encontrar el número de marco (*frame*), $k$.
+
+   **Paso 3:** La dirección física de inicio del marco es $k \times 2^m$, y la dirección física del byte referenciado es ese número más el offset. Esta dirección física no necesita calcularse; se construye fácilmente **concatenando** el número de marco al offset (es decir, $k$ seguido del offset en binario).
+
+---
+
+![bg fit](img/fig_7_12.png)
 
 ---
 
 # 7.3 — Resumen de Paginación Simple
 
 **Ventajas:**
-- ✅ Sin fragmentación externa
-- ✅ No requiere compactación
-- ✅ Los frames no necesitan ser contiguos
-- ✅ Transparente al programador/compilador
+- Sin fragmentación externa
+- No requiere compactación
+- Los frames no necesitan ser contiguos
+- Transparente al programador/compilador
 
 **Desventajas:**
-- ❌ Fragmentación interna (última página parcialmente usada)
-- ❌ Overhead de la tabla de páginas (memoria)
-- ❌ Dos accesos a memoria por cada referencia (uno a la tabla, otro al dato)
+- Fragmentación interna (última página parcialmente usada)
+- Overhead de la tabla de páginas (memoria)
+- Dos accesos a memoria por cada referencia (uno a la tabla, otro al dato)
 
 > La paginación simple requiere que **todas** las páginas de un proceso estén en memoria para ejecutarse. La **memoria virtual** (Cap. 8) elimina esta limitación.
 
