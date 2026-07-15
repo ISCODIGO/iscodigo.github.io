@@ -565,7 +565,7 @@ Ejemplo con 1 MB inicial:
 
 ---
 
-# 7.2c — Buddy System — Ejemplo Completo (Figura 7.6)
+# 7.2c — Buddy System
 
 ```
 Secuencia de asignaciones/liberaciones en 1 MB:
@@ -597,36 +597,6 @@ Secuencia de asignaciones/liberaciones en 1 MB:
 ```
 
 **Aplicación:** Usado en kernels UNIX para asignación de memoria del kernel.
-
----
-
-# 7.2d — Relocación (Base + Límite)
-
-```
-       ┌─────────────┐
-       │  Dirección  │
-       │  Relativa   │────┐
-       └─────────────┘    │
-                          ▼
-                  ┌───────────────┐
-     Base Reg ───→│    Sumador    │
-                  └───────┬───────┘
-                          │
-                          ▼
-                  ┌───────────────┐
-                  │  Dirección    │
-     Bounds Reg──→│  ¿Dentro de   │──Sí──→ Acceso permitido
-                  │  límites?     │
-                  └───────┬───────┘
-                          │ No
-                          ▼
-                   Interrupción al SO
-                   (violación de segmento)
-```
-
-- **Base Register:** dirección de inicio del proceso
-- **Bounds Register:** dirección final (o tamaño máximo)
-- Permite **swapping** sin cambiar direcciones en el código
 
 ---
 
@@ -672,7 +642,9 @@ Secuencia de asignaciones/liberaciones en 1 MB:
 
 ![](img/fig_7_11.png)
 
-<!-- Nota para el relator: La Figura 7.11 muestra dos vistas de la misma dirección lógica. (a) el formato general: una dirección de n+m bits partida en número de página (n bits, izquierda) y offset (m bits, derecha) — el m sale de log2(tamaño de página). (b) el ejemplo concreto de 16 bits con páginas de 1K: 6 bits de página + 10 bits de offset. Conviene señalar que esta partición es puramente posicional (no hay cálculo, solo "cortar" la dirección en dos campos), y que es la tabla de páginas la que traduce el campo izquierdo (número de página) a un número de marco; el campo derecho (offset) pasa intacto a la dirección física. -->
+<!-- Nota para el relator: La Figura 7.11 muestra tres vistas de un mismo proceso de 2700 bytes. (a) Partitioning: la dirección relativa 1502 dentro del proceso contiguo, sin dividir en campos — es la referencia "antes" de aplicar paginación o segmentación. (b) Paging: la misma dirección 1502 partida en número de página (6 bits, izquierda) + offset (10 bits, derecha) con páginas de 1K; se ve la fragmentación interna en la última página (Page 2). (c) Segmentation: la misma dirección lógica pero como segmento# + offset (4 bits de segmento + 12 bits de offset): segmento 1, offset 752, dentro de un segmento de 1950 bytes. Conviene señalar que en (b) la partición es puramente posicional (no hay cálculo, solo "cortar" la dirección en dos campos) porque el tamaño de página es potencia de 2, y que es la tabla de páginas la que traduce el número de página a un número de marco; el offset pasa intacto a la dirección física. En (c), en cambio, los segmentos son de tamaño variable, así que la tabla de segmentos no solo traduce sino que también valida el offset contra el largo (length) del segmento — el detalle completo se retoma en la sección 7.4 (Figura 7.11c). -->
+
+<!-- Nota para el relator: falta acá el enunciado (c) de la figura 7.11 — se desarrolla más abajo en la sección "7.4 — Dirección Lógica en Segmentación (Figura 7.11c)", pero conviene mencionar en esta diapositiva que la misma figura ya incluye el panel de segmentación, para que el alumno lo relacione desde el principio con (a) y (b). -->
 
 ---
 
