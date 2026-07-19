@@ -20,7 +20,7 @@
 
 ## Objetivo
 
-Observar en Linux los conceptos teóricos de los Capítulos 2 (MOS) y 4 (OSID):
+Observar en Linux los conceptos teóricos de los Capítulos relacionados con hilos y procesos, y cómo se implementan en la práctica:
 
 - Identificación de hilos: TID de kernel vs. identificador POSIX
 - Creación de hilos dentro de un proceso (`pthread_create`)
@@ -195,7 +195,7 @@ ls /proc/$PID/task
 ### Preguntas de análisis
 
 1. ¿Por qué `getpid()` devuelve el mismo valor en el hilo principal y en los hilos creados?
-2. El TID del hilo principal coincide con el PID del proceso. Explica por qué usando lo que sabes de `task_struct` en Linux (OSID § 4.6).
+2. El TID del hilo principal coincide con el PID del proceso. Explica por qué usando lo que sabes de `task_struct` en Linux.
 3. ¿Qué diferencia hay entre `pthread_t` y el TID de kernel?
 
 ---
@@ -216,8 +216,6 @@ flowchart TD
 ```
 
 > **Diferencia con `fork()`:** `fork()` copia el espacio de direcciones (o usa COW); `pthread_create()` comparte el mismo espacio. Un hilo nuevo es más barato de crear y puede comunicarse directamente a través de variables globales.
-
-> **Referencia:** MOS § 2.2.3 — *POSIX Threads*; OSID § 4.6 — `clone()` con `CLONE_VM | CLONE_FILES | CLONE_THREAD`.
 
 ### Código — `t2_create.c`
 
@@ -305,8 +303,6 @@ Hilo A escribe contador = 101
 Hilo B escribe contador = 101   ← se pierde un incremento
 ```
 
-> **Referencia:** MOS § 2.3.1 — *Race Conditions*; OSID § 5.1 — *Mutual Exclusion*.
-
 ### Código — `t3_carrera.c`
 
 ```c
@@ -360,7 +356,7 @@ El resultado cambia en cada ejecución y es siempre menor que el esperado — ev
 
 ### Preguntas de análisis
 
-1. ¿Por qué `contador++` no es una operación atómica? Descompón la instrucción en pasos de CPU (leer, modificar, escribir).
+1. ¿Por qué `contador++` no es una operación atómica? Descomponer la instrucción en pasos de CPU (leer, modificar, escribir).
 2. ¿Por qué el resultado siempre es *menor* que `N_HILOS × ITERACIONES` y nunca mayor?
 3. ¿Qué ocurre si reduces `N_HILOS` a 1? ¿Aparece la condición de carrera?
 
@@ -467,8 +463,6 @@ A diferencia de Windows, que separa explícitamente `PROCESS_OBJECT` y `THREAD_O
 | Identificador de "proceso" | PID | TGID (== PID del hilo principal) |
 | Identificador de "hilo" | TID | PID de kernel (`gettid()`) |
 | Recursos compartidos entre hilos | Vía el `PROCESS_OBJECT` | Vía `mm_struct`, tabla de archivos y señales, compartidos por flags de `clone()` |
-
-> **Referencia:** OSID § 4.6 — *Linux tasks*: "Linux uses the term task ... to refer to a running program fragment; this term can refer to a process or to a thread within a process."
 
 ### Código — `t5_objetos.c`
 
@@ -716,12 +710,11 @@ Conclusión:
 ### Preguntas de análisis
 
 1. ¿Cuántos hilos tiene el proceso 1 (`init`/`systemd`)? ¿Por qué todo proceso tiene al menos un hilo?
-2. Compara el promedio de hilos por proceso que obtuviste con el de Windows Ejercicio 6 (~12). ¿Es distinto en Linux? ¿A qué se debe?
+2. Compara el promedio de hilos por proceso que obtuviste con el de Windows. ¿Es distinto en Linux? ¿A qué se debe?
 3. ¿Qué proceso de tu sistema tiene más hilos? Investígalo con el segundo comando de `ps -eLf` de arriba.
 
 ---
 
 *Basado en:*  
-*Tanenbaum & Bos, Modern Operating Systems, 4.ª Ed. (§ 2.2–2.3)*  
-*Stallings, Operating Systems: Internals and Design Principles, 9.ª Ed. (Cap. 4, esp. § 4.6)*  
-*Plataforma: GNU/Linux — Compilador: GCC — Biblioteca: POSIX Threads (pthreads)*
+*Tanenbaum & Bos, Modern Operating Systems, 4.ª Ed.*  
+*Stallings, Operating Systems: Internals and Design Principles, 9.ª Ed.*  

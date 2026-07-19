@@ -1,19 +1,10 @@
----
-layout: default
-title: "Lab: Procesos vs Hilos en Windows (Win32 API)"
-parent: "Unidad I: Introducción a SO y Control de Procesos"
-grand_parent: "ISC-333 Sistemas Operativos I"
-nav_order: 8
-has_mermaid: true
----
-
 # Laboratorio: Procesos vs Hilos en Windows (Win32 API)
 
 **Plataforma:** Microsoft Windows 10/11  
 **Compilador:** MinGW-w64 (gcc) o MSVC (cl.exe)  
 **API:** Win32 (Windows API)  
 **Referencias:**
-- Stallings, *Operating Systems: Internals and Design Principles*, 9.ª Ed., **§ 4.4 — Windows Thread and Process Management**
+- Stallings, *Operating Systems: Internals and Design Principles*, 9.ª Ed.
 - Tanenbaum & Bos, *Modern Operating Systems*, 4.ª Ed., **§ 2.2 — Threads**
 - Microsoft Docs: [Processes and Threads](https://docs.microsoft.com/en-us/windows/win32/procthread/processes-and-threads)
 
@@ -37,7 +28,7 @@ Observar en Windows la diferencia fundamental entre **procesos** e **hilos** usa
 - **Procesos (`CreateProcess`)**: unidad de propiedad de recursos (`PROCESS_OBJECT`), espacio de direcciones separado
 - **Hilos (`CreateThread`)**: unidad de planificación/ejecución (`THREAD_OBJECT`), comparten el espacio de direcciones del proceso
 
-| Concepto (Stallings § 4.1, 4.4) | Procesos | Hilos |
+| Concepto (Stallings) | Procesos | Hilos |
 |----------|----------|-------|
 | Unidad de **propiedad de recursos** (*resource ownership*) | ✓ `PROCESS_OBJECT` | ✗ |
 | Unidad de **planificación/ejecución** (*dispatchable unit*) | ✗ (1 hilo por defecto) | ✓ `THREAD_OBJECT` |
@@ -58,40 +49,7 @@ Observar en Windows la diferencia fundamental entre **procesos** e **hilos** usa
 
 > **Nota:** La API Win32 está disponible desde `<windows.h>`. No requiere enlaces adicionales (`-lpthread` como en Linux).
 
-#### Instalación paso a paso — MinGW-w64 (recomendado)
-
-```powershell
-winget install --id=MSYS2.MSYS2
-```
-
-1. Abre el menú Inicio y ejecuta la terminal **"MSYS2 UCRT64"** (no la ventana "MSYS2 MSYS" genérica — el toolchain UCRT64 es el que coincide con el runtime de Windows 10/11).
-2. Dentro de esa terminal, actualiza el sistema de paquetes y luego instala el compilador:
-
-   ```bash
-   pacman -Syu
-   pacman -S mingw-w64-ucrt-x86_64-gcc
-   ```
-
-3. Agrega `C:\msys64\ucrt64\bin` al `PATH` del sistema (Panel de control → Sistema → Variables de entorno, o con PowerShell como administrador):
-
-   ```powershell
-   [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\msys64\ucrt64\bin", "User")
-   ```
-
-4. **Cierra y vuelve a abrir PowerShell** (el `PATH` no se actualiza en sesiones ya abiertas) y verifica:
-
-   ```powershell
-   gcc --version
-   ```
-
-Si `gcc --version` no responde, la causa casi siempre es una de estas dos: abriste la terminal "MSYS2 MSYS" en vez de "MSYS2 UCRT64" en el paso 2, o no reiniciaste la ventana de PowerShell después de modificar el `PATH`.
-
-> **Diagnóstico — `C:\msys64\ucrt64\bin` está vacía:** Instalar MSYS2 con winget solo trae la base del sistema (bash, pacman), **no** el compilador. Si esa carpeta no tiene archivos, significa que falta el paso 2 (`pacman -S mingw-w64-ucrt-x86_64-gcc`). Corre `pacman -Syu` primero; si a mitad del proceso te pide cerrar la ventana, hazlo y vuelve a ejecutar `pacman -Syu` una segunda vez antes de instalar el compilador.
-
-#### Alternativa — MSVC
-
-1. Instala **Visual Studio Build Tools 2022** (workload "Desarrollo de escritorio con C++").
-2. `cl.exe` **no** está en el `PATH` de una PowerShell normal — debes usar la terminal **"Developer Command Prompt for VS 2022"** (o **"Developer PowerShell for VS 2022"**) que aparece en el menú Inicio tras la instalación.
+Es posible instalar un entorno de desarrollo como Code::Blocks que permiten compilar y ejecutar programas Win32.
 
 ### Instalar Process Explorer (recomendado)
 
@@ -228,7 +186,7 @@ w1_identidad.exe
 
 #### Preguntas de análisis
 
-1. ¿Por qué `PID` es el mismo en el hilo principal y en los hilos creados? (Relaciona con el concepto de `PROCESS_OBJECT` en Stallings § 4.4).
+1. ¿Por qué `PID` es el mismo en el hilo principal y en los hilos creados? (Relaciona con el concepto de `PROCESS_OBJECT` en Stallings).
 2. Ejecuta el programa varias veces. ¿El TID del hilo principal coincide numéricamente con el PID del proceso en todas las ejecuciones? ¿Qué conclusión obtienes sobre la relación entre `GetCurrentProcessId()` y `GetCurrentThreadId()` en Windows?
 3. Compara con el laboratorio de Linux Ejercicio 1: allá `gettid()` del hilo principal coincide con `getpid()`. ¿Por qué en Windows esto puede ser diferente?
 
@@ -355,7 +313,7 @@ Get-Process -Name w2_createprocess, w2_child
 
 #### Preguntas de análisis
 
-1. ¿Qué diferencia fundamental observas entre `CreateProcess()` de Windows y `fork()` + `exec()` de UNIX? (Stallings § 4.4 vs. § 4.6).
+1. ¿Qué diferencia fundamental observas entre `CreateProcess()` de Windows y `fork()` + `exec()` de UNIX?.
 2. El hijo se ejecuta en un **espacio de direcciones separado**. Si el hijo modificara una variable global, ¿el padre la vería cambiada? ¿Por qué?
 3. Windows **no tiene jerarquía de procesos** (árbol). El creador recibe un handle. ¿Qué implica esto sobre la relación padre–hijo si el padre termina antes que el hijo?
 
@@ -375,8 +333,6 @@ flowchart TD
     H1 -->|"return 0"| J1["WaitForSingleObject recoge"]
     H2 -->|"return 0"| J2["WaitForSingleObject recoge"]
 ```
-
-> **Referencia:** Stallings § 4.4 — *"A thread object contains the thread's context, dynamic priority, alert status, suspend count, and impersonation token."*
 
 ### Código — `w3_createthread.c`
 
@@ -489,7 +445,7 @@ w3_createthread.exe
 
 ## Ejercicio 3 — El ejercicio clave: memoria compartida (hilos) vs. separada (procesos)
 
-### Conceptos relacionados (Stallings § 4.1, § 4.4)
+### Conceptos relacionados
 
 Este es el ejercicio central del laboratorio. Demuestra experimentalmente la diferencia fundamental:
 
@@ -499,8 +455,6 @@ Este es el ejercicio central del laboratorio. Demuestra experimentalmente la dif
 | Modificación de variables | Copia privada → cambios no se propagan | Único valor → cambios visibles entre hilos |
 | Aislamiento | Alto | Bajo (riesgo de corrupción) |
 | Comunicación | Explícita (IPC) | Directa (variables globales) |
-
-> **Referencia:** Stallings § 4.1 — *"All of the threads of a process share the state and resources of that process. They reside in the same address space and have access to the same data."*
 
 ### Código — `w4_compartida.c`
 
@@ -620,15 +574,15 @@ CONCLUSIÓN:
 
 1. El hilo modifica `variable_compartida` a 777 y el main **ve** el cambio. El proceso hijo la modifica a 999 y el main **no ve** el cambio. Explica por qué usando el concepto de espacio de direcciones virtuales.
 2. El proceso hijo imprime la misma dirección de memoria virtual que el padre. ¿Significa eso que apuntan al mismo marco de página física? (Stallings — memoria virtual vs. física).
-3. Según Stallings § 4.1, ¿cuál es la principal **ventaja** y la principal **desventaja** de que los hilos compartan memoria?
+3. Según Stallings, ¿cuál es la principal **ventaja** y la principal **desventaja** de que los hilos compartan memoria?
 
 ---
 
-## Ejercicio 4 — Estados de hilo en Windows (Stallings § 4.4)
+## Ejercicio 4 — Estados de hilo en Windows
 
 ### Conceptos relacionados
 
-Windows define **6 estados** para los hilos, según Stallings § 4.4:
+Windows define **6 estados** para los hilos, según Stallings:
 
 | Estado | Descripción |
 |--------|-------------|
@@ -1041,7 +995,7 @@ RESUMEN:
 
 ### Preguntas de análisis
 
-1. Según Stallings § 4.4, un proceso Windows **no puede ejecutar sin al menos un hilo**. ¿Cómo se asegura esto cuando se crea un proceso con `CreateProcess()`?
+1. Según Stallings, un proceso Windows **no puede ejecutar sin al menos un hilo**. ¿Cómo se asegura esto cuando se crea un proceso con `CreateProcess()`?
 2. ¿Cuántos THREAD_OBJECTs puede tener un solo PROCESS_OBJECT? ¿Hay un límite teórico?
 3. ¿Qué atributos exclusivos del THREAD_OBJECT menciona Stallings que no existen en el PROCESS_OBJECT? (Pista: prioridad dinámica, contador de suspensión, contexto, token de suplantación).
 
@@ -1049,7 +1003,7 @@ RESUMEN:
 
 ## Ejercicio 6 — Hilos en el sistema: exploración con herramientas
 
-### Conceptos relacionados (Stallings § 4.4)
+### Conceptos relacionados
 
 En Windows, cada proceso tiene al menos un hilo. Algunos procesos del sistema tienen cientos. Explorar los hilos del sistema ayuda a comprender que:
 
@@ -1211,8 +1165,7 @@ Conclusión (Stallings § 4.4):
 
 ---
 
-*Basado en:*
-*Stallings, Operating Systems: Internals and Design Principles, 9.ª Ed. (§ 4.4 — Windows Thread and Process Management; § 4.1 — Thread Concepts)*
-*Tanenbaum & Bos, Modern Operating Systems, 4.ª Ed. (§ 2.2 — Threads)*
+*Basado en:*  
+*Stallings, Operating Systems: Internals and Design Principles, 9.ª Ed.*  
+*Tanenbaum & Bos, Modern Operating Systems, 4.ª Ed.*  
 *Microsoft Docs: Processes and Threads (Win32 API)*
-*Plataforma: Microsoft Windows 10/11 — Compilador: MinGW-w64 / MSVC — API: Win32*
