@@ -134,7 +134,6 @@ En Linux cada hilo es un `task_struct` con su propio **TID de kernel** (visible 
 | **TID de kernel** | Identifica al hilo individual dentro del kernel | `gettid()` *(Linux 2.4.11+)* | `/proc/<PID>/task/<TID>/` |
 | **pthread_t** | Identificador opaco POSIX del hilo | `pthread_self()` | — |
 
-> **Referencia:** MOS § 2.2.1 — *Thread Usage*; OSID § 4.6 — *task_struct* en Linux.
 
 ### Código — `t1_identidad.c`
 
@@ -206,14 +205,7 @@ ls /proc/$PID/task
 
 `pthread_create()` crea un nuevo hilo de ejecución dentro del **mismo proceso**. Internamente invoca la syscall `clone()` con flags que permiten compartir espacio de memoria, descriptores de archivo y señales:
 
-```mermaid
-flowchart TD
-    M["Hilo principal\npthread_self = A\ngettid = X"]
-    M -->|pthread_create| H1["Hilo 1\npthread_self = B\ngettid = X+1\nMisma memoria del proceso"]
-    M -->|pthread_create| H2["Hilo 2\npthread_self = C\ngettid = X+2\nMisma memoria del proceso"]
-    H1 -->|retorna NULL| J1["pthread_join recoge H1"]
-    H2 -->|retorna NULL| J2["pthread_join recoge H2"]
-```
+![Diagrama de creación de hilos](img/thread_management_linux.png)
 
 > **Diferencia con `fork()`:** `fork()` copia el espacio de direcciones (o usa COW); `pthread_create()` comparte el mismo espacio. Un hilo nuevo es más barato de crear y puede comunicarse directamente a través de variables globales.
 
@@ -375,8 +367,6 @@ Linux no distingue estados de hilo de los de proceso: cada hilo es un `task_stru
 | **Uninterruptible sleep** | `D` | Esperando E/S de disco; no puede interrumpirse con señales |
 | **Stopped** | `T` | Detenido por `SIGSTOP` o being traced (`ptrace`) |
 | **Zombie** | `Z` | Terminó pero nadie ha hecho `pthread_join`/`wait` sobre él |
-
-> **Referencia:** OSID § 4.6 — estados de proceso/hilo en Linux; `man proc` — formato de `/proc/[pid]/status`.
 
 ### Código — `t4_estados.c`
 

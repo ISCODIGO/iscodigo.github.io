@@ -5,7 +5,7 @@
 **API:** Win32 (Windows API)  
 **Referencias:**
 - Stallings, *Operating Systems: Internals and Design Principles*, 9.ª Ed.
-- Tanenbaum & Bos, *Modern Operating Systems*, 4.ª Ed., **§ 2.2 — Threads**
+- Tanenbaum & Bos, *Modern Operating Systems*, 4.ª Ed.,
 - Microsoft Docs: [Processes and Threads](https://docs.microsoft.com/en-us/windows/win32/procthread/processes-and-threads)
 
 ---
@@ -23,7 +23,7 @@
 
 ## Objetivo
 
-Observar en Windows la diferencia fundamental entre **procesos** e **hilos** usando la API Win32, apoyado en los conceptos de Stallings § 4.4:
+Observar en Windows la diferencia fundamental entre **procesos** e **hilos** usando la API Win32. Se demostrará que:
 
 - **Procesos (`CreateProcess`)**: unidad de propiedad de recursos (`PROCESS_OBJECT`), espacio de direcciones separado
 - **Hilos (`CreateThread`)**: unidad de planificación/ejecución (`THREAD_OBJECT`), comparten el espacio de direcciones del proceso
@@ -114,7 +114,7 @@ cd %USERPROFILE%\lab-hilos-windows
 
 ### Parte A — Identificación: PID vs TID
 
-#### Conceptos relacionados (Stallings § 4.4)
+#### Conceptos relacionados (Stallings)
 
 En Windows, cada proceso tiene un **PID** y cada hilo tiene un **TID**. A diferencia de Linux, donde el hilo principal tiene `gettid() == getpid()`, en Windows **PID y TID son numéricamente diferentes** porque cada hilo es un `THREAD_OBJECT` independiente del `PROCESS_OBJECT`.
 
@@ -192,22 +192,13 @@ w1_identidad.exe
 
 ### Parte B — Creación de procesos con `CreateProcess()`
 
-#### Conceptos relacionados (Stallings § 4.4)
+#### Conceptos relacionados (Stallings)
 
 A diferencia de UNIX, donde `fork()` crea un clon y `exec()` carga una nueva imagen (dos pasos), en Windows **`CreateProcess()`** hace ambas operaciones en una sola llamada.
 
 En Windows **no existe** jerarquía padre–hijo al estilo UNIX. El creador recibe un **handle** al nuevo proceso, pero la relación es administrativa, no estructural. Todos los procesos son iguales ante el sistema.
 
-```mermaid
-flowchart LR
-    P["Proceso padre\n(main.exe)"]
-    NP["Nuevo proceso\n(child.exe)\nEspacio propio"]
-    P -->|"CreateProcess(child.exe)"| NP
-    P -->|"WaitForSingleObject"| W[Espera]
-    NP -->|"ExitProcess()"| W
-```
-
-> **Referencia:** Stallings § 4.4 — *Process Creation in Windows*. "When a process is created, a process object is created and a thread object is also created."
+![Diagrama de creación de procesos en Windows](img/process_creation.png)
 
 #### Código — `w2_createprocess.c`
 
@@ -321,18 +312,11 @@ Get-Process -Name w2_createprocess, w2_child
 
 ## Ejercicio 2 — Creación de hilos con `CreateThread()`
 
-### Conceptos relacionados (Stallings § 4.4)
+### Conceptos relacionados (Stallings)
 
 `CreateThread()` crea un nuevo `THREAD_OBJECT` dentro del `PROCESS_OBJECT` actual. El hilo comparte el espacio de direcciones, la tabla de handles y los recursos del proceso. Cada hilo tiene su propia pila, contexto de registros y almacenamiento local (TLS).
 
-```mermaid
-flowchart TD
-    M["Hilo principal\nTID = A"]
-    M -->|"CreateThread"| H1["Hilo 1\nTID = B\nMisma memoria del proceso"]
-    M -->|"CreateThread"| H2["Hilo 2\nTID = C\nMisma memoria del proceso"]
-    H1 -->|"return 0"| J1["WaitForSingleObject recoge"]
-    H2 -->|"return 0"| J2["WaitForSingleObject recoge"]
-```
+![Diagrama de creación de hilos en Windows](img/thread_creation.png)
 
 ### Código — `w3_createthread.c`
 
@@ -439,7 +423,7 @@ w3_createthread.exe
 
 1. Compara `CreateThread()` con `pthread_create()` del laboratorio de Linux. ¿Qué parámetros son equivalentes? ¿Cuál es la diferencia en el valor de retorno?
 2. ¿Por qué los mensajes `inicio` de los 4 hilos aparecen antes de cualquier `fin`? ¿Qué dice esto sobre la ejecución concurrente?
-3. ¿Qué representa el `HANDLE` devuelto por `CreateThread()`? (Stallings § 4.4 — *Windows handles and object management*).
+3. ¿Qué representa el `HANDLE` devuelto por `CreateThread()`?
 
 ---
 
@@ -595,16 +579,7 @@ Windows define **6 estados** para los hilos, según Stallings:
 
 Con `CreateThread` podemos crear hilos en estado **Suspended** (con `CREATE_SUSPENDED`) y observar cómo cambian de estado: Suspended → Ready → Running → Waiting.
 
-```mermaid
-stateDiagram-v2
-    [*] --> Ready : CreateThread()
-    Ready --> Standby : dispatcher selecciona
-    Standby --> Running : cambio de contexto
-    Running --> Ready : fin de quantum (apropiación)
-    Running --> Waiting : Sleep(), E/S, sincronización
-    Waiting --> Ready : evento ocurre
-    Running --> Terminated : ExitThread() / return
-```
+![Diagrama de estados de hilo en Windows](img/thread_state_machine.png)
 
 ### Código — `w5_estados.c`
 
@@ -613,7 +588,7 @@ stateDiagram-v2
 #include <windows.h>
 
 /*
- * Demostración de los estados de hilo en Windows (Stallings § 4.4).
+ * Demostración de los estados de hilo en Windows.
  *
  * Creamos varios hilos que cambian de estado:
  *   Ready → Running → Waiting (Sleep) → Ready → Running → Terminated
@@ -649,7 +624,7 @@ int main(void) {
     int params[N_HILOS];
     int i;
 
-    printf("=== Estados de Hilo en Windows (Stallings § 4.4) ===\n\n");
+    printf("=== Estados de Hilo en Windows (Stallings) ===\n\n");
     printf("Abre Process Explorer y busca este proceso.\n");
     printf("Observa los hilos en la pestaña Threads.\n\n");
 
@@ -726,7 +701,7 @@ w5_estados.exe
 ### Salida esperada
 
 ```
-=== Estados de Hilo en Windows (Stallings § 4.4) ===
+=== Estados de Hilo en Windows (Stallings) ===
 
 Abre Process Explorer y busca este proceso.
 Observa los hilos en la pestaña Threads.
@@ -775,44 +750,23 @@ Estados observados:
 
 ### Preguntas de análisis
 
-1. Según Stallings § 4.4, Windows tiene 6 estados de hilo. ¿Cuáles observaste directamente en este ejercicio? ¿Cuáles no?
+1. Según Stallings, Windows tiene 6 estados de hilo. ¿Cuáles observaste directamente en este ejercicio? ¿Cuáles no?
 2. ¿Qué diferencia hay entre **Ready** y **Standby** en Windows? (Pista: Standby es un estado de transición muy breve).
-3. Windows tiene un estado llamado **Transition** que no observamos aquí. ¿Cuándo ocurre? (Pista: ¿qué pasa si la pila del kernel del hilo fue paginada a disco?).
 
 ---
 
-## Ejercicio 5 — Objeto Proceso vs. Objeto Hilo en Windows (Stallings § 4.4)
+## Ejercicio 5 — Objeto Proceso vs. Objeto Hilo en Windows
 
 ### Conceptos relacionados
 
-Stallings § 4.4 explica que Windows distingue explícitamente entre:
+Stallings explica que Windows distingue explícitamente entre:
 
 - **`PROCESS_OBJECT`**: tiene espacio de direcciones, tabla de handles, descriptores de seguridad, prioridad base, afinidad de procesador, límites de cuota
 - **`THREAD_OBJECT`**: tiene contexto de registros, prioridad dinámica, contador de suspensión, estado de alerta, token de suplantación
 
 Un proceso Windows **no puede ejecutar sin un hilo**. `CreateProcess()` siempre crea el proceso **y** su hilo principal automáticamente. `CreateThread()` solo crea hilos adicionales dentro de un proceso existente.
 
-```mermaid
-flowchart TD
-    subgraph "PROCESS_OBJECT"
-        MEM[Espacio de direcciones]
-        HT[Tabla de Handles]
-        SEC[Descriptor de Seguridad]
-        PRIO[Prioridad Base]
-    end
-    subgraph "THREAD_OBJECT 1"
-        REG1[Contexto/Registros]
-        STACK1[Pila propia]
-        TID1[TID = A]
-    end
-    subgraph "THREAD_OBJECT 2"
-        REG2[Contexto/Registros]
-        STACK2[Pila propia]
-        TID2[TID = B]
-    end
-    PROCESS_OBJECT --> THREAD_OBJECT_1
-    PROCESS_OBJECT --> THREAD_OBJECT_2
-```
+![Proceso vs Hilo](img/process_thread_management.png)
 
 Este ejercicio crea un proceso y explora la relación proceso ↔ hilos centralizada en el **PROCESS_INFORMATION**.
 
@@ -823,7 +777,7 @@ Este ejercicio crea un proceso y explora la relación proceso ↔ hilos centrali
 #include <windows.h>
 
 /*
- * Stallings § 4.4: PROCESS_OBJECT vs THREAD_OBJECT
+ * Stallings: PROCESS_OBJECT vs THREAD_OBJECT
  *
  * Demostración de que:
  * 1. CreateProcess() crea un proceso + su hilo principal
@@ -867,7 +821,7 @@ int main(int argc, char *argv[]) {
     DWORD pid_actual = GetCurrentProcessId();
     DWORD tid_actual = GetCurrentThreadId();
 
-    printf("=== Stallings § 4.4: PROCESS_OBJECT vs THREAD_OBJECT ===\n\n");
+    printf("=== Stallings: PROCESS_OBJECT vs THREAD_OBJECT ===\n\n");
     printf("[PADRE] Este PROCESO (PROCESS_OBJECT): PID = %lu\n", pid_actual);
     printf("[PADRE]   Hilo principal (THREAD_OBJECT): TID = %lu\n", tid_actual);
 
@@ -960,7 +914,7 @@ w6_objetos.exe
 ### Salida esperada
 
 ```
-=== Stallings § 4.4: PROCESS_OBJECT vs THREAD_OBJECT ===
+=== Stallings: PROCESS_OBJECT vs THREAD_OBJECT ===
 
 [PADRE] Este PROCESO (PROCESS_OBJECT): PID = 24560
 [PADRE]   Hilo principal (THREAD_OBJECT): TID = 24560
@@ -1050,7 +1004,7 @@ Get-Process -Name explorer | Select-Object -ExpandProperty Threads |
  * Explorar los hilos del sistema usando la API de Windows.
  * Equivalente a: ps -eLf en Linux, pero desde Win32.
  *
- * Stallings § 4.4: observamos que cada proceso tiene al menos
+ * Stallings: observamos que cada proceso tiene al menos
  * un hilo, y que los hilos son las unidades de ejecución reales.
  */
 
@@ -1059,7 +1013,7 @@ int main(void) {
     THREADENTRY32 te;
     DWORD total_hilos = 0;
 
-    printf("=== Exploración de Hilos en el Sistema (Stallings § 4.4) ===\n\n");
+    printf("=== Exploración de Hilos en el Sistema (Stallings) ===\n\n");
 
     /* Tomar una instantánea de todos los hilos del sistema */
     hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
@@ -1112,7 +1066,7 @@ int main(void) {
     printf("Promedio hilos por proceso:   %.1f\n",
            (double)total_hilos / total_procesos);
 
-    printf("\nConclusión (Stallings § 4.4):\n");
+    printf("\nConclusión (Stallings):\n");
     printf("  Cada proceso (PROCESS_OBJECT) tiene 1+ hilos (THREAD_OBJECT).\n");
     printf("  Los hilos son las unidades reales de planificación.\n");
     printf("  Un proceso 'sin hilos' no puede ejecutar instrucciones.\n");
@@ -1130,7 +1084,7 @@ w7_explorar.exe
 ### Salida esperada
 
 ```
-=== Exploración de Hilos en el Sistema (Stallings § 4.4) ===
+=== Exploración de Hilos en el Sistema (Stallings) ===
 
 PID del proceso actual: 24560
 TID del hilo actual:    24561
@@ -1151,7 +1105,7 @@ Total procesos en el sistema: 185
 Total hilos en el sistema:    2340
 Promedio hilos por proceso:   12.6
 
-Conclusión (Stallings § 4.4):
+Conclusión (Stallings):
   Cada proceso (PROCESS_OBJECT) tiene 1+ hilos (THREAD_OBJECT).
   Los hilos son las unidades reales de planificación.
   Un proceso 'sin hilos' no puede ejecutar instrucciones.
@@ -1160,7 +1114,7 @@ Conclusión (Stallings § 4.4):
 ### Preguntas de análisis
 
 1. ¿Cuántos hilos tiene el proceso `System Idle Process` (PID 0)? ¿Por qué siempre hay al menos un hilo en cada proceso?
-2. Según Stallings § 4.4, un proceso es "unidad de propiedad de recursos" y un hilo es "unidad de planificación". ¿Cómo se refleja esto en los conteos que obtuviste (promedio ~12 hilos por proceso)?
+2. Según Stallings, un proceso es "unidad de propiedad de recursos" y un hilo es "unidad de planificación". ¿Cómo se refleja esto en los conteos que obtuviste (promedio ~12 hilos por proceso)?
 3. ¿Qué proceso tiene más hilos en tu sistema? ¿Por qué crees que ese proceso necesita tantos hilos?
 
 ---
