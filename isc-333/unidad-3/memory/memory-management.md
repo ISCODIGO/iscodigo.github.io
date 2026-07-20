@@ -674,6 +674,8 @@ En nuestro ejemplo (Figura 7.11b), $n = 6$ y $m = 10$. Se necesitan los siguient
 
 ![bg fit](img/fig_7_12.png)
 
+<!-- Nota para el relator (Stallings, Figura 7.12): Esta figura junta en un solo lugar los dos mecanismos de traducción que se están viendo por separado: (a) Paginación y (b) Segmentación, ambos partiendo de la misma idea general (dirección lógica → tabla → dirección física) pero resolviéndola distinto. En (a) Paginación: la dirección lógica se corta en número de página + offset por simple posición de bits (no hay cálculo); el número de página indexa la tabla de páginas y devuelve un número de marco; la dirección física se arma concatenando marco + offset. Como todas las páginas miden lo mismo, no hace falta comparar contra ningún límite. En (b) Segmentación: la dirección lógica se corta en número de segmento + offset; el segmento indexa la tabla de segmentos, que devuelve una base Y una longitud; la dirección física es base + offset, pero antes hay que VALIDAR que offset < longitud (porque los segmentos son de tamaño variable, sí puede haber un offset inválido que se salga del segmento). Esa comparación extra es la diferencia clave frente a paginación, y es la que se detalla más adelante en la Figura 7.11c/7.12b de la sección 7.4. Conviene remarcar que en ambos esquemas el offset final nunca se transforma: solo cambia qué número (marco o base) se le concatena/suma. -->
+
 ---
 
 # 7.3 — Resumen de Paginación Simple
@@ -744,52 +746,29 @@ Programa:
 
 # 7.4 — Dirección Lógica en Segmentación (Figura 7.11c)
 
-```
 Dirección lógica 16 bits: 4 bits segmento + 12 bits offset
 
-Ejemplo: (segmento 1, offset 752)
-  0001 001011110000
-
-  4 bits         12 bits
-┌──────┐    ┌──────────────┐
-│Seg 1 │    │ Offset 752   │
-│(0001)│    │(001011110000)│
-└──┬───┘    └──────┬───────┘
-   │               │
-   ▼               │
-┌──────────┐       │
-│Tabla de  │       │
-│Segmentos │       │
-│[seg]→base│       │
-│       len│       │
-└─────┬────┘       │
-      │            │
-  Base ────────────┤
-      │            │
-      ▼            ▼
-   ┌─────────────────────┐
-   │ Dirección Física    │
-   │ (base + offset)     │
-   └─────────────────────┘
-```
+Ejemplo: (segmento 1, offset 752) → `0001 001011110000`
 
 ---
 
-# 7.4 — Traducción en Segmentación (Figura 7.12b)
+![bg fit](img/segmentacion.png)
+
+---
+
+# 7.4 — Traducción en Segmentación
 
 ```
 Dirección lógica: segmento 1, offset 752
-
 Tabla de segmentos del proceso:
 ┌──────┬──────────────┬──────────────────┐
-│ Seg  │ Longitud      │ Base (dirección) │
+│ Seg  │ Longitud     │ Base (dirección) │
 ├──────┼──────────────┼──────────────────┤
 │  0   │  750 bytes   │  0x00010000      │
 │  1   │  1950 bytes  │  0x00020000      │
 │  2   │  1024 bytes  │  0x00080000      │
 │  3   │  512 bytes   │  0x000A0000      │
 └──────┴──────────────┴──────────────────┘
-
 ¿Offset 752 < Longitud 1950? → Sí ✓
 Dirección física = 0x00020000 + 752 = 0x000202F0
 ```
@@ -798,6 +777,8 @@ Dirección física = 0x00020000 + 752 = 0x000202F0
 - Segmento 0: solo lectura (código)
 - Segmento 1: lectura/escritura (datos)
 - Segmento 2: solo ejecución
+
+<!-- Nota para el relator (Stallings, §7.4): Esta diapositiva muestra el algoritmo de traducción paso a paso. La dirección lógica (segmento 1, offset 752) se descompone: el número de segmento (1) indexa la tabla de segmentos del proceso, que entrega la longitud y la base de ese segmento. Primero se valida el límite: el offset (752) debe ser menor que la longitud del segmento (1950); si no lo fuera, el hardware generaría una falla de protección (segmentation fault), porque el proceso estaría intentando acceder fuera de su segmento. Al pasar la validación, la dirección física se calcula sumando la base (0x00020000) más el offset (752 = 0x2F0), dando 0x000202F0. Nótese que cada segmento tiene su propio bit de protección (lectura, escritura, ejecución) independiente de los demás — esto es lo que permite, por ejemplo, que el segmento de código sea de solo lectura (evitando que el programa se sobrescriba a sí mismo) mientras el segmento de datos es de lectura/escritura. Esta protección por segmento es una ventaja clave frente a la paginación, donde los permisos se aplican por página y no reflejan necesariamente unidades lógicas del programa. -->
 
 ---
 
@@ -838,139 +819,6 @@ Organización modular del programa:
 | **Uso principal** | Memoria virtual (Cap. 8) | Organización de programas |
 
 > **Observación:** Los sistemas modernos (x86, ARM) usan **segmentación + paginación combinadas**. La segmentación organiza lógicamente; la paginación maneja la memoria física.
-
----
-
-<!-- _class: titulo -->
-
-# Resumen del Capítulo 7
-
----
-
-# Resumen — Administración de Memoria
-
-**Requisitos (§7.1):** Relocación, Protección, Compartición, Org. Lógica, Org. Física
-
-**Técnicas de particionamiento (§7.2):**
-| Técnica | Característica | Fragmentación |
-|---------|---------------|---------------|
-| Partición Fija | Tamaños predefinidos | Interna |
-| Partición Dinámica | Tamaños variables según proceso | Externa |
-| Buddy System | Bloques $2^K$ | Híbrida |
-
-**Algoritmos de colocación:** First-Fit (mejor) → Next-Fit → Best-Fit (peor)
-
-**Paginación (§7.3):**
-- Memoria dividida en **frames**; procesos en **pages**
-- Tabla de páginas por proceso
-- Sin fragmentación externa
-
-**Segmentación (§7.4):**
-- Memoria dividida en **segmentos** lógicos
-- Tabla de segmentos con base + límite
-- Soporte natural para protección y compartición
-
----
-
-# Términos Clave
-
-| Término | Definición |
-|---------|-----------|
-| **Frame** | Bloque de tamaño fijo en memoria principal |
-| **Page** | Bloque de tamaño fijo en memoria secundaria |
-| **Segment** | Bloque de tamaño variable con significado lógico |
-| **Fragmentación Interna** | Espacio desperdiciado dentro de un bloque asignado |
-| **Fragmentación Externa** | Huecos entre bloques asignados |
-| **Compactación** | Reorganización de memoria para eliminar fragmentación externa |
-| **Relocación** | Capacidad de mover procesos en memoria sin invalidar referencias |
-| **Base Register** | Registro HW con la dirección base del proceso |
-| **Bounds Register** | Registro HW con el límite del proceso |
-| **Page Table** | Tabla que mapea páginas lógicas a frames físicos |
-| **Segment Table** | Tabla que mapea segmentos lógicos a direcciones base |
-
----
-
-# Preguntas de Repaso
-
-1. ¿Cuáles son los **cinco requisitos** que debe satisfacer la administración de memoria?
-
-2. ¿Cuál es la diferencia entre fragmentación **interna** y **externa**?
-
-3. ¿Por qué **Best-Fit** suele ser peor que **First-Fit** a largo plazo?
-
-4. ¿Cómo funciona el **Buddy System**? Da un ejemplo con asignación y liberación.
-
-5. En paginación, ¿cómo se traduce una dirección lógica `(página 3, offset 150)` a física si la página 3 está en el frame 12 y el tamaño de página es 1 KB?
-
-6. ¿Cuál es la principal ventaja de la **segmentación** sobre la paginación? ¿Y la principal desventaja?
-
-7. ¿Por qué la **protección** debe ser implementada por el hardware y no por el SO?
-
-8. ¿Qué rol cumplen los registros **Base** y **Bounds** en la relocación?
-
----
-
-<!-- _class: titulo -->
-
-# Apéndice 7A
-## Carga y Enlace
-### *Loading and Linking*
-
----
-
-# Ap. 7A — Carga y Enlace
-
-**Proceso de preparación de un programa para ejecución:**
-
-```
-Código Fuente
-     │
-     ▼ Compilación
-Código Objeto (módulo .o/.obj)
-     │
-     ▼ Enlace (Linking)
-Módulo Cargable (ejecutable)
-     │
-     ▼ Carga (Loading)
-Proceso en Memoria (ejecución)
-```
-
----
-
-# Ap. 7A — Tipos de Enlace
-
-| Tipo | Momento | Descripción |
-|------|---------|-------------|
-| **Enlace Estático** | Antes de ejecución | Todas las bibliotecas se incluyen en el ejecutable |
-| **Enlace Dinámico** | Durante ejecución | Bibliotecas compartidas cargadas bajo demanda |
-
-**Ventajas del enlace dinámico:**
-- Menor tamaño de ejecutables
-- Actualización de bibliotecas sin recompilar
-- Compartición de código entre procesos (una copia en RAM)
-
-**Desventaja:**
-- Dependencia de la presencia de las DLLs/.so
-- Posible fragmentación de versiones (*DLL Hell*)
-
-<!-- Nota para el relator (Stallings, Ap. 7A): El enlace dinámico es fundamental en sistemas modernos. Permite que múltiples procesos compartan una sola copia física de una biblioteca (como libc.so en Linux o kernel32.dll en Windows). Esto ahorra RAM, pero introduce el "DLL Hell": si dos programas requieren versiones distintas de la misma biblioteca, ocurren conflictos. En Linux, los enlaces simbólicos con número de versión (libc.so.6) mitigan este problema. -->
-
----
-
-# Ap. 7A — Tipos de Carga
-
-
-| Tipo | Descripción |
-|------|-------------|
-| **Carga Absoluta** | Carga en dirección fija; requiere reensamblado si cambia |
-| **Carga Relocalizable** | El cargador ajusta direcciones (usa base register) |
-
-**Relocación dinámica:**
-- Los programas usan direcciones relativas
-- El hardware (MMU) + SO traducen en tiempo real
-- Permite swapping y carga en cualquier dirección disponible
-
-> Los sistemas modernos combinan **enlace dinámico** + **carga relocalizable** para máxima flexibilidad.
 
 ---
 
