@@ -162,32 +162,57 @@ style: |
 
 ---
 
-# 8.1 — Concepto de Memoria Virtual
+# El Gran Avance (*Breakthrough*)
 
-**Memoria Virtual:** Separación entre la dirección lógica (virtual) que ve el proceso y la dirección física real en RAM.
+Comparar la **paginación y segmentación simples** con la **partición fija y dinámica** revela dos características que son la base de un avance fundamental en la gestión de memoria:
 
-```
-          Espacio Virtual              RAM (Física)
-    ┌────────────────────────┐      ┌─────────┬─────────┐
-    │  Página 0  (proceso)   │      │ Frame 3 │ Frame 7 │
-    ├────────────────────────┤      ├─────────┼─────────┤
-    │  Página 1              │ ──►  │ Frame 1 │ Frame 5 │
-    ├────────────────────────┤      ├─────────┼─────────┤
-    │  Página 2              │      │ Frame 0 │ ...     │
-    ├────────────────────────┤      └─────────┴─────────┘
-    │  Página 3              │          ▲        ▲
-    ├────────────────────────┤          │        │
-    │  ...                   │          └── Tabla de páginas
-    └────────────────────────┘             del proceso
-```
+1. **Direcciones lógicas traducidas en tiempo de ejecución**
+   Toda referencia a memoria dentro de un proceso es una dirección lógica, traducida dinámicamente a dirección física. Esto permite que un proceso sea intercambiado (*swapped*) dentro y fuera de la memoria principal, ocupando regiones distintas en cada momento de su ejecución.
 
-**Resultado:** El proceso "cree" tener un espacio contiguo enorme, pero en realidad está disperso por la RAM (y parte en disco).
+2. **El proceso no necesita ser contiguo**
+   Un proceso puede dividirse en piezas (páginas o segmentos) que no necesitan ubicarse de forma contigua en memoria principal. La combinación de traducción de direcciones en tiempo de ejecución y una tabla de páginas o segmentos hace esto posible.
 
-<!-- Nota para el relator (Stallings, §8.1 — Execution of a Program): Stallings inicia con la observación de que un programa no necesita estar completamente en memoria para ejecutarse. El hardware traduce cada dirección virtual a física en tiempo real. Si la página referenciada no está en RAM, se produce un *page fault* (fallo de página) y el SO la carga desde disco. Esta transparencia es lo que permite que un programa de 4 GB funcione en una máquina con solo 1 GB de RAM: solo las páginas activas (el *working set*) están en RAM. -->
+<!-- Nota para el relator (Stallings, §8.1): Este es el puente conceptual entre lo visto en el Cap. 7 (paginación/segmentación simple, partición fija/dinámica) y la memoria virtual. Las dos características listadas son *prerrequisitos* que ya existían en paginación/segmentación simple; lo que falta para memoria virtual es un tercer ingrediente: no requerir que todas las páginas/segmentos de un proceso estén en RAM simultáneamente (ver siguiente diapositiva, principio de localidad). -->
 
 ---
 
-# 8.1 — Principio de Localidad (*Locality*)
+# Implicaciones de la Memoria Virtual
+
+Interrumpir un proceso solo porque falta cargar una pieza puede parecer ineficiente, pero ese costo se compensa con dos beneficios que mejoran la utilización del sistema:
+
+1. **Más procesos caben en memoria principal**
+   Al cargar solo algunas piezas de cada proceso, hay espacio para más procesos en RAM. Esto mejora la utilización del procesador: es más probable que, en un momento dado, al menos uno de los (más numerosos) procesos esté en estado *Listo*.
+
+2. **Un proceso puede ser más grande que toda la memoria principal**
+   Se elimina una restricción fundamental de la programación. Sin esta técnica, el programador debe conocer la memoria disponible y dividir manualmente el programa en piezas cargables (*overlay*). Con memoria virtual, esa tarea recae en el SO y el hardware: el programador percibe una memoria enorme, del tamaño del almacenamiento en disco.
+
+<!-- Nota para el relator (Stallings, §8.1): La memoria en la que el proceso realmente se ejecuta se llama memoria real; la memoria (mayor) que percibe el programador es la memoria virtual. -->
+
+---
+
+# Tabla 8.2 — Paginación y Segmentación (con y sin Memoria Virtual)
+
+| | Paginación Simple | Memoria Virtual (Paginación) | Segmentación Simple | Memoria Virtual (Segmentación) |
+|---|---|---|---|---|
+| **Partición de RAM** | Memoria principal dividida en fragmentos fijos llamados *frames*. | Memoria principal dividida en *frames*. | Memoria principal no particionada. | Memoria principal no particionada. |
+| **Origen de las piezas** | El programa se divide en páginas por el compilador o el sistema de gestión de memoria. | Igual que en paginación simple. | Los segmentos son definidos por el programador al compilar. | Igual que en segmentación simple. |
+
+---
+| | Paginación Simple | Memoria Virtual (Paginación) | Segmentación Simple | Memoria Virtual (Segmentación) |
+|---|---|---|---|---|
+| **Fragmentación interna** | Sí, dentro de los *frames*. | Sí, dentro de los *frames*. | No. | No. |
+| **Fragmentación externa** | No. | No. | Sí. | Sí. |
+| **Tabla que mantiene el SO** | Tabla de páginas por proceso: indica qué *frame* ocupa cada página. | Igual que en paginación simple. | Tabla de segmentos por proceso: indica dirección de carga y longitud de cada segmento. | Igual que en segmentación simple. |
+| **Lista que mantiene el SO** | Lista de *frames* libres. | Igual que en paginación simple. | Lista de huecos libres en memoria principal. | Igual que en segmentación simple. |
+| **Cálculo de dirección** | El procesador usa número de página + *offset*. | Igual que en paginación simple. | El procesador usa número de segmento + *offset*. | Igual que en segmentación simple. |
+| **¿Todo el proceso debe estar en RAM?** | Sí, todas las páginas (salvo *overlays*). | No; las páginas se leen según se necesiten. | Sí, todos los segmentos (salvo *overlays*). | No; los segmentos se leen según se necesiten. |
+| **Costo de traer una pieza a RAM** | — | Puede requerir escribir otra página a disco. | — | Puede requerir escribir uno o más segmentos a disco. |
+
+<!-- Nota para el relator (Stallings, Tabla 8.2): Resume el salto de paginación/segmentación simples a sus versiones con memoria virtual. La fila clave es la penúltima: en las versiones simples TODO el proceso debe estar en RAM (o usar overlays manuales); con memoria virtual el SO carga piezas bajo demanda. La última fila anticipa el reemplazo de páginas (§8.2): traer una pieza nueva puede exigir sacar otra. -->
+
+---
+
+# Principio de Localidad (*Locality*)
 
 **La clave que hace viable la memoria virtual:**
 
@@ -207,7 +232,7 @@ for (i = 0; i < 1000; i++) {
 
 ---
 
-# 8.1 — Memoria Virtual con Paginación
+# Memoria Virtual con Paginación
 
 **Extensión directa de la paginación simple (Cap. 7):**
 
@@ -226,7 +251,19 @@ for (i = 0; i < 1000; i++) {
 
 ---
 
-# 8.1 — La Tabla de Páginas en Memoria Virtual
+![bg fit](img/fig_8_2.png)
+
+<!-- (1) "Program": la dirección virtual llega dividida en Page# (n bits) y Offset. (2) "Paging mechanism": el registro "Page table ptr" apunta al inicio de la tabla de páginas del proceso; se suma (+) el Page# a esa base para indexar la entrada correspondiente, de la cual se extrae el Frame# (m bits) — esto es exactamente la traducción página→marco que ya vimos con el bit de presencia. (3) "Main memory": el Frame# obtenido se concatena con el Offset original (sin modificar) para formar la dirección física; el Offset ubica el byte exacto dentro del "page frame" señalado. Puntos clave para remarcar: el Offset nunca cambia (misma posición relativa dentro de la página/frame); solo el Page# se traduce a Frame# vía la tabla de páginas; n y m pueden ser de distinto tamaño porque el número de frames en RAM no tiene por qué igualar el número de páginas del proceso. -->
+
+---
+
+![bg fit](img/fig_8_3.png)
+
+<!-- Ejemplo concreto (x86 de 32 bits) de por qué una tabla de páginas de un solo nivel es poco práctica: un espacio de direcciones de 4 GB con páginas de 4 KB necesitaría ~1.048.576 entradas en una sola tabla plana, que además tendría que residir completa en RAM aunque el proceso use solo una fracción de su espacio. La solución de dos niveles: (1) "4-kB root page table": tabla raíz, pequeña y siempre en RAM, con una entrada por cada tabla de usuario. (2) "4-MB user page table": el conjunto completo de tablas de segundo nivel (apuntadas por la raíz) sumaría 4 MB si existieran todas, pero solo se crean/cargan las tablas de las regiones del espacio de direcciones que el proceso realmente usa (de ahí las flechas que "saltan" con "• • •" indicando huecos). (3) "4-GB user address space": cada entrada de una tabla de usuario apunta finalmente a una página de 4 KB dentro de las 4 GB direccionables. Punto clave: la jerarquía explota que el espacio de direcciones de un proceso típico es disperso (sparse) — se paga memoria de tabla solo por las partes efectivamente mapeadas, no por todo el espacio virtual posible. -->
+
+---
+
+# La Tabla de Páginas en Memoria Virtual
 
 **Cada entrada (PTE — *Page Table Entry*) contiene:**
 
@@ -244,7 +281,7 @@ for (i = 0; i < 1000; i++) {
 
 ---
 
-# 8.1 — Page Fault (Fallo de Página)
+# Page Fault (Fallo de Página)
 
 **Secuencia de eventos:**
 
@@ -262,13 +299,15 @@ for (i = 0; i < 1000; i++) {
    f. Reanuda el proceso en la instrucción original
 ```
 
-> **Costo:** Un page fault tarda **millones de ciclos** (~10 ms leer disco) vs. ~10 ns un acceso a RAM. ¡1.000.000x más lento!
+> **Costo:** Un page fault tarda **millones de ciclos** (~10 ms leer disco) vs. ~100 ns un acceso a RAM. ¡~100.000x más lento! (HDD)
+>
+> *Con SSD/NVMe, el swap tarda ~50–150 µs: la brecha baja a ~1.000x)*
 
-<!-- Nota para el relator (Stallings, §8.1): El costo de un page fault es brutal. Por eso la memoria virtual depende tanto de la localidad: si los fallos son pocos, el rendimiento es aceptable. Si el working set no cabe en RAM, ocurren fallos continuos → **thrashing** (hiperpaginación). Stallings dedica §8.2 al control de thrashing. -->
+<!-- Nota para el relator (Stallings, §8.1): El costo de un page fault es brutal. Por eso la memoria virtual depende tanto de la localidad: si los fallos son pocos, el rendimiento es aceptable. Si el working set no cabe en RAM, ocurren fallos continuos → **thrashing** (hiperpaginación). Stallings dedica §8.2 al control de thrashing. Nota histórica: el libro asume disco mecánico (~10 ms). Con SSD/NVMe (~100 µs) la brecha se reduce ~100x, aunque el punto pedagógico (RAM >> disco) sigue vigente. -->
 
 ---
 
-# 8.1 — TLB (*Translation Lookaside Buffer*)
+# TLB (*Translation Lookaside Buffer*)
 
 **Problema:** Cada referencia virtual requiere 2 accesos a memoria (uno a la tabla de páginas, otro al dato).
 
@@ -276,16 +315,17 @@ for (i = 0; i < 1000; i++) {
 
 ```
 Dirección Virtual
-      │
-      ▼
+     │
+     ▼
   ┌──────┐
   │ TLB  │ ── Hit? ──► Dirección Física (rápido: 1 ciclo)
   └──┬───┘
-      │ Miss
-      ▼
+     │ Miss
+     ▼
   Tabla de Páginas (en RAM) → carga en TLB → Dirección Física
         (lento: cientos de ciclos)
 ```
+---
 
 **Características del TLB:**
 - Pequeño: 32–1024 entradas (cada una cubre 4 KB → ~4 MB cubiertos con 1024 entradas)
@@ -296,7 +336,7 @@ Dirección Virtual
 
 ---
 
-# 8.1 — TLB: Ejemplo
+# TLB: Ejemplo
 
 **TLB típico (64 entradas, totalmente asociativo):**
 
