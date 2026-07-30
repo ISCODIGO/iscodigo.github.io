@@ -259,7 +259,14 @@ for (i = 0; i < 1000; i++) {
 
 ![bg fit](img/fig_8_3.png)
 
-<!-- Ejemplo concreto (x86 de 32 bits) de por qué una tabla de páginas de un solo nivel es poco práctica: un espacio de direcciones de 4 GB con páginas de 4 KB necesitaría ~1.048.576 entradas en una sola tabla plana, que además tendría que residir completa en RAM aunque el proceso use solo una fracción de su espacio. La solución de dos niveles: (1) "4-kB root page table": tabla raíz, pequeña y siempre en RAM, con una entrada por cada tabla de usuario. (2) "4-MB user page table": el conjunto completo de tablas de segundo nivel (apuntadas por la raíz) sumaría 4 MB si existieran todas, pero solo se crean/cargan las tablas de las regiones del espacio de direcciones que el proceso realmente usa (de ahí las flechas que "saltan" con "• • •" indicando huecos). (3) "4-GB user address space": cada entrada de una tabla de usuario apunta finalmente a una página de 4 KB dentro de las 4 GB direccionables. Punto clave: la jerarquía explota que el espacio de direcciones de un proceso típico es disperso (sparse) — se paga memoria de tabla solo por las partes efectivamente mapeadas, no por todo el espacio virtual posible. -->
+<!-- **Por qué dos niveles?** Con un espacio de 4 GB y páginas de 4 KB, una tabla plana necesitaría ~1 millón de entradas, todas en RAM incluso si el programa solo usa 10 MB.
+
+**Solución jerárquica:**
+1. "Tabla raíz" (4 KB): pequeña, siempre en RAM. Una entrada por cada región de direcciones del programa.
+2. "Tablas de nivel 2" (solo las usadas): se crean solo donde el programa realmente accede a memoria. Las regiones sin usar = sin tabla en RAM.
+3. "Espacio de direcciones" (4 GB): cada entrada de nivel 2 apunta a una página de 4 KB.
+
+**Ventaja:** en lugar de 1 millón de entradas en RAM, solo mantienes la tabla raíz + las tablas secundarias de zonas realmente usadas. Es como un árbol de carpetas: solo abre las que necesitas. -->
 
 ---
 
@@ -361,7 +368,7 @@ Tiempo con TLB: 0.99 × (1 × 100 ns) + 0.01 × (2 × 100 ns)
 
 ---
 
-# 8.1 — Tamaño de Página
+# Tamaño de Página
 
 **Compromiso fundamental (*trade-off*):**
 
@@ -372,6 +379,8 @@ Tiempo con TLB: 0.99 × (1 × 100 ns) + 0.01 × (2 × 100 ns)
 | ✅ Mejor localidad (menos desperdicio) | ❌ Peor localidad (páginas parcialmente usadas) |
 | ❌ Más entradas TLB para cubrir misma RAM | ✅ Menos entradas TLB para cubrir misma RAM |
 
+---
+
 **Tamaños típicos:**
 | Arquitectura | Tamaños de página |
 |-------------|-------------------|
@@ -380,30 +389,33 @@ Tiempo con TLB: 0.99 × (1 × 100 ns) + 0.01 × (2 × 100 ns)
 | ARMv8 | 4 KB, 16 KB, 64 KB |
 | RISC-V | 4 KB (base), soporta 2 MB, 1 GB |
 
-<!-- Nota para el relator (Stallings, §8.1, Page Size): Stallings dedica un análisis al tamaño de página. En x86 tradicional, 4 KB era el estándar. Hoy, los sistemas con mucha RAM (servidores, big data) usan *huge pages* (2 MB o 1 GB) para reducir la presión sobre el TLB. Una base de datos que accede a 100 GB con páginas de 4 KB necesitaría 25 millones de entradas TLB — imposible. Con páginas de 2 MB, solo 50,000. -->
+<!-- Nota para el relator (Stallings, §8.1, Page Size): Stallings dedica un análisis al tamaño de página. En x86 tradicional, 4 KB era el estándar. Hoy, los sistemas con mucha RAM (servidores, big data) usan *huge pages* (2 MB o 1 GB) para reducir la presión sobre el TLB. Una base de datos que accede a 100 GB con páginas de 4 KB necesitaría 25 millones de entradas TLB — imposible. Con páginas de 2 MB, solo 50,000. Linux soporta huge pages desde hace años; Windows ofrece "large pages"; macOS tiene su propio mecanismo. Esto no es opcional para data centers de escala. -->
 
 ---
 
-# 8.1 — Tablas de Páginas Jerárquicas
+# Tablas de Páginas Jerárquicas
 
 **Problema:** Espacio de direcciones de 32 bits (4 GB), páginas de 4 KB → $2^{20} = 1,000,000$ entradas por proceso. ¡4 MB por proceso solo para la tabla!
+
+<!-- Nota para el relator: 4 MB = 2^20 entradas × 4 bytes/entrada = 2^22 bytes. Cada entrada de tabla de páginas ocupa 4 bytes en arquitecturas de 32 bits (contiene dirección física + flags de control). Este es el tamaño mínimo necesario independientemente de cuánta memoria física tenga la máquina. -->
 
 **Solución:** Tabla de páginas de **dos niveles** (x86):
 
 ```
 Dirección Virtual (32 bits):
-┌──────────┬──────────┬──────────────┐
-│ Dir 1    │ Dir 2    │ Offset       │
-│ (10 bits)│ (10 bits)│ (12 bits)    │
-└─────┬────┴─────┬────┴──────┬───────┘
-      │          │           │
-      ▼          ▼           │
+┌──────────┬──────────┬─────────────┐
+│ Dir 1    │ Dir 2    │ Offset      │
+│ (10 bits)│ (10 bits)│ (12 bits)   │
+└─────┬────┴─────┬────┴─────┬───────┘
+      │          │          │
+      ▼          ▼          │
   ┌──────┐   ┌──────┐       │
   │ Page │──►│ Page │       │
   │ Dir  │   │Table │───────┤
   └──────┘   └──────┘       ▼
                         Dirección Física
 ```
+---
 
 **Beneficio:** La tabla de nivel superior (Page Directory) ocupa solo 4 KB. Las tablas de segundo nivel se crean solo si se usan.
 
@@ -411,7 +423,7 @@ Dirección Virtual (32 bits):
 
 ---
 
-# 8.1 — Tabla de Páginas Invertida
+# Tabla de Páginas Invertida
 
 **Alternativa radical: una sola tabla para toda la RAM, indexada por frame, no por página.**
 
@@ -435,22 +447,22 @@ Tabla Invertida (una entrada por frame de RAM):
 
 **Implementación real:** IBM System/38, PowerPC, HP PA-RISC, IA-64 (Itanium).
 
-<!-- Nota para el relator (Stallings, §8.1, Inverted Page Table): La tabla invertida es elegante porque su tamaño depende de la RAM física, no del espacio virtual de los procesos. Si la RAM es 4 GB y cada frame es 4 KB, caben ~1M entradas. En contraste, una tabla jerárquica para 100 procesos de 4 GB virtuales ocuparía mucho más. El problema es que la búsqueda inversa (dado PID+Page#, encontrar frame) requiere un hash. PowerPC y el Itanium implementaron tablas invertidas con hashing en hardware. x86-64 no la usa: prefiere tablas jerárquicas de 4 niveles. -->
+<!-- Nota para el relator (Stallings, §8.1, Inverted Page Table): Se llama "invertida" porque invierte la dirección de búsqueda: tabla normal (PID+VirtualPage → PhysicalFrame), tabla invertida (PhysicalFrame → PID+VirtualPage). Es elegante porque su tamaño depende de la RAM física, no del espacio virtual de los procesos. Si la RAM es 4 GB y cada frame es 4 KB, caben ~1M entradas. En contraste, una tabla jerárquica para 100 procesos de 4 GB virtuales ocuparía mucho más. El problema es que la búsqueda inversa (dado PID+Page#, encontrar frame) requiere un hash. PowerPC y el Itanium implementaron tablas invertidas con hashing en hardware. x86-64 no la usa: prefiere tablas jerárquicas de 4 niveles. -->
 
 ---
 
-# 8.1 — Segmentación con Memoria Virtual
+# Segmentación con Memoria Virtual
 
 **Extensión de la segmentación: cada segmento se divide en páginas.**
 
 ```
 Dirección Virtual:
-┌──────────────┬──────────────┬──────────────┐
-│ Segmento #   │ Página #     │ Offset       │
-│   (s bits)   │   (p bits)   │  (w bits)    │
-└──────┬───────┴──────┬───────┴──────┬───────┘
-       │              │              │
-       ▼              ▼              │
+┌──────────────┬──────────────┬─────────────┐
+│ Segmento #   │ Página #     │ Offset      │
+│   (s bits)   │   (p bits)   │  (w bits)   │
+└──────┬───────┴──────┬───────┴─────┬───────┘
+       │              │             │
+       ▼              ▼             │
   ┌─────────┐   ┌──────────┐        │
   │ Tabla de│   │  Tabla   │        │
   │Segmentos│──►│   de     │────────┤
@@ -465,7 +477,7 @@ Dirección Virtual:
 
 ---
 
-# 8.1 — Protección y Compartición
+# Protección y Compartición
 
 **Cada entrada de tabla (página o segmento) incluye bits de protección:**
 
@@ -476,6 +488,10 @@ Dirección Virtual:
 | **Write** | Escritura permitida |
 | **Execute** | Ejecución permitida |
 | **XD/NX** (*eXecute Disable*) | Prohíbe la ejecución (protección contra *buffer overflow*) |
+
+<!-- Nota para el relator (XD/NX): XD (en Intel) y NX (en AMD) son el mismo concepto. Permiten marcar zonas de memoria como "no ejecutable". Un buffer overflow clásico inyecta código malicioso en el heap/stack, luego salta a esa dirección. Con XD/NX activo, la CPU rechaza la ejecución inmediatamente. Introdujeron esta característica en los 2000s (DEP en Windows, ejecutable space protection en Linux). Es un pilar fundamental de seguridad moderna. -->
+
+---
 
 **Compartición de páginas:**
 - Dos procesos pueden tener la misma entrada de tabla → mismos frames físicos
@@ -509,7 +525,7 @@ Proceso A          Proceso B
 
 ---
 
-# 8.2 — Políticas de Memoria Virtual
+# Políticas de Memoria Virtual
 
 **Seis políticas que el SO debe implementar:**
 
@@ -526,7 +542,7 @@ Proceso A          Proceso B
 
 ---
 
-# 8.2a — Fetch Policy: Demand Paging vs. Prepaging
+# a — Fetch Policy: Demand Paging vs. Prepaging
 
 **¿Cuándo traer una página de disco a RAM?**
 
@@ -541,7 +557,7 @@ Proceso A          Proceso B
 
 ---
 
-# 8.2a — Fetch Policy: Ubicación de Páginas en Disco
+# a — Fetch Policy: Ubicación de Páginas en Disco
 
 **¿Dónde se guardan las páginas cuando no están en RAM?**
 
@@ -569,7 +585,7 @@ Proceso A          Proceso B
 
 ---
 
-# 8.2b — Placement Policy (Colocación)
+# b — Placement Policy (Colocación)
 
 **En paginación con memoria virtual, ¿existe el problema de colocación?**
 
@@ -583,7 +599,24 @@ Proceso A          Proceso B
 
 ---
 
-# 8.2c — Replacement Policy (Reemplazo)
+![bg fit](img/fig_8_14.png)
+
+<!-- Nota para el relator (Stallings, Fig. 8.14): Esta figura (de Stallings) compara cuatro algoritmos de reemplazo de páginas sobre la misma secuencia de accesos. OPT es óptimo (conoce el futuro), LRU lo aproxima usando recencia, FIFO es simple pero ingenuo, CLOCK es un compromiso práctico. Las "F" marcan fallos de página. Note que OPT tiene ~6 fallos, LRU ~8, FIFO ~9, CLOCK ~8-9. CLOCK es la opción real en Linux/Unix porque LRU requiere actualizar un timestamp en CADA acceso a memoria (overhead brutal). -->
+
+---
+
+# Comparación de Algoritmos de Reemplazo
+
+| Algoritmo | Estrategia | Ventajas | Desventajas | Implementación |
+|-----------|-----------|----------|-------------|-----------------|
+| **OPT** | Reemplaza la página que se usará más lejos en el futuro | Mínima tasa de fallos (teórica) | Requiere conocer el futuro → **no implementable** | Cota de referencia (benchmark) |
+| **FIFO** | Reemplaza la página más antigua (primera en entrar) | Muy simple, bajo overhead | Pobre rendimiento; sufre anomalía de Belady | Cola circular |
+| **LRU** | Reemplaza la página menos usada recientemente | Excelente rendimiento, cercano a OPT | Alto costo: timestamp/lista ordenada en cada acceso | Hardware costoso (raro en la práctica) |
+| **CLOCK** | Usa bit de referencia (R); puntero circular busca R=0 | Bajo overhead, buena aproximación a LRU | Rendimiento intermedio, menos preciso que LRU | Bits R, M que ya mantiene el hardware |
+
+---
+
+# c — Replacement Policy (Reemplazo)
 
 **¿Qué página sacar de RAM cuando no hay frames libres?**
 
@@ -606,165 +639,6 @@ Dos familias de algoritmos:
 **Objetivo del reemplazo:** Minimizar la tasa de fallos cumpliendo el principio de localidad.
 
 <!-- Nota para el relator (Stallings, §8.2): El reemplazo es quizás la política más estudiada de la memoria virtual. La distinción local/global es importante. En reemplazo local, el conjunto de páginas de un proceso no se ve afectado por otros procesos. En global, un proceso puede "robar" frames de otro, lo que puede llevar a situaciones injustas. Stallings cubre varios algoritmos específicos en §8.2. -->
-
----
-
-# 8.2c — Algoritmo Óptimo (OPT / MIN)
-
-**Referencia teórica:** Reemplazar la página que no se usará en el **futuro más lejano**.
-
-```
-Referencias:  7  0  1  2  0  3  0  4  2  3  0  3  2  1  2  0  1  7  0  1
-Frames (3):  [7] [7][7] [2] [2][2] [2][4] [4][4] [0][0] [0][0][0] ... etc.
-
-Paso a paso (frames = 3):
-Ref:  7   0   1   2   0   3   0   4   2   3   0   3   2   1   2   0   1   7   0   1
-───── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ───
-F0:   7   7   7   2   2   2   2   2   2   2   2   2   2   2   2   2   2   2   2   2
-F1:   -   0   0   0   0   0   0   4   4   4   4   4   4   4   4   4   4   7   7   7
-F2:   -   -   1   1   1   3   3   3   3   3   0   0   0   0   0   0   0   0   0   0
-F:    ✗   ✗   ✗   ✗   ✓   ✗   ✓   ✗   ✓   ✓   ✗   ✓   ✓   ✗   ✓   ✓   ✓   ✗   ✓   ✓
-
-Total fallos (faults) = 9
-```
-
-> ⚠️ **No implementable en la práctica** — requiere conocer el futuro. Sirve como **cota inferior** para comparar otros algoritmos.
-
-<!-- Nota para el relator (Stallings, §8.2, Optimal Replacement): OPT es puramente teórico. Fue propuesto por Belady (1966). Se usa como benchmark: ningún algoritmo real puede tener menos fallos que OPT. En el ejemplo, OPT produce 9 fallos con 3 frames. Cualquier algoritmo real tendrá ≥ 9 fallos. La tabla muestra que OPT "mira hacia adelante": cuando llega el 3 y hay que reemplazar, OPT ve que el 7 se usará mucho después que el 0 o el 1 (en realidad 7 no se usa hasta la ref. 17), así que reemplaza 1 (que se usará en ref. 13). -->
-
----
-
-# 8.2c — FIFO (*First-In, First-Out*)
-
-**La página que lleva más tiempo en RAM es la reemplazada.**
-
-```
-Referencias:  7  0  1  2  0  3  0  4  2  3  0  3  2  1  2  0  1  7  0  1
-Frames (3):  [7] [7][7] [2] [2][3] [3][4] [4][4] [0][0] [0][1] [1][1] [1][7] ... etc.
-
-Paso a paso:
-Ref:  7   0   1   2   0   3   0   4   2   3   0   3   2   1   2   0   1   7   0   1
-───── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ───
-F0:   7   7   7   2   2   2   2   4   4   4   0   0   0   0   0   0   0   7   7   7
-F1:   -   0   0   0   0   3   3   3   2   2   2   3   3   3   3   0   0   0   0   1
-F2:   -   -   1   1   1   1   0   0   0   3   3   3   2   2   2   2   1   1   1   1
-F:    ✗   ✗   ✗   ✗   ✓   ✗   ✗   ✗   ✗   ✗   ✗   ✓   ✗   ✗   ✓   ✗   ✗   ✗   ✓   ✗
-
-Total fallos = 15 (vs. 9 de OPT)
-```
-
-**Problema:** Puede reemplazar páginas muy usadas (como el código en un bucle). Sufre la **anomalía de Belady**: aumentar frames puede **aumentar** fallos.
-
-<!-- Nota para el relator (Stallings, §8.2, FIFO): FIFO es simple de implementar (una cola circular), pero su rendimiento es pobre porque ignora por completo la localidad. La anomalía de Belady (descubierta por Belady, Nelson y Shedler en 1969) es contraintuitiva: en FIFO, a veces tener más frames disponibles empeora la tasa de fallos. Esto no ocurre en algoritmos basados en pila (LRU, OPT). -->
-
----
-
-# 8.2c — LRU (*Least Recently Used*)
-
-**Reemplazar la página que no se ha usado en el tiempo más largo.**
-
-```
-Referencias:  7  0  1  2  0  3  0  4  2  3  0  3  2  1  2  0  1  7  0  1
-Frames (3):  [7] [7][7] [2] [2][2] [2][4] [4][4] [0][0] [0][1] [1][1] [1][7] ... etc.
-
-Paso a paso:
-Ref:  7   0   1   2   0   3   0   4   2   3   0   3   2   1   2   0   1   7   0   1
-───── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ───
-F0:   7   7   7   2   2   2   2   4   4   4   0   0   0   1   1   1   1   7   7   7
-F1:   -   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
-F2:   -   -   1   1   1   3   3   3   2   3   3   3   2   2   2   2   2   2   2   1
-F:    ✗   ✗   ✗   ✗   ✓   ✗   ✓   ✗   ✗   ✗   ✓   ✓   ✓   ✗   ✓   ✓   ✓   ✗   ✓   ✗
-
-Total fallos = 12 (vs. 15 FIFO, 9 OPT)
-```
-
-**Ventaja:** Se aproxima mucho a OPT en la práctica.
-
-**Desventaja:** Implementación costosa (requiere marcas de tiempo o listas ordenadas).
-
-<!-- Nota para el relator (Stallings, §8.2, LRU): LRU es el estándar de comparación para algoritmos "decentes". Se basa en que el pasado reciente predice el futuro cercano (localidad temporal). Con 3 frames obtiene 12 fallos vs. 15 de FIFO. Con más frames, LRU se acerca aún más a OPT. El problema es que LRU puro requiere hardware costoso: ya sea un contador de 64 bits por página (y actualizarlo en cada acceso) o una pila ordenada (mover la página al tope en cada acceso). Ninguna de las dos es práctica. Por eso se usan aproximaciones. -->
-
----
-
-# 8.2c — Aproximaciones a LRU
-
-## Algoritmo del Reloj (*Clock / Second Chance*)
-
-**Usa el bit de referencia (R) en la PTE.**
-
-```
-      ┌───────────────────┐
-      │   ┌───┐    ┌───┐ │
-      │   │ 0 │◄───│ 4 │ │
-      │   │ R=1│   │ R=0│ │
-      │   └─┬─┘    └─┬─┘ │
-      │     │        ▲    │
-      │   ┌─▼─┐    ┌─┴─┐ │
-      │   │ 1 │───►│ 3 │ │
-      │   │ R=0│   │ R=1│ │
-      │   └───┘    └───┘ │
-      │                  │
-      └──────────────────┘
-         Manecilla (clock hand)
-
-Algoritmo:
-1. Manecilla apunta a una página candidata
-2. Si R=0 → reemplazar (victoria)
-3. Si R=1 → poner R=0, avanzar, repetir
-```
-
-**Variante:** **Clock Mejorado** — usa bits R y M (4 combinaciones: 00, 01, 10, 11).
-
-<!-- Nota para el relator (Stallings, §8.2, Clock): El algoritmo del reloj (también llamado *Second Chance* o *NRU — Not Recently Used*) es la implementación más común de LRU aproximado. Apareció en el sistema Multics (1969) y se popularizó en UNIX. Es barato de implementar porque solo necesita los bits R y M que el hardware ya actualiza. El Clock Mejorado (*Enhanced Clock*) prioriza páginas no modificadas (M=0) para evitar escrituras a disco innecesarias. La prioridad de reemplazo es: (0,0) → (0,1) → (1,0) → (1,1). -->
-
----
-
-# 8.2c — Algoritmo de Reemplazo basado en Working Set
-
-**Peter Denning (1968):** Un proceso solo necesita un subconjunto de páginas para progresar. Ese subconjunto es el **Working Set** (Conjunto de Trabajo).
-
-```
-Definición: WS(t, Δ) = conjunto de páginas referenciadas en el
-                        intervalo [t-Δ, t]
-
-Δ (Ventana de Working Set) = parámetro de tamaño de la ventana.
-
-Ejemplo: Δ = 5 referencias
-Ref:   7  0  1  2  0  3  0  4  2  3  0  3  2  1  2  0  1  7  0  1
-      ◄───── Δ = 5 ─────►
-      WS(5,5) = {7, 0, 1, 2}  (páginas referenciadas en las últimas 5 referencias)
-      
-      Continuando:
-Ref # 6: WS = {0, 1, 2, 3}  (sale 7, entra 3)
-Ref # 7: WS = {0, 1, 2, 3}  (0 ya estaba)
-Ref # 8: WS = {0, 3, 4}     (salen 1,2; entra 4)
-```
-
-<!-- Nota para el relator (Stallings, §8.2, Working Set): Denning introdujo el working set como respuesta al thrashing. La idea es simple: si el working set de cada proceso cabe en RAM, el sistema funciona bien. Si no, hay thrashing. La ventana Δ (delta) se elige empíricamente (típicamente entre 10K y 100K referencias). El working set cambia con el tiempo: un proceso puede pasar por distintas *fases* con distintos working sets (ver §8.2 — Phase Transition Behavior). -->
-
----
-
-# 8.2c — Reemplazo basado en Frecuencia de Fallos (*PFF*)
-
-**Controlar el tamaño del conjunto residente según la tasa de fallos:**
-
-```
-                    Tasa de Fallos
-                         │
-              Alta ◄─────┴──────► Baja
-                 │                 │
-                 ▼                 ▼
-         Aumentar conjunto   Disminuir conjunto
-         residente           residente
-         (agregar frames)    (quitar frames)
-
-Si tasa > umbral_alto  → agregar un frame
-Si tasa < umbral_bajo → quitar un frame
-```
-
-**Ventaja:** Adaptativo. Cada proceso mantiene su working set sin necesidad de ventana explícita.
-
-<!-- Nota para el relator (Stallings, §8.2, PFF): El algoritmo de *Page Fault Frequency* (PFF) es una alternativa más sencilla que el working set exacto. En lugar de rastrear qué páginas se usaron en una ventana, simplemente observa la tasa de fallos. Si un proceso falla mucho, necesita más páginas. Si falla poco, se le pueden quitar páginas. Es un control de tipo *feedback* simple y efectivo. -->
 
 ---
 
