@@ -11,6 +11,9 @@ Bienvenido a mi espacio de formación técnica. Aquí comparto el material de mi
 
     Material proveniente originalmente de [ConsSorto](https://github.com/ConsSorto)
 
+- **[ISC-211: Estructuras de Datos](./isc-211/index.md)**
+    *Fundamentos de Estructuras de Datos y Algoritmos.*
+
 - **[ISC-321: Fundamentos de Bases de Datos](./isc-321/index.md)**
     *Fundamentos de Bases de Datos, Modelado de Datos y Lenguaje SQL.*
 
