@@ -13,4 +13,15 @@ Para entender C, debemos conocer su evolución. C surgió de los lenguajes BCPL 
 Un programa típico en C se organiza mediante **directivas del preprocesador** como `#include` (Capítulo 3, Sección 3.1), declaraciones globales, la **función principal `main()`** y definiciones de otras funciones necesarias para resolver el problema (Capítulo 3, Sección 3.1). 
 Los comentarios, encerrados entre `/* ... */`, son esenciales para documentar el código, aunque el compilador los ignora por completo (Capítulo 3, Sección 3.1).
 
+### Versiones del estándar C
+
+| Versión | Año | Notas |
+|---|---|---|
+| K&R C | 1978 | Versión original, sin estándar formal |
+| C89 / C90 (ANSI C) | 1989 / 1990 | Primer estándar formal (ANSI/ISO) |
+| C99 | 1999 | Comentarios `//`, `for` con declaración de variable, tipos `bool`, `long long` |
+| C11 | 2011 | Concurrencia (`threads.h`), `_Generic`, `_Static_assert` |
+| C17 (C18) | 2018 | Correcciones menores a C11, sin nuevas características |
+| C23 | 2024 | `nullptr`, `bool`/`true`/`false` como palabras clave, `#embed` |
+
 [⬅️ Volver al índice de la unidad](./index.md)
