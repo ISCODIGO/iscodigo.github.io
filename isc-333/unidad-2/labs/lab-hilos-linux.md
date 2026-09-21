@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+---
+
 # Laboratorio: Hilos en Linux con GCC
 
 **Plataforma:** GNU/Linux (Ubuntu / Debian)  

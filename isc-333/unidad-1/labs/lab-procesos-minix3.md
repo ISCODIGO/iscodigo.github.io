@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+---
+
 # Laboratorio: Procesos en Minix3 con Clang
 
 **Plataforma:** Minix 3.3 (máquina virtual)  

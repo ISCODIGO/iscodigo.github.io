@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+---
+
 
 # Laboratorio: Procesos en Linux con GCC
 

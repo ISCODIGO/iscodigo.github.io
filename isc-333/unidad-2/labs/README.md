@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+---
+
 # Laboratorio: Procesos vs Hilos
 
 Material del laboratorio de procesos e hilos (Unidad 2), en Linux (pthreads) y Windows (Win32 API).

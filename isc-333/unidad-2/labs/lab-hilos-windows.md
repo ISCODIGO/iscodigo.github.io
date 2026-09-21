@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+---
+
 # Laboratorio: Procesos vs Hilos en Windows (Win32 API)
 
 **Plataforma:** Microsoft Windows 10/11  
