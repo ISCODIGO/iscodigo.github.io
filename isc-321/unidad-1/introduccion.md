@@ -65,6 +65,10 @@ Personas que usan la base de datos a diario:
 - **Inferencia y acciones mediante reglas** (bases de datos deductivas, *triggers*, procedimientos almacenados, bases de datos activas).
 - Beneficios adicionales: estándares, menor tiempo de desarrollo de aplicaciones, flexibilidad, información siempre actualizada, economías de escala.
 
+## Ejemplo de una base de datos
+
+![Ejemplo de base de datos](../../assets/ejemplo-base-datos.png)
+
 ## Breve historia de las aplicaciones de bases de datos
 
 El procesamiento de datos impulsa el crecimiento de las computadoras desde sus primeros días: la automatización de tareas de procesamiento de datos precede a las computadoras comerciales (tarjetas perforadas de Herman Hollerith para el censo de EE. UU.). Las técnicas de almacenamiento y procesamiento evolucionaron así a lo largo de las décadas:
