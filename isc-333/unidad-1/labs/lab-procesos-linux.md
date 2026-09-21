@@ -1,11 +1,3 @@
----
-layout: default
-title: "Lab: Procesos en Linux con GCC"
-parent: "Unidad I: Introducción a SO y Control de Procesos"
-grand_parent: "ISC-333 Sistemas Operativos I"
-nav_order: 4
-has_mermaid: true
----
 
 # Laboratorio: Procesos en Linux con GCC
 

@@ -1,12 +1,3 @@
----
-layout: default
-title: "Lab: Procesos en Minix3 con Clang"
-parent: "Unidad I: Introducción a SO y Control de Procesos"
-grand_parent: "ISC-333 Sistemas Operativos I"
-nav_order: 5
-has_mermaid: true
----
-
 # Laboratorio: Procesos en Minix3 con Clang
 
 **Plataforma:** Minix 3.3 (máquina virtual)  
