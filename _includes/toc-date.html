@@ -75,7 +75,7 @@
                             {% unless unit.name contains course.name %}{% continue %}{% endunless %}
 
                             {% assign unit_index = unit.items | where: "name", "index.md" | first %}
-                            {% assign unit_leaves = unit.items | where_exp: "p", "p.name != 'index.md'" | sort: "title" %}
+                            {% assign unit_leaves = unit.items | where_exp: "p", "p.name != 'index.md'" | sort: "nav_order" %}
 
                             {% if unit_index %}
                                 <li class="chapter{% if page.url == unit_index.url %} active{% endif %}{% if page.url contains unit.name %} expanded{% endif %}" data-path="{{site.baseurl}}{{unit_index.url}}">
