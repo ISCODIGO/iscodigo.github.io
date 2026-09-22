@@ -7,6 +7,7 @@ logo: "assets/logo.png"
 # Configuración de navegación
 nav_enabled: true
 search_enabled: true
+syntax_highlighter_style: monokai
 
 # Soporte para diagramas
 has_mermaid: true
