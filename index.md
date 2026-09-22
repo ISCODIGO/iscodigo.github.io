@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "🚀 José Enrique Ávila | UNAH"
+title: "José Enrique Ávila | UNAH"
 ---
 
 Bienvenido a mi espacio de formación técnica. Aquí comparto el material de mis clases y recursos para la comunidad de desarrolladores.
