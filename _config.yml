@@ -1,4 +1,4 @@
-remote_theme: pmarsceill/just-the-docs
+remote_theme: sighingnow/jekyll-gitbook
 title: "IsCodigo | Blog"
 description: "Blog de Enrique Avila | UNAH"
 url: "https://iscodigo.github.io"
