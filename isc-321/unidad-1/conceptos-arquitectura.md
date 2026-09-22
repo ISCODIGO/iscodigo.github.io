@@ -115,7 +115,23 @@ Se clasifican según varios criterios:
 
 Una **transacción** es un conjunto de operaciones que forma una única unidad lógica de trabajo (p. ej., una transferencia de fondos con cargo en la cuenta *A* y abono en la cuenta *B*). Debe cumplir las propiedades **ACID**:
 
-![Propiedades ACID](../../assets/acid-propiedades.png)
+```mermaid
+flowchart TD
+    T["<b>Transacción</b><br/>Unidad lógica de trabajo"]
+    T --> ACID["<b>Propiedades ACID</b>"]
+
+    ACID --> A["<b>Atomicidad</b><br/>Todo o nada:<br/>se ejecuta completa<br/>o ninguna operación"]
+    ACID --> C["<b>Consistencia</b><br/>Lleva la BD de un estado<br/>consistente a otro<br/>consistente"]
+    ACID --> I["<b>Aislamiento</b><br/>Transacciones concurrentes<br/>se comportan como<br/>si fueran secuenciales"]
+    ACID --> D["<b>Durabilidad</b><br/>Los cambios confirmados<br/>persisten aunque<br/>el sistema falle"]
+
+    classDef raiz fill:#e8eef7,stroke:#4a6fa5,stroke-width:2px,color:#1b2b40
+    classDef nivel fill:#f4f6f8,stroke:#8a9bb0,color:#1b2b40
+    classDef detalle fill:#fbfcfd,stroke:#c3ccd7,color:#33414f
+    class T raiz
+    class ACID nivel
+    class A,C,I,D detalle
+```
 
 
 Garantizar atomicidad y durabilidad es responsabilidad del **componente de gestión de transacciones**: si una transacción falla, el sistema debe realizar la **recuperación de fallos**, restaurando la base de datos al estado que tenía antes de que ocurriera el fallo.
