@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "2. Entrada y Salida (Archivos)"
 parent: "Unidad III: Estructuras y Archivos"
 nav_order: 2

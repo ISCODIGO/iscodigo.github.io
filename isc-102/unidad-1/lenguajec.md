@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "1: Lenguaje C - Historia y Estructura"
 parent: "Unidad I: Introducción y Lógica de Programación"
 nav_order: 3

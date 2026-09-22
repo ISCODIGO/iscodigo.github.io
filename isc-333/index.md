@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "ISC-333 Sistemas Operativos I"
 nav_order: 2
 has_children: true

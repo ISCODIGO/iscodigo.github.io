@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "Ejercicios: Clases y Objetos en Java"
 parent: "Unidad I: Introducción a Estructuras de Datos, Modelado y Algoritmos Básicos"
 grand_parent: "ISC-211 Estructuras de Datos"

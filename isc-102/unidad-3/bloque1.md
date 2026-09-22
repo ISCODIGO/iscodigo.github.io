@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "1. Estructuras y Uniones"
 parent: "Unidad III: Estructuras y Archivos"
 nav_order: 1

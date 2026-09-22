@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "Unidad I: Introducción a Estructuras de Datos, Modelado y Algoritmos Básicos"
 parent: "ISC-211 Estructuras de Datos"
 nav_order: 1

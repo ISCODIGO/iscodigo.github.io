@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "Conceptos y arquitectura de los sistemas de bases de datos"
 parent: "Unidad I: Introducción a las Bases de Datos Relacionales y conceptos básicos"
 grand_parent: "ISC-321 Fundamentos de Bases de Datos"
@@ -37,6 +37,8 @@ nav_order: 2
 
 Arquitectura de dos y tres capas: el DBMS puede estar en un solo computador (monolítico) o en varios (cliente/servidor). La arquitectura de tres capas añade una capa intermedia de procesamiento de aplicaciones, que puede estar en el cliente o en el servidor.
 ![Arquitectura de capas](../../assets/arquitectura-2y3-capas.png)
+
+![Arquitectura de capas 2](../../assets/arquitectura-capas.png)
 
 > **Nota (fuera del libro):** sobre esa base de 2/3 capas, la nube extendió el modelo de servidor de base de datos con nuevas variantes:
 > - **DBaaS** (*Database as a Service*): el proveedor cloud administra el ciclo de vida completo del DBMS (aprovisionamiento, parches, backups, escalado); el "servidor" ya no lo opera el DBA local.

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "1. Introducción a los Sistemas Operativos"
 parent: "Unidad I: Introducción a SO y Control de Procesos"
 grand_parent: "ISC-333 Sistemas Operativos I"

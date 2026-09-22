@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "Unidad II: Gestión de Procesos, Concurrencia y Deadlock"
 parent: "ISC-333 Sistemas Operativos I"
 nav_order: 2

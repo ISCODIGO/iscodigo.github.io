@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "Unidad III: Estructuras y Archivos"
 parent: "ISC-102 Programación Estructurada"
 nav_order: 3

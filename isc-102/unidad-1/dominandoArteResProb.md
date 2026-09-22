@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "0: Dominando el Arte de Resolver Problemas"
 parent: "Unidad I: Introducción y Lógica de Programación"
 nav_order: 2

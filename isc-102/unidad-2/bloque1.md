@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "1. Funciones y Estructura de un Programa"
 parent: "Unidad II: Funciones, Arreglos, Punteros y Memoria "
 nav_order: 1

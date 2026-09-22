@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "ISC-102 Programación Estructurada"
 nav_order: 1
 has_children: true

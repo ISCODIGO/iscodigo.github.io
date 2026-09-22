@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "ISC-211 Estructuras de Datos"
 nav_order: 1
 has_children: true

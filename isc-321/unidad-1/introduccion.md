@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "Introducción a las Bases de Datos Relacionales y conceptos básicos"
 parent: "Unidad I: Introducción a las Bases de Datos Relacionales y conceptos básicos"
 grand_parent: "ISC-321 Fundamentos de Bases de Datos"

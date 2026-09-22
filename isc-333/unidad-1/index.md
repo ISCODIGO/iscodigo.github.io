@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "Unidad I: Introducción a SO y Control de Procesos"
 parent: "ISC-333 Sistemas Operativos I"
 nav_order: 1

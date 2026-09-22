@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "Tipos de Datos Abstractos (ADT)"
 parent: "Unidad I: Introducción a Estructuras de Datos, Modelado y Algoritmos Básicos"
 grand_parent: "ISC-211 Estructuras de Datos"

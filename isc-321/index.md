@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "ISC-321 Fundamentos de Bases de Datos"
 nav_order: 1
 has_children: true

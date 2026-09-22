@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "3: Control de Flujo"
 parent: "Unidad I: Introducción y Lógica de Programación"
 nav_order: 5

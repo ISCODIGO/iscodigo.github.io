@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: Unidad 3 — Administración de Memoria
 nav_order: 5
 parent: isc-333

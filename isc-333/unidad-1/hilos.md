@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "3. Hilos (Threads)"
 parent: "Unidad I: Introducción a SO y Control de Procesos"
 grand_parent: "ISC-333 Sistemas Operativos I"

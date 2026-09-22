@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "Unidad I: Introducción y Lógica de Programación"
 parent: "ISC-102 Programación Estructurada"
 nav_order: 1

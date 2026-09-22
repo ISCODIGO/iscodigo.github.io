@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "2. Arreglos y Punteros"
 parent: "Unidad II: Funciones, Arreglos, Punteros y Memoria "
 nav_order: 2
