@@ -6,7 +6,6 @@ nav_order: 1
 has_mermaid: true 
 ---
 
-# 📘 Unidad I: Introducción y Lógica de Programación
 # Introducción
 
 ¡Bienvenidos a la primera etapa de nuestro viaje en la programación estructurada! En esta unidad, dejaremos atrás la teoría general para ensuciarnos las manos con el lenguaje que cambió la historia de la computación: el **Lenguaje C**.

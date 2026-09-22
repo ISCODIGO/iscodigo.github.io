@@ -5,8 +5,6 @@ nav_order: 1
 has_children: true
 ---
 
-# 📘 ISC-102: Programación Estructurada
-
 Este es el repositorio de contenido para la clase. Aquí seguiremos el sílabo oficial.
 
 ### Contenido Académico

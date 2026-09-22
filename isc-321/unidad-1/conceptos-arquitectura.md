@@ -6,8 +6,6 @@ grand_parent: "ISC-321 Fundamentos de Bases de Datos"
 nav_order: 2
 ---
 
-# Conceptos y arquitectura de los sistemas de bases de datos
-
 ## Modelos de datos, esquemas e instancias
 
 

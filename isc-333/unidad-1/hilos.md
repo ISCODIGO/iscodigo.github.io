@@ -7,8 +7,6 @@ nav_order: 3
 has_mermaid: true
 ---
 
-# Hilos (Threads)
-
 **Referencias:**
 - Tanenbaum & Bos, *Modern Operating Systems* (Cap. 2, Threads)
 - William Stallings, *Operating Systems: Internals and Design Principles* (Cap. 2, Threads)

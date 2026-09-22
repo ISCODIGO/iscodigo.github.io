@@ -6,8 +6,6 @@ grand_parent: "ISC-211 Estructuras de Datos"
 nav_order: 2
 ---
 
-# Recursión
-
 ## Introducción
 
 Resumen del capítulo 2 del libro de texto: qué es un algoritmo recursivo, sus componentes, la recursión infinita y la comparación entre iteración y recursión.

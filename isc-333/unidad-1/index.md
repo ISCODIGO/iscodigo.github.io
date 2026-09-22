@@ -7,8 +7,6 @@ has_children: true
 has_mermaid: true
 ---
 
-# 📘 Unidad I: Unidad I: Introducción a SO y Control de Procesos
-
 **[1. Introduccion ](./introSO.md)**
 Una introducción a los sistemas operativos, su historia, evolución y su papel fundamental en la informática moderna.
 

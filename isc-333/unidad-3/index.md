@@ -5,8 +5,6 @@ nav_order: 5
 parent: isc-333
 ---
 
-# Unidad 3: Administración de Memoria
-
 ## 🧠 Capítulo 7 — Memory Management (Stallings)
 
 | Recurso | Descripción |

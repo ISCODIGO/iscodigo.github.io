@@ -6,7 +6,6 @@ nav_order: 3
 has_mermaid: true 
 ---
 
-# 📘 Unidad III: Estructuras y Archivos 
 # Introducción
 
 ¡Llegamos a la etapa final de nuestro recorrido! En esta unidad, aprenderemos a manejar información compleja mediante la agrupación de datos de diferentes tipos en una sola entidad y a garantizar que esta información sea persistente, guardándola de forma permanente en archivos externos para que no se pierda al cerrar el programa

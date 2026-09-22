@@ -6,8 +6,6 @@ grand_parent: "ISC-211 Estructuras de Datos"
 nav_order: 1
 ---
 
-# Tipos de Datos Abstractos (ADT)
-
 ## Abstracción
 
 La **abstracción** oculta detalles al usuario, dejando visible solo lo importante (p. ej., la palabra "perro" abstrae tamaño, color y raza). En programación existen dos tipos:

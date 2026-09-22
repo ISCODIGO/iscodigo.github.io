@@ -6,7 +6,6 @@ nav_order: 1
 has_mermaid: true 
 ---
 
-# 📘 Unidad I: Introducción a Bases de Datos Relacionales, Modelado y SQL Básico
 # Introducción
 
 **[1. Introducción a las Bases de Datos Relacionales y conceptos básicos](./introduccion.md)**

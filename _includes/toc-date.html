@@ -1,0 +1,104 @@
+<div class="book-summary">
+    <script type="text/javascript">
+        // Fixes the page links scroll problem on both desktop and mobile browsers
+        function pageScrollToTop(element) {
+            // both mobile and non-mobile
+            $('div.body-inner').animate({scrollTop: 0});
+            $(element).parent().find('li>ul>li').removeClass('active');
+            return true;  // propagate
+        }
+        // Fixes the anchor links scroll problem on mobile browsers
+        function mobilePageScrollToAnchor(element) {
+            $(element).closest('li.chapter').find('ul>li').removeClass('active');
+            $(element).parent().addClass('active');
+            if ($(document).width() <= 1240) {
+                let target = $($(element).attr('href'));
+                if (target.length) {
+                    $('div.body-inner').animate({
+                        scrollTop: target.get(0).offsetTop,
+                    });
+                }
+            }
+            return true;
+        }
+    </script>
+
+    <nav role="navigation">
+        {% if site.search_enabled %}
+        <div id="book-search-input" role="search">
+            <input type="text" placeholder="Type to search" />
+        </div>
+        <div id="book-search-input-link" role="search">
+            <a href="{{site.baseurl}}/assets/search.html">Click to Search</a>
+        </div>
+        {% endif %}
+
+        {%- comment -%}
+          The stock theme builds this sidebar from site.collections only. This site
+          keeps its content in plain directories, so group site.pages by `dir`
+          instead: /curso/ is a course, /curso/unidad-N/ is a unit. Pages without a
+          title (labs, books) stay out of the nav by omission.
+        {%- endcomment -%}
+        {% assign nav_pages = site.pages | where_exp: "p", "p.title" %}
+        {% assign nav_groups = nav_pages | group_by: "dir" | sort: "name" %}
+
+        <ul class="summary">
+            <li class="chapter{% if page.url == '/' or page.url == '/index.html' %} active{% endif %}" data-level="1.1" data-path="{{site.baseurl}}">
+                <a href="{{site.baseurl}}/" onclick="pageScrollToTop(this)">
+                    {{ site.title | escape }}
+                </a>
+            </li>
+
+            <li class="divider"></li>
+
+            {% for course in nav_groups %}
+                {% assign course_segments = course.name | split: '/' %}
+                {% if course_segments.size != 2 %}{% continue %}{% endif %}
+                {% assign course_index = course.items | where: "name", "index.md" | first %}
+                {% if course_index == nil %}{% continue %}{% endif %}
+
+                <li class="chapter{% if page.url == course_index.url %} active{% endif %}" data-level="1.1" data-path="{{site.baseurl}}{{course_index.url}}">
+                    <a href="{{site.baseurl}}{{course_index.url}}" onclick="pageScrollToTop(this)">
+                        {{ course_index.title | escape }}
+                    </a>
+
+                    <ul>
+                        {% for unit in nav_groups %}
+                            {% assign unit_segments = unit.name | split: '/' %}
+                            {% if unit_segments.size != 3 %}{% continue %}{% endif %}
+                            {% unless unit.name contains course.name %}{% continue %}{% endunless %}
+
+                            {% assign unit_index = unit.items | where: "name", "index.md" | first %}
+                            {% assign unit_leaves = unit.items | where_exp: "p", "p.name != 'index.md'" | sort: "title" %}
+
+                            {% if unit_index %}
+                                <li class="chapter{% if page.url == unit_index.url %} active{% endif %}" data-path="{{site.baseurl}}{{unit_index.url}}">
+                                    <a href="{{site.baseurl}}{{unit_index.url}}" onclick="pageScrollToTop(this)">
+                                        {{ unit_index.title | escape }}
+                                    </a>
+                            {% else %}
+                                <li class="chapter">
+                            {% endif %}
+
+                                    <ul>
+                                        {% for leaf in unit_leaves %}
+                                            <li class="chapter{% if page.url == leaf.url %} active{% endif %}" data-path="{{site.baseurl}}{{leaf.url}}">
+                                                <a href="{{site.baseurl}}{{leaf.url}}" onclick="pageScrollToTop(this)">
+                                                    {{ leaf.title | escape }}
+                                                </a>
+                                                {% if site.toc.enabled and page.url == leaf.url %}
+                                                    {% include toc.html html=content h_min=site.toc.h_min h_max=site.toc.h_max %}
+                                                {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <li class="divider"></li>
+            {% endfor %}
+        </ul>
+    </nav>
+</div>

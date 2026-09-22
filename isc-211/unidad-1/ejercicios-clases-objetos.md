@@ -6,8 +6,6 @@ grand_parent: "ISC-211 Estructuras de Datos"
 nav_order: 2
 ---
 
-# Ejercicios de Repaso: Clases y Objetos en Java
-
 Ejercicios para verificar el dominio de clases y objetos en Java como base para el diseño de ADTs. No se incluyen soluciones.
 
 ## 1. Conceptos básicos

@@ -6,8 +6,6 @@ grand_parent: "ISC-211 Estructuras de Datos"
 nav_order: 3
 ---
 
-# Análisis de Algoritmos
-
 ## Notación asintótica
 
 Para un mismo problema pueden existir varias soluciones; hay que analizar la eficiencia de cada una en tiempo de ejecución (en función del tamaño de la entrada `n`) y en uso de memoria. En un polinomio como `3n² + 87n + 230`, para entradas grandes el término `3n²` domina sobre los demás: la notación asintótica descarta los términos menos significativos y las constantes, quedándose solo con el término que crece más rápido.

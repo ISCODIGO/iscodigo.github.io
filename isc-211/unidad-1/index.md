@@ -6,7 +6,6 @@ nav_order: 1
 has_mermaid: true 
 ---
 
-# 📘 Unidad I: Introducción a Estructuras de Datos, Modelado y Algoritmos Básicos
 # Introducción
 
 **[1. Tipos de Datos Abstractos (ADT)](./tipos-de-datos-abstractos.md)**

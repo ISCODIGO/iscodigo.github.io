@@ -6,8 +6,6 @@ grand_parent: "ISC-321 Fundamentos de Bases de Datos"
 nav_order: 1
 ---
 
-# Introducción a las Bases de Datos Relacionales y conceptos básicos
-
 ## Introducción
 
 Una **base de datos** es una colección de datos relacionados con un significado implícito. Tiene tres propiedades:

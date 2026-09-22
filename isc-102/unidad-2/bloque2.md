@@ -6,8 +6,6 @@ nav_order: 2
 has_mermaid: true 
 ---
 
-## 2. Arreglos y Punteros
-
 En esta sección de la Unidad II, exploraremos el que posiblemente es el tema más potente y distintivo del lenguaje C: los punteros. Dominar el manejo de la memoria y su relación con los arreglos es lo que permite crear programas altamente eficientes y manipular datos de forma avanzada (Capítulo 11, Introducción).
 
 ### 1. Punteros y Direccionamiento de Memoria

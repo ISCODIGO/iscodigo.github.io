@@ -6,4 +6,3 @@ nav_order: 2
 has_children: true
 ---
 
-# 📘 Unidad II: Gestión de Procesos, Concurrencia y Deadlock

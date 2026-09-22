@@ -5,8 +5,6 @@ nav_order: 2
 has_children: true
 ---
 
-# 📘 ISC-333: Sistemas Operativos I
-
 Este es el repositorio de contenido para la clase. Aquí seguiremos el sílabo oficial.
 
 ### Contenido Académico

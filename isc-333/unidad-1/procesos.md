@@ -7,8 +7,6 @@ nav_order: 2
 has_mermaid: true
 ---
 
-# Procesos en Sistemas Operativos
-
 **Tanenbaum & Bos · Modern Operating Systems, Cap. 2**  
 **William Stallings · Operating Systems: Internals and Design Principles, 9ª Ed., Cap. 3**
 

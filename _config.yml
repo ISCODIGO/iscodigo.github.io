@@ -5,9 +5,14 @@ url: "https://iscodigo.github.io"
 logo: "assets/logo.png"
 
 # Configuración de navegación
-nav_enabled: true
 search_enabled: true
 syntax_highlighter_style: monokai
+
+# Índice de encabezados dentro de la página activa
+toc:
+  enabled: true
+  h_min: 2
+  h_max: 3
 
 # Soporte para diagramas
 has_mermaid: true

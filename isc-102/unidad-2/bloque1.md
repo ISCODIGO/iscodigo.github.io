@@ -6,8 +6,6 @@ nav_order: 1
 has_mermaid: true 
 ---
 
-## 1. Funciones y Estructura de un Programa
-
 Una **función** es un grupo de sentencias diseñadas para realizar una tarea específica. La programación estructurada se basa en dividir un problema grande en módulos pequeños y manejables (Capítulo 7, Sección 7.1).
 
 ### 1. Elementos Básicos y Retorno de Valores
