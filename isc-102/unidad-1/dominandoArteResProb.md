@@ -90,5 +90,6 @@ Aprender programación estructurada es el paso inicial y vital en tu formación,
 Programar no es solo aprender reglas de escritura, sino desarrollar un **razonamiento lógico y estructurado**. Es la capacidad de "dialogar" con la máquina para construir soluciones innovadoras. 
 
 **¿Estás listo para escribir tu primer programa?**
+
 ---
 [⬅️ Volver al índice de la unidad](./index.md)

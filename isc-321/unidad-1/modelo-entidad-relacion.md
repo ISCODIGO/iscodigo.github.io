@@ -84,6 +84,7 @@ flowchart TD
 ---
 
 ![Ejemplo de atributos complejos: anidamiento de compuestos y multivalor](../../assets/dos-entidades.png)
+
 ---
 El anidamiento se representa agrupando los componentes de un atributo compuesto entre paréntesis `()` y los multivalor entre llaves `{}`:
 
