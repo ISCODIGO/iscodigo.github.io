@@ -4,12 +4,31 @@ title: "Conceptos y arquitectura de los sistemas de bases de datos"
 parent: "Unidad I: Introducción a las Bases de Datos Relacionales y conceptos básicos"
 grand_parent: "ISC-321 Fundamentos de Bases de Datos"
 nav_order: 2
+mermaid: true
 ---
 
 ## Modelos de datos, esquemas e instancias
 
 
-![Clasificación de los modelos de datos](../../assets/modelos-de-datos.png)
+```mermaid
+flowchart TD
+    M["<b>Modelo de datos</b><br/>Conceptos para describir<br/>estructura y operaciones"]
+
+    M --> ALTO["<b>Alto nivel</b><br/>o conceptuales"]
+    M --> REP["<b>Representativos</b><br/>o de implementación"]
+    M --> BAJO["<b>Bajo nivel</b><br/>o físicos"]
+
+    ALTO --> ALTOD["Entidades, atributos y relaciones<br/><i>Ej.: modelo Entidad-Relación</i>"]
+    REP --> REPD["Relacional, de red, jerárquico<br/>y orientado a objetos<br/><i>Los más usados en DBMS comerciales</i>"]
+    BAJO --> BAJOD["Formatos de registro, ordenación<br/>y rutas de acceso"]
+
+    classDef raiz fill:#e8eef7,stroke:#4a6fa5,stroke-width:2px,color:#1b2b40
+    classDef nivel fill:#f4f6f8,stroke:#8a9bb0,color:#1b2b40
+    classDef detalle fill:#fbfcfd,stroke:#c3ccd7,color:#33414f
+    class M raiz
+    class ALTO,REP,BAJO nivel
+    class ALTOD,REPD,BAJOD detalle
+```
 
 
 **Esquema vs. estado de la base de datos:**
@@ -28,6 +47,31 @@ nav_order: 2
 - **DML** (*data manipulation language*): recuperación, inserción, borrado y modificación de datos. Puede ser:
   - **Alto nivel / no procedimental / declarativo / set-at-a-time** (p. ej., SQL): especifica *qué* se quiere, no *cómo* obtenerlo. Usado de forma interactiva se llama **lenguaje de consulta**.
   - **Bajo nivel / procedimental / record-at-a-time** (p. ej., DL/1): debe incrustarse en un lenguaje **host** y procesa un registro a la vez con construcciones tipo bucle.
+
+```mermaid
+flowchart TD
+    L["Lenguajes de un DBMS"]
+
+    L --> DDL["<b>DDL</b><br/>data definition language<br/>Define el esquema conceptual<br/>y, en muchos DBMS, el externo"]
+    L --> SDL["<b>SDL</b><br/>storage definition language<br/>Define el esquema interno<br/>En los DBMS relacionales actuales<br/>no existe como lenguaje aparte"]
+    L --> VDL["<b>VDL</b><br/>view definition language<br/>Define vistas externas y mapeados<br/>En la práctica lo cubre SQL"]
+    L --> DML["<b>DML</b><br/>data manipulation language<br/>Recuperar, insertar,<br/>borrar y modificar datos"]
+
+    DML --> ALTO["<b>Alto nivel</b><br/>no procedimental · declarativo<br/>set-at-a-time — p. ej. SQL<br/>Especifica <i>qué</i>, no <i>cómo</i>"]
+    DML --> BAJO["<b>Bajo nivel</b><br/>procedimental<br/>record-at-a-time — p. ej. DL/1<br/>Un registro a la vez, con bucles"]
+
+    ALTO --> QUERY["Usado de forma interactiva<br/>se llama <b>lenguaje de consulta</b>"]
+    BAJO --> HOST["Debe incrustarse en<br/>un lenguaje <b>host</b>"]
+
+    classDef raiz fill:#e8eef7,stroke:#4a6fa5,stroke-width:2px,color:#1b2b40
+    classDef leng fill:#f4f6f8,stroke:#8a9bb0,color:#1b2b40
+    classDef nota fill:#fdf6e3,stroke:#c9a227,color:#4a3c00
+    class L raiz
+    class DDL,SDL,VDL,DML,ALTO,BAJO leng
+    class QUERY,HOST nota
+```
+
+## Arquitectura de un DBMS
 
 **Interfaces para el usuario:** basadas en menús, en formularios, GUI, lenguaje natural, entrada/salida por voz, interfaces para usuarios paramétricos (teclas de función) y comandos privilegiados para el DBA.
 
@@ -60,7 +104,6 @@ Se clasifican según varios criterios:
 > - **Tipo de carga de trabajo**: **OLTP** (transaccional, escritura intensiva) vs. **OLAP** (analítico, lectura intensiva sobre grandes volúmenes históricos) vs. **HTAP** (*Hybrid Transactional/Analytical Processing*), que intenta soportar ambas cargas en una sola plataforma.
 > - **Modelo de despliegue**: on-premises (hardware propio) vs. **cloud-native / administrado** (p. ej. Amazon Aurora, Google Cloud SQL, con escalado y mantenimiento a cargo del proveedor) vs. híbrido.
 >
-> Fuentes: [ClickHouse – Unifying OLTP and OLAP: HTAP databases](https://clickhouse.com/resources/engineering/unifying-oltp-and-olap), [Towards Data Science – NewSQL, Lakehouse, HTAP, and the Future of Data](https://towardsdatascience.com/newsql-lakehouse-htap-and-the-future-of-data-69d427c533e0/), [CloudOptimo – How OLTP, OLAP, and ETL Drive Modern Cloud Data Management](https://www.cloudoptimo.com/blog/how-oltp-olap-and-etl-drive-modern-cloud-data-management/).
 
 **Modelos de datos heredados** (contexto histórico):
 

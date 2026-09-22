@@ -13,6 +13,9 @@ Resumen del capítulo 1 del libro de texto (Elmasri & Navathe): definición de b
 **[2. Conceptos y arquitectura de los sistemas de bases de datos](./conceptos-arquitectura.md)**
 Resumen del capítulo 2 del libro de texto (Elmasri & Navathe): modelos de datos, esquemas e instancias, arquitectura de tres esquemas e independencia de los datos, lenguajes e interfaces, entorno del DBMS, arquitecturas cliente/servidor y clasificación de los DBMS.
 
+**[3. Modelado de datos con el modelo Entidad-Relación (ER)](./modelo-entidad-relacion.md)**
+Resumen del capítulo 3 del libro de texto (Elmasri & Navathe): el diseño conceptual, entidades, atributos y claves, tipos de relación y restricciones estructurales, entidades débiles, diagramas ER de la base de datos EMPRESA, notación UML y relaciones de grado mayor que dos.
+
 --
 
 [⬅️ Volver al índice general de la clase](../index.md)
