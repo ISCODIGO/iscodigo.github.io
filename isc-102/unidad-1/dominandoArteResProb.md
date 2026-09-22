@@ -6,7 +6,7 @@ nav_order: 2
 has_mermaid: true 
 ---
 
-# ¡Hola, Mundo! Guía Esencial para Iniciar en la Programación
+## ¡Hola, Mundo! Guía Esencial para Iniciar en la Programación
 
 ¿Alguna vez te has preguntado cómo las computadoras realizan tareas tan complejas? La respuesta no es magia, es **programación**. Si estás dando tus primeros pasos en este mundo, esta guía te ayudará a entender los fundamentos que todo ingeniero debe conocer.
 

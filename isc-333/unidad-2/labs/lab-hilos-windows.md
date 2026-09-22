@@ -1,8 +1,7 @@
 ---
-nav_exclude: true
+layout: post
+title: "Laboratorio: Procesos vs Hilos en Windows (Win32 API)"
 ---
-
-# Laboratorio: Procesos vs Hilos en Windows (Win32 API)
 
 **Plataforma:** Microsoft Windows 10/11  
 **Compilador:** MinGW-w64 (gcc) o MSVC (cl.exe)  

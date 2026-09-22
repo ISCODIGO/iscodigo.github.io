@@ -7,7 +7,7 @@ nav_order: 1
 has_mermaid: true
 ---
 
-# Sistemas Operativos Modernos — Capítulo 1
+## Sistemas Operativos Modernos — Capítulo 1
 
 **Andrew S. Tanenbaum · Herbert Bos · 4ª Edición**  
 Vrije Universiteit Amsterdam

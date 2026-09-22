@@ -6,7 +6,7 @@ nav_order: 1
 has_mermaid: true 
 ---
 
-# Introducción
+## Introducción
 
 **[1. Tipos de Datos Abstractos (ADT)](./tipos-de-datos-abstractos.md)**
 Resumen del capítulo 1 del libro de texto: abstracción de datos, tipos definidos por el usuario, diseño de ADT y su relación con la programación orientada a objetos, con el ejemplo del ADT Arreglo.

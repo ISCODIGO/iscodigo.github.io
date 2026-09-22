@@ -1,8 +1,7 @@
 ---
-nav_exclude: true
+layout: post
+title: "Laboratorio: Procesos en Minix3 con Clang"
 ---
-
-# Laboratorio: Procesos en Minix3 con Clang
 
 **Plataforma:** Minix 3.3 (máquina virtual)  
 **Compilador:** Clang  

@@ -23,3 +23,13 @@ lang: "es"
 
 # Estética
 color_scheme: light
+
+# Apuntes de referencia, no son páginas del sitio. Contienen llaves dobles
+# que Liquid intenta interpretar y rompen la compilación.
+exclude:
+  - isc-211/books/
+  - isc-321/books/
+  # Presentaciones Marp: el fuente de las diapositivas, no páginas del sitio.
+  - isc-333/unidad-1/hilos/
+  - isc-333/unidad-3/cap7/
+  - isc-333/unidad-3/cap8/

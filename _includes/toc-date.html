@@ -57,7 +57,13 @@
                 {% assign course_index = course.items | where: "name", "index.md" | first %}
                 {% if course_index == nil %}{% continue %}{% endif %}
 
-                <li class="chapter{% if page.url == course_index.url %} active{% endif %}" data-level="1.1" data-path="{{site.baseurl}}{{course_index.url}}">
+                {%- comment -%}
+                  expandable-chapters-small2 expands the active chapter but not its
+                  ancestors (that call is commented out in the plugin), so an active
+                  leaf would stay hidden inside a collapsed parent. Mark the branch
+                  holding the current page as expanded here instead.
+                {%- endcomment -%}
+                <li class="chapter{% if page.url == course_index.url %} active{% endif %}{% if page.url contains course.name %} expanded{% endif %}" data-level="1.1" data-path="{{site.baseurl}}{{course_index.url}}">
                     <a href="{{site.baseurl}}{{course_index.url}}" onclick="pageScrollToTop(this)">
                         {{ course_index.title | escape }}
                     </a>
@@ -72,7 +78,7 @@
                             {% assign unit_leaves = unit.items | where_exp: "p", "p.name != 'index.md'" | sort: "title" %}
 
                             {% if unit_index %}
-                                <li class="chapter{% if page.url == unit_index.url %} active{% endif %}" data-path="{{site.baseurl}}{{unit_index.url}}">
+                                <li class="chapter{% if page.url == unit_index.url %} active{% endif %}{% if page.url contains unit.name %} expanded{% endif %}" data-path="{{site.baseurl}}{{unit_index.url}}">
                                     <a href="{{site.baseurl}}{{unit_index.url}}" onclick="pageScrollToTop(this)">
                                         {{ unit_index.title | escape }}
                                     </a>

@@ -6,7 +6,7 @@ nav_order: 2
 has_mermaid: true 
 ---
 
-# Introducción
+## Introducción
 
 ¡Bienvenidos a la segunda etapa de nuestro curso! En esta unidad, elevaremos nuestro nivel de programación pasando de simples scripts secuenciales a la creación de software modular y el manejo directo de la memoria.
 

@@ -1,8 +1,7 @@
 ---
-nav_exclude: true
+layout: post
+title: "Laboratorio: Hilos en Linux con GCC"
 ---
-
-# Laboratorio: Hilos en Linux con GCC
 
 **Plataforma:** GNU/Linux (Ubuntu / Debian)  
 **Compilador:** GCC  

@@ -1,9 +1,7 @@
 ---
-nav_exclude: true
+layout: post
+title: "Laboratorio: Procesos en Linux con GCC"
 ---
-
-
-# Laboratorio: Procesos en Linux con GCC
 
 **Plataforma:** GNU/Linux (Ubuntu / Debian)  
 **Compilador:** GCC  

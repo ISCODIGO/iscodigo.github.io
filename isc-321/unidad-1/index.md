@@ -6,7 +6,7 @@ nav_order: 1
 has_mermaid: true 
 ---
 
-# Introducción
+## Introducción
 
 **[1. Introducción a las Bases de Datos Relacionales y conceptos básicos](./introduccion.md)**
 Resumen del capítulo 1 del libro de texto (Elmasri & Navathe): definición de base de datos y DBMS, características de la metodología de bases de datos, actores de la escena, ventajas de un DBMS, historia y cuándo no conviene usar un DBMS.
