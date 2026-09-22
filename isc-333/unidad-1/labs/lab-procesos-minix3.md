@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Laboratorio: Procesos en Minix3 con Clang"
+mermaid: true
 ---
 
 **Plataforma:** Minix 3.3 (máquina virtual)  

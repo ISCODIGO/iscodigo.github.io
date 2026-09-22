@@ -6,7 +6,7 @@ logo: "assets/logo.png"
 
 # Configuración de navegación
 search_enabled: true
-syntax_highlighter_style: monokai
+syntax_highlighter_style: github
 
 # Índice de encabezados dentro de la página activa
 toc:
@@ -14,10 +14,8 @@ toc:
   h_min: 2
   h_max: 3
 
-# Soporte para diagramas
-has_mermaid: true
-mermaid:
-  version: "10"
+# Los diagramas se activan por página con `mermaid: true` en el front matter;
+# el tema fija la versión de la librería, aquí no se configura.
 
 lang: "es"
 

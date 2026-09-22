@@ -4,7 +4,7 @@ title: "3. Hilos (Threads)"
 parent: "Unidad I: Introducción a SO y Control de Procesos"
 grand_parent: "ISC-333 Sistemas Operativos I"
 nav_order: 3
-has_mermaid: true
+mermaid: true
 ---
 
 **Referencias:**

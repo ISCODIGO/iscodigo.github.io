@@ -4,7 +4,6 @@ title: "Unidad I: Introducción a SO y Control de Procesos"
 parent: "ISC-333 Sistemas Operativos I"
 nav_order: 1
 has_children: true
-has_mermaid: true
 ---
 
 **[1. Introduccion ](./introSO.md)**

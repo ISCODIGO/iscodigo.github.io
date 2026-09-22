@@ -3,7 +3,7 @@ layout: post
 title: "3: Control de Flujo del Programa"
 parent: "Unidad I: Introducción y Lógica de Programación"
 nav_order: 5
-has_mermaid: true 
+mermaid: true
 ---
 
 El **control de flujo** es la capacidad de un programa para alterar el orden en que se ejecutan sus instrucciones. Sin estas estructuras, una computadora solo podría ejecutar tareas de forma secuencial (una tras otra). 

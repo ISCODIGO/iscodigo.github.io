@@ -3,7 +3,6 @@ layout: post
 title: "Unidad II: Funciones, Arreglos, Punteros y Memoria "
 parent: "ISC-102 Programación Estructurada"
 nav_order: 2
-has_mermaid: true 
 ---
 
 ## Introducción

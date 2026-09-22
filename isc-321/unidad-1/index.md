@@ -3,7 +3,6 @@ layout: post
 title: "Unidad I: Introducción a Bases de Datos Relacionales, Modelado y SQL Básico"
 parent: "ISC-321 Fundamentos de Bases de Datos"
 nav_order: 1
-has_mermaid: true 
 ---
 
 ## Introducción

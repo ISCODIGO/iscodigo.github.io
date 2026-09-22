@@ -4,7 +4,7 @@ title: "2. Procesos en Sistemas Operativos"
 parent: "Unidad I: Introducción a SO y Control de Procesos"
 grand_parent: "ISC-333 Sistemas Operativos I"
 nav_order: 2
-has_mermaid: true
+mermaid: true
 ---
 
 **Tanenbaum & Bos · Modern Operating Systems, Cap. 2**  

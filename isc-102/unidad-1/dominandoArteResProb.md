@@ -3,7 +3,7 @@ layout: post
 title: "0: Dominando el Arte de Resolver Problemas"
 parent: "Unidad I: Introducción y Lógica de Programación"
 nav_order: 2
-has_mermaid: true 
+mermaid: true
 ---
 
 ## ¡Hola, Mundo! Guía Esencial para Iniciar en la Programación

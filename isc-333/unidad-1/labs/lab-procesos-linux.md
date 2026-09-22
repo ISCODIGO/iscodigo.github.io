@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Laboratorio: Procesos en Linux con GCC"
+mermaid: true
 ---
 
 **Plataforma:** GNU/Linux (Ubuntu / Debian)  

@@ -3,7 +3,7 @@ layout: post
 title: "1. Estructuras y Uniones"
 parent: "Unidad III: Estructuras y Archivos"
 nav_order: 1
-has_mermaid: true 
+mermaid: true
 ---
 
 En este bloque aprenderemos a crear tipos de datos personalizados para agrupar información heterogénea, permitiendo que un solo nombre de variable represente un registro completo (Capítulo 10, Sección 10.1).

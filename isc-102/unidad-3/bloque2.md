@@ -3,7 +3,7 @@ layout: post
 title: "2. Entrada y Salida (Archivos)"
 parent: "Unidad III: Estructuras y Archivos"
 nav_order: 2
-has_mermaid: true 
+mermaid: true
 ---
 
 En este bloque aprenderemos a trabajar con archivos, permitiendo que nuestros programas guarden y recuperen información de forma persistente. Exploraremos operaciones básicas de lectura/escritura, manejo de archivos de texto y binarios (Capítulo 12, Secciones 12.1 - 12.9).
