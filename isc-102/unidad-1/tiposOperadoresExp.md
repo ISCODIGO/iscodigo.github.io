@@ -17,11 +17,27 @@ Para nombrar variables, C sigue reglas estrictas que todo programador debe memor
     *   ❌ *Inválidos:* `1erParcial` (empieza con número), `valor total` (tiene espacio).
 
 ### 2. Tipos de datos y tamaños
-C no desperdicia memoria. Cada dato tiene un tamaño específico que puede variar según la máquina, pero el estándar suele ser (Capítulo 3, Sección 3.7 y Tabla 3.1):
-*   **char:** Almacena un solo carácter (1 byte). Ejemplo: `'A'`.
-*   **int:** Para números enteros (normalmente 2 o 4 bytes).
-*   **float:** Números con decimales de precisión simple (4 bytes).
-*   **double:** Números con decimales de alta precisión (8 bytes).
+
+
+Tipos comunes en un sistema moderno de 64 bits:
+
+| Tipo | Tamaño | Mínimo | Máximo |
+|------|--------|--------|--------|
+| `char` | 1 byte | -128 | 127 |
+| `unsigned char` | 1 byte | 0 | 255 |
+| `short` | 2 bytes | -32 768 | 32 767 |
+| `unsigned short` | 2 bytes | 0 | 65 535 |
+| `int` | 4 bytes | -2 147 483 648 | 2 147 483 647 |
+| `unsigned int` | 4 bytes | 0 | 4 294 967 295 |
+| `long` | 8 bytes* | -9 223 372 036 854 775 808 | 9 223 372 036 854 775 807 |
+| `unsigned long` | 8 bytes* | 0 | 18 446 744 073 709 551 615 |
+| `long long` | 8 bytes | -9 223 372 036 854 775 808 | 9 223 372 036 854 775 807 |
+| `float` | 4 bytes | ±1.2 × 10⁻³⁸ | ±3.4 × 10³⁸ (~6-7 dígitos de precisión) |
+| `double` | 8 bytes | ±2.2 × 10⁻³⁰⁸ | ±1.8 × 10³⁰⁸ (~15-16 dígitos de precisión) |
+| `long double` | 16 bytes** | ±3.4 × 10⁻⁴⁹³² | ±1.2 × 10⁴⁹³² (~18-19 dígitos de precisión) |
+
+> En Windows, `long` ocupa 4 bytes (mismo rango que `int`). \*\* `long double` depende de la plataforma: en Linux x86-64 usa 80 bits útiles (almacenados en 16 bytes); en Windows (MSVC) y macOS con Apple Silicon es igual a `double` (8 bytes). En `float`, `double` y `long double`, el mínimo es el menor valor positivo normalizado. Los límites exactos de tu sistema están en `<limits.h>` (`INT_MAX`, `INT_MIN`, …) y `<float.h>` (`FLT_MAX`, `DBL_MAX`, …).
+
 
 **¿Cómo saber cuánto ocupa un dato en MI computadora?**
 Usamos el operador **`sizeof`**. Si escribes `sizeof(int)`, el programa te dirá cuántos bytes reserva tu sistema para un entero (Capítulo 4, Sección 4.10).
