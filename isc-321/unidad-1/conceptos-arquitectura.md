@@ -39,15 +39,6 @@ flowchart TD
 
 ## Lenguajes e interfaces de bases de datos
 
-**Lenguajes:**
-
-- **DDL** (*data definition language*): define el esquema conceptual (y, en muchos DBMS, también el externo).
-- **SDL** (*storage definition language*): define el esquema interno; en los DBMS relacionales actuales no existe como lenguaje separado, se maneja con parámetros de almacenamiento controlados por el DBA.
-- **VDL** (*view definition language*): define las vistas externas y sus mapeados; en la práctica, SQL cumple este rol.
-- **DML** (*data manipulation language*): recuperación, inserción, borrado y modificación de datos. Puede ser:
-  - **Alto nivel / no procedimental / declarativo / set-at-a-time** (p. ej., SQL): especifica *qué* se quiere, no *cómo* obtenerlo. Usado de forma interactiva se llama **lenguaje de consulta**.
-  - **Bajo nivel / procedimental / record-at-a-time** (p. ej., DL/1): debe incrustarse en un lenguaje **host** y procesa un registro a la vez con construcciones tipo bucle.
-
 ```mermaid
 flowchart TD
     L["Lenguajes de un DBMS"]
@@ -94,22 +85,38 @@ Arquitectura de dos y tres capas: el DBMS puede estar en un solo computador (mon
 
 Se clasifican según varios criterios:
 
-1. **Modelo de datos**: relacional, orientado a objetos, objeto-relacional, jerárquico, de red, y (fuera del libro) **NoSQL** — clave-valor (p. ej. Redis, Amazon DynamoDB), documental (p. ej. MongoDB), columnar (p. ej. Apache Cassandra) y de grafos (p. ej. Neo4j).
-2. **Número de usuarios**: monousuario (típico en PC) vs. multiusuario.
-3. **Número de sitios**: centralizado (un solo computador) vs. **distribuido (DDBMS)** (datos y software repartidos en varios sitios conectados por red); un **DBMS federado** conecta DBMS autónomos preexistentes con cierta autonomía local.
-4. **Costo**: desde código abierto (MySQL, PostgreSQL) hasta licencias de varios millones anuales para sistemas empresariales modulares.
-5. **Tipo de rutas de acceso** y **propósito**: general vs. propósito especial (p. ej., sistemas OLTP de alto volumen de transacciones simultáneas, como reservas de aerolíneas).
+```mermaid
+flowchart LR
+    D["<b>Clasificación<br/>de los DBMS</b>"]
 
-> **Nota (fuera del libro):** hoy se suelen agregar dos criterios más:
-> - **Tipo de carga de trabajo**: **OLTP** (transaccional, escritura intensiva) vs. **OLAP** (analítico, lectura intensiva sobre grandes volúmenes históricos) vs. **HTAP** (*Hybrid Transactional/Analytical Processing*), que intenta soportar ambas cargas en una sola plataforma.
-> - **Modelo de despliegue**: on-premises (hardware propio) vs. **cloud-native / administrado** (p. ej. Amazon Aurora, Google Cloud SQL, con escalado y mantenimiento a cargo del proveedor) vs. híbrido.
->
+    D --> MD["<b>Modelo de datos</b>"]
+    MD --> REL["Relacional"]
+    MD --> OO["Orientado a objetos /<br/>objeto-relacional"]
+    MD --> HER["Heredados"]
+    HER --> RED["<b>Red (CODASYL DBTG)</b><br/>Tipos conjunto: relaciones 1:N<br/>con punteros; DML record-at-a-time<br/>embebido en COBOL"]
+    HER --> JER["<b>Jerárquico</b><br/>Estructuras en árbol; DL/1 (IMS)<br/>dominó 1965–1985; aún en banca,<br/>salud y gobierno"]
+    HER --> XML["<b>XML</b><br/>Árbol de elementos anidados;<br/>estándar de intercambio en Internet"]
+    MD -.-> NOSQL["<b>NoSQL*</b>"]
+    NOSQL -.-> KV["<b>Clave-valor</b><br/>(Redis, DynamoDB)"]
+    NOSQL -.-> DOC["<b>Documental</b><br/>(MongoDB)"]
+    NOSQL -.-> COL["<b>Columnar</b><br/>(Cassandra)"]
+    NOSQL -.-> GRA["<b>Grafos</b><br/>(Neo4j)"]
+    MD -.-> VEC["<b>Vectoriales*</b><br/>Embeddings y búsqueda por similitud<br/>(Pinecone, Milvus, pgvector)"]
 
-**Modelos de datos heredados** (contexto histórico):
+    D --> U["<b>Usuarios</b><br/>Monousuario (típico en PC)<br/>vs. multiusuario"]
+    D --> S["<b>Sitios</b><br/>Centralizado: un solo computador<br/>Distribuido (DDBMS): varios sitios en red<br/>Federado: une DBMS autónomos preexistentes"]
+    D --> C["<b>Costo</b><br/>Código abierto (MySQL, PostgreSQL)<br/>hasta licencias de millones anuales"]
+    D --> P["<b>Rutas de acceso y propósito</b><br/>General vs. especial<br/>(p. ej. OLTP de reservas de aerolíneas)"]
+    D -.-> W["<b>Carga de trabajo*</b><br/>OLTP: transaccional, escritura intensiva<br/>OLAP: analítico, lectura sobre históricos<br/>HTAP: ambas en una plataforma"]
+    D -.-> DE["<b>Despliegue*</b><br/>On-premises: hardware propio<br/>Cloud/administrado: Aurora, Cloud SQL<br/>Híbrido"]
 
-- **Red (CODASYL DBTG)**: registros relacionados mediante *tipos conjunto* (relaciones 1:N con punteros); DML record-at-a-time embebido en COBOL.
-- **Jerárquico**: estructuras en árbol; DL/1 (IMS de IBM) dominó el mercado entre 1965 y 1985 y aún se usa en banca, salud y gobierno.
-- **XML**: estructura jerárquica (árbol de elementos anidados), estándar para intercambio de datos por Internet; conceptualmente parecido al modelo de objetos.
+    classDef raiz fill:#e8eef7,stroke:#4a6fa5,stroke-width:2px,color:#1b2b40
+    classDef nivel fill:#f4f6f8,stroke:#8a9bb0,color:#1b2b40
+    classDef detalle fill:#fbfcfd,stroke:#c3ccd7,color:#33414f
+    class D raiz
+    class MD,HER,NOSQL,U,S,C,P,W,DE nivel
+    class REL,OO,RED,JER,XML,KV,DOC,COL,GRA,VEC detalle
+```
 
 ## Gestión de transacciones
 
