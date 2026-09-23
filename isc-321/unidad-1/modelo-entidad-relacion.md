@@ -79,18 +79,23 @@ flowchart TD
 
 ---
 
-![Ejemplo de atributos simples, compuestos, multivalor y derivados](../../assets/jerarquia-atributos.png)
+#### Jerarquía de un atributo compuesto
 
----
+![Jerarquía del atributo compuesto Dirección: DirCalle (Número, Calle, NumApto), Ciudad, Provincia y CP](../../assets/jerarquia-atributos.png)
 
-![Ejemplo de atributos complejos: anidamiento de compuestos y multivalor](../../assets/dos-entidades.png)
+Los atributos compuestos pueden formar **jerarquías**. `Dirección` se divide en `DirCalle`, `Ciudad`, `Provincia` y `CP`. A su vez, `DirCalle` es un atributo compuesto formado por `Número`, `Calle` y `NumApto`. Las hojas del árbol son **atributos simples (atómicos)**: ya no se pueden dividir. El valor del atributo compuesto es la concatenación de los valores de sus componentes. Conviene modelarlo así cuando unas veces se hace referencia a la dirección completa y otras solo a una de sus partes, por ejemplo al buscar por `Ciudad` o por `CP`.
 
----
 El anidamiento se representa agrupando los componentes de un atributo compuesto entre paréntesis `()` y los multivalor entre llaves `{}`:
 
 ```text
 {TlfDir( {Tlf(CodÁrea, NumTlf)}, Dir(DirCalle(Número, Calle, NumApto), Ciudad, Provincia, CP) )}
 ```
+
+#### Entidades y valores de sus atributos
+
+![Dos entidades con los valores de sus atributos: el empleado e1 y la empresa c1](../../assets/dos-entidades.png)
+
+> Cada entidad concreta tiene un **valor** para cada uno de sus atributos. El empleado `e1` se describe con `Nombre`, `Dirección`, `Edad` y `TlfCasa`, y sus valores son "José Pérez", "Ribera del Sena, 915, Getafe, Madrid, 28903", 55 y "91-123-4567". La empresa `c1` se describe con `Nombre`, `Sede Central` y `Presidente`, cuyos valores son "Sunco Oil", "Madrid" y "José Pérez". Los valores de los atributos de cada entidad forman una parte importante de los datos que se almacenan en la base de datos.
 
 **Valores NULL.** Se utilizan cuando una entidad no tiene un valor aplicable para un atributo (`NumApto` en una casa unifamiliar, `Licenciaturas` en alguien sin carrera) o cuando el valor es **desconocido**. Lo desconocido se clasifica en dos casos: se sabe que el valor existe pero no se encuentra (la `Altura` de una persona), o **no se sabe si el valor existe** (el `TlfCasa` de una persona).
 
