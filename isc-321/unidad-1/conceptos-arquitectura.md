@@ -37,22 +37,61 @@ flowchart TD
 - El **estado** (o *snapshot*) es el conjunto de datos reales en un momento dado; cambia con cada inserción, borrado o actualización. El **estado inicial** es cuando la base de datos se carga por primera vez.
 - Un cambio de esquema (p. ej., añadir un campo) es **evolución del esquema**, distinto de una actualización normal de datos.
 
+## Arquitectura de tres esquemas e independencia de los datos
+
+La **arquitectura de tres esquemas** (ANSI/SPARC) separa las aplicaciones de usuario de la base de datos física. Para eso describe la base de datos en tres niveles:
+
+```mermaid
+flowchart TD
+    U["Usuarios finales y aplicaciones"]
+
+    U --> EXT1["<b>Vista externa 1</b><br/>p. ej. nómina"]
+    U --> EXT2["<b>Vista externa 2</b><br/>p. ej. directorio público"]
+    U --> EXTN["<b>Vista externa n</b>"]
+
+    EXT1 -->|mapeo externo/conceptual| CONC
+    EXT2 -->|mapeo externo/conceptual| CONC
+    EXTN -->|mapeo externo/conceptual| CONC
+
+    CONC["<b>Esquema conceptual</b><br/>Toda la base de datos:<br/>entidades, tipos de datos,<br/>relaciones y restricciones<br/>sin detalles físicos"]
+    CONC -->|mapeo conceptual/interno| INT["<b>Esquema interno</b><br/>Almacenamiento físico:<br/>archivos, registros,<br/>índices y rutas de acceso"]
+    INT --> BD[("Base de datos almacenada")]
+
+    classDef ext fill:#f4f6f8,stroke:#8a9bb0,color:#1b2b40
+    classDef conc fill:#e8eef7,stroke:#4a6fa5,stroke-width:2px,color:#1b2b40
+    classDef fis fill:#fdf6e3,stroke:#c9a227,color:#4a3c00
+    class U,EXT1,EXT2,EXTN ext
+    class CONC conc
+    class INT,BD fis
+```
+
+- El **nivel externo** tiene un **esquema externo** (o **vista de usuario**) por cada grupo de usuarios. Cada uno muestra solo la parte de la base de datos que le interesa a ese grupo y oculta el resto. Por ejemplo, nómina ve el salario de los empleados; el directorio público solo ve el nombre y el cargo.
+- El **nivel conceptual** tiene un único **esquema conceptual**, que describe toda la base de datos para la comunidad de usuarios. Suele expresarse con un modelo de datos representativo (p. ej. el relacional).
+- El **nivel interno** tiene el **esquema interno**, que describe cómo se almacenan los datos físicamente.
+
+Los tres esquemas son solo **descripciones**: los datos reales existen únicamente en el nivel físico. El DBMS usa los **mapeos** entre niveles para traducir una consulta hecha sobre una vista externa a una consulta sobre el esquema conceptual y, de ahí, a operaciones sobre el almacenamiento.
+
+**Independencia de los datos:** es la posibilidad de cambiar el esquema de un nivel sin tener que cambiar el esquema del nivel superior. Solo cambia el mapeo entre ambos.
+
+- **Independencia lógica:** se puede cambiar el esquema conceptual (p. ej. agregar un atributo o una tabla) sin modificar los esquemas externos ni los programas que no usan lo que cambió.
+- **Independencia física:** se puede cambiar el esquema interno (p. ej. crear un índice o reorganizar archivos) sin modificar el esquema conceptual. Es más fácil de lograr que la independencia lógica y la mayoría de los DBMS la ofrecen.
+
 ## Lenguajes e interfaces de bases de datos
 
 ```mermaid
 flowchart TD
     L["Lenguajes de un DBMS"]
 
-    L --> DDL["<b>DDL</b><br/>data definition language<br/>Define el esquema conceptual<br/>y, en muchos DBMS, el externo"]
-    L --> SDL["<b>SDL</b><br/>storage definition language<br/>Define el esquema interno<br/>En los DBMS relacionales actuales<br/>no existe como lenguaje aparte"]
-    L --> VDL["<b>VDL</b><br/>view definition language<br/>Define vistas externas y mapeados<br/>En la práctica lo cubre SQL"]
-    L --> DML["<b>DML</b><br/>data manipulation language<br/>Recuperar, insertar,<br/>borrar y modificar datos"]
+    L --> DDL["<b>DDL</b><br/>data definition language<br/>Define el esquema conceptual<br/>En la mayoría de los DBMS<br/>también define el esquema externo"]
+    L --> SDL["<b>SDL</b><br/>storage definition language<br/>Define el esquema interno<br/>(cómo se almacenan los datos)<br/>En los DBMS relacionales actuales<br/>no es un lenguaje aparte: el DBA<br/>usa parámetros de almacenamiento"]
+    L --> VDL["<b>VDL</b><br/>view definition language<br/>Define las vistas de usuario<br/>y su correspondencia<br/>con el esquema conceptual<br/>En la práctica lo hace SQL"]
+    L --> DML["<b>DML</b><br/>data manipulation language<br/>Recupera, inserta, borra<br/>y modifica datos<br/>Hay dos tipos:"]
 
-    DML --> ALTO["<b>Alto nivel</b><br/>no procedimental · declarativo<br/>set-at-a-time — p. ej. SQL<br/>Especifica <i>qué</i>, no <i>cómo</i>"]
-    DML --> BAJO["<b>Bajo nivel</b><br/>procedimental<br/>record-at-a-time — p. ej. DL/1<br/>Un registro a la vez, con bucles"]
+    DML --> ALTO["<b>Alto nivel</b><br/>no procedimental · declarativo<br/>Opera sobre conjuntos de registros<br/>(set-at-a-time) — p. ej. SQL<br/>Indica <i>qué</i> datos se quieren,<br/>no <i>cómo</i> obtenerlos"]
+    DML --> BAJO["<b>Bajo nivel</b><br/>procedimental<br/>Opera sobre un registro a la vez<br/>(record-at-a-time) — p. ej. DL/1<br/>Recorre los registros con bucles"]
 
-    ALTO --> QUERY["Usado de forma interactiva<br/>se llama <b>lenguaje de consulta</b>"]
-    BAJO --> HOST["Debe incrustarse en<br/>un lenguaje <b>host</b>"]
+    ALTO --> QUERY["Cuando se usa de forma interactiva<br/>se le llama <b>lenguaje de consulta</b>"]
+    BAJO --> HOST["Debe incrustarse en un lenguaje<br/>de programación de propósito<br/>general: el lenguaje <b>host</b>"]
 
     classDef raiz fill:#e8eef7,stroke:#4a6fa5,stroke-width:2px,color:#1b2b40
     classDef leng fill:#f4f6f8,stroke:#8a9bb0,color:#1b2b40
