@@ -194,27 +194,27 @@ erDiagram
     EMPLEADO {
         string Dni PK
         string Nombre "compuesto: NombreP, Apellido1, Apellido2"
-        string Dirección
+        string Direccion
         string Sexo
         decimal Sueldo
         date FechaNac
     }
     DEPARTAMENTO {
         string Nombre UK
-        int Número PK
+        int Numero PK
         string Ubicaciones "multivalor"
         int NumEmpleados "derivado"
     }
     PROYECTO {
         string Nombre UK
-        int Número PK
-        string Ubicación
+        int Numero PK
+        string Ubicacion
     }
     SUBORDINADO {
         string Nombre "clave parcial"
         string Sexo
         date FechaNac
-        string Relación
+        string Relacion
     }
 ```
 
