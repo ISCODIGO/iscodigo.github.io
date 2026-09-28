@@ -9,7 +9,9 @@ mermaid: true
 
 ## Proceso de diseño de una base de datos
 
-- **Requisitos de datos** y **requisitos funcionales** → entrevistas con los usuarios
+- **Minimundo**: la parte del mundo real que la base de datos va a representar
+- **Requisitos de datos**: *qué* información hay que guardar (se obtienen entrevistando a los usuarios)
+- **Requisitos funcionales**: *qué operaciones* (transacciones) se harán sobre esos datos
 - **Esquema conceptual**: entidades, relaciones y restricciones → *independiente del DBMS*
 - **Diseño lógico**: mapeo al modelo del DBMS (relacional…)
 - **Diseño físico**: almacenamiento, índices, rutas de acceso
@@ -54,6 +56,10 @@ flowchart TD
 
 ### Tipos de atributos
 
+- **Simple** (atómico): no se divide (`Edad`) · **Compuesto**: formado por subpartes (`Dirección`)
+- **Monovalor**: un solo valor por entidad (`FechaNac`) · **Multivalor**: varios valores (`Licenciaturas`)
+- **Almacenado**: se guarda tal cual (`FechaNac`) · **Derivado**: se calcula a partir de otro (`Edad`)
+
 ```mermaid
 flowchart TD
     A["<b>Atributo</b>"]
@@ -96,17 +102,19 @@ flowchart TD
 ![Dos entidades con los valores de sus atributos: el empleado e1 y la empresa c1](../../assets/dos-entidades.png)
 
 - Cada entidad tiene un **valor** por atributo
-- **NULL** cuando:
+- **NULL**: valor especial que indica *ausencia de valor*. Se usa cuando:
   - No aplica (`NumApto` en una casa)
   - Existe pero se desconoce (`Altura`)
   - No se sabe si existe (`TlfCasa`)
 
 ### Tipo de entidad, clave y dominio
 
-- **Tipo de entidad** = esquema (*intención*); **conjunto de entidades** = instancias (*extensión*)
-- **Atributo clave**: valor único por entidad
-  - Puede haber varias claves; una clave compuesta debe ser **mínima**
-  - Sin clave → **entidad débil**
+- **Tipo de entidad**: molde que define los atributos comunes (`EMPLEADO`) → es el *esquema* o **intención**
+- **Conjunto de entidades**: todas las entidades de ese tipo en un momento dado → es la **extensión**
+- **Atributo clave**: su valor es único para cada entidad, así que la identifica
+  - Puede haber varias claves (`IdVehículo`, `Matrícula`)
+  - Clave compuesta (varios atributos) debe ser **mínima**: sin atributos que sobren
+  - Sin clave → **entidad débil** (se ve más adelante)
 - **Dominio**: valores permitidos del atributo (no se dibuja en el ER)
 
 ### Diseño inicial de EMPRESA
@@ -122,23 +130,45 @@ flowchart TD
 
 ## Relaciones
 
-- Atributo que **referencia otra entidad** → debe ser **relación**
-- **Instancia de relación**: *(e₁, e₂, …, eₙ)*, una entidad de cada tipo
+- **Relación**: asociación entre entidades (un empleado *trabaja para* un departamento)
+- **Tipo de relación**: la definición general (`TRABAJA_PARA` entre EMPLEADO y DEPARTAMENTO)
+- **Instancia de relación**: un caso concreto, una entidad de cada tipo → *(José, Investigación)*
+- Un atributo que **referencia otra entidad** (`Departamento` en EMPLEADO) debe modelarse como relación
 - Se dibuja como **rombo**
 
-### Grado, roles y recursividad
+### Grado de una relación
 
-- **Grado**: nº de entidades participantes → binaria (2), ternaria (3)
-- **Nombre de rol**: papel de cada entidad (*trabajador*, *empleador*)
+- **Grado** = cuántos tipos de entidad participan en la relación
+- Cada instancia une **una** entidad de cada tipo participante
+
+| Grado | Nombre | Ejemplo | Instancia |
+| --- | --- | --- | --- |
+| 2 | **Binaria** | `TRABAJA_PARA(EMPLEADO, DEPARTAMENTO)` | (José, Investigación) |
+| 3 | **Ternaria** | `SUMINISTRO(PROVEEDOR, REPUESTO, PROYECTO)` | (Acme, tornillos, Puente) |
+
+```mermaid
+flowchart LR
+    E1[EMPLEADO] --- R1{TRABAJA_PARA} --- D1[DEPARTAMENTO]
+    S[PROVEEDOR] --- R2{SUMINISTRO} --- P[PROYECTO]
+    R2 --- Q[REPUESTO]
+```
+
+- La mayoría de las relaciones son **binarias**; las de grado > 2 se ven más adelante
+
+### Roles y recursividad
+
+- **Nombre de rol**: papel que cumple cada entidad dentro de la relación
+  - En `TRABAJA_PARA`: EMPLEADO es *trabajador*, DEPARTAMENTO es *empleador*
 - **Relación recursiva**: la misma entidad participa dos veces
   - `CONTROL`: EMPLEADO como *supervisor* y *supervisado*
 
 ### Restricciones estructurales
 
-- **Razón de cardinalidad** (máximo): 1:1, 1:N, M:N
-- **Participación** (mínimo):
-  - **Total** (línea doble) = dependencia de existencia
-  - **Parcial** (línea sencilla)
+- **Restricción estructural**: regla que limita cuántas veces participa una entidad en una relación
+- **Razón de cardinalidad**: el **máximo** de instancias de relación por entidad → 1:1, 1:N, M:N
+- **Participación**: el **mínimo**
+  - **Total** (línea doble): *toda* entidad debe participar → **dependencia de existencia** (no existe sin la relación)
+  - **Parcial** (línea sencilla): solo *algunas* entidades participan
 
 | Relación | Razón | Significado |
 | --- | --- | --- |
@@ -148,15 +178,20 @@ flowchart TD
 
 ### Atributos de relación
 
+- Dato que pertenece a la **asociación**, no a una sola entidad
 - Ej.: `Horas` en `TRABAJA_EN`, `FechaInicio` en `ADMINISTRA`
+- ¿Se puede **migrar** (mover) el atributo a una de las entidades?
 - **1:1** → puede migrar a cualquiera de las dos entidades
 - **1:N** → solo al lado **N**
 - **M:N** → debe quedarse en la relación
 
 ## Entidades débiles
 
-- **Sin clave propia**; se identifican por su **propietario** + **clave parcial**
-- **Relación identificativa**: participación **siempre total**
+- **Entidad débil**: no tiene clave propia
+- **Propietario**: entidad de la que depende para identificarse
+- **Clave parcial**: atributo que distingue a las débiles *del mismo propietario*
+- Identificación = clave del propietario **+** clave parcial
+- **Relación identificativa**: la que une débil y propietario; la débil participa **siempre total**
 - Ej.: `SUBORDINADO` (clave parcial `Nombre`) ← `EMPLEADO`
 - Notación: rectángulo y rombo **dobles**; clave parcial con subrayado **discontinuo**
 - Dependencia de existencia ≠ entidad débil (`PERMISO_CONDUCIR` tiene clave propia)
@@ -173,7 +208,18 @@ flowchart TD
 | `SUBORDINADOS_DE` | EMPLEADO – SUBORDINADO | 1:N | EMP parcial, SUB total | |
 
 - Se eliminan los atributos convertidos en relaciones
-- Objetivo: **mínima redundancia**
+- Objetivo: **mínima redundancia** (no guardar el mismo dato en varios lugares)
+
+Notación del diagrama (pata de gallo; el símbolo se lee junto a la entidad del extremo):
+
+| Símbolo | Significado |
+| --- | --- |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="20" x2="90" y2="20"/><line x1="70" y1="12" x2="70" y2="28"/><line x1="78" y1="12" x2="78" y2="28"/></svg> | exactamente uno |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="20" x2="60" y2="20"/><circle cx="66" cy="20" r="6"/><line x1="72" y1="20" x2="90" y2="20"/><line x1="80" y1="12" x2="80" y2="28"/></svg> | cero o uno |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="20" x2="90" y2="20"/><line x1="66" y1="12" x2="66" y2="28"/><line x1="76" y1="20" x2="90" y2="10"/><line x1="76" y1="20" x2="90" y2="30"/></svg> | uno o más |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="20" x2="60" y2="20"/><circle cx="66" cy="20" r="6"/><line x1="72" y1="20" x2="90" y2="20"/><line x1="76" y1="20" x2="90" y2="10"/><line x1="76" y1="20" x2="90" y2="30"/></svg> | cero o más |
+| `PK` | clave primaria |
+| `UK` | clave alternativa (valor único) |
 
 ```mermaid
 erDiagram
@@ -244,8 +290,9 @@ erDiagram
 
 ### Notación (mín, máx)
 
+- Cada participación se anota con un par **(mín, máx)**: una entidad participa *al menos* `mín` y *a lo sumo* `máx` veces
 - `mín = 0` → parcial; `mín > 0` → total
-- Más precisa que la razón de cardinalidad
+- Más precisa que la razón de cardinalidad (combina mínimo y máximo)
 
 | Relación | Participaciones |
 | --- | --- |
@@ -258,6 +305,9 @@ erDiagram
 
 ## ER vs UML
 
+- **UML**: lenguaje estándar de modelado de software
+- Su **diagrama de clases** cumple el mismo papel que el diagrama ER
+
 | Modelo ER | UML |
 | --- | --- |
 | Tipo de entidad | **Clase** (nombre, atributos, operaciones) |
@@ -265,19 +315,45 @@ erDiagram
 | Atributo multivalor | **Clase separada** |
 | Tipo de relación | **Asociación** |
 | Instancia de relación | **Vínculo** |
-| (mín, máx) | **Multiplicidad** `mín..máx` (en el extremo opuesto) |
+| (mín, máx) | **Multiplicidad** `mín..máx` (se escribe junto a la *otra* clase) |
 | Relación recursiva | **Asociación reflexiva** |
-| Entidad débil | **Asociación cualificada** |
+| Entidad débil | **Asociación cualificada** (la clave parcial es el *discriminador*) |
 
 ## Relaciones de grado > 2
 
-- Una ternaria **≠** tres binarias
-  - `SUMINISTRO(s, j, p)` no se deduce de `PUEDE_SUMINISTRAR`, `USA`, `SUMINISTRA`
-- Solución típica: ternaria **+** las binarias necesarias
-- Alternativas:
-  - Entidad débil con **tres relaciones identificativas**
-  - Entidad regular con **clave sustituta** (`IdSuministro`)
-- Restricciones: usar **ambas** notaciones (razón de cardinalidad y (mín, máx))
+### Ternaria vs. tres binarias
+
+- Recordatorio: **binaria** une 2 entidades; **ternaria** une 3 en un mismo hecho
+- **Ternaria** `SUMINISTRO(PROVEEDOR, REPUESTO, PROYECTO)`: *quién* suministra *qué* a *quién*
+- **Binarias**:
+  - `PUEDE_SUMINISTRAR(PROVEEDOR, REPUESTO)`
+  - `USA(PROYECTO, REPUESTO)`
+  - `SUMINISTRA(PROVEEDOR, PROYECTO)`
+
+> Las tres binarias **no** permiten reconstruir la ternaria.
+
+| Hecho registrado | Relación |
+| --- | --- |
+| Acme **puede suministrar** tornillos | `PUEDE_SUMINISTRAR` |
+| El proyecto Puente **usa** tornillos | `USA` |
+| Acme **suministra** al proyecto Puente (pero solo cemento) | `SUMINISTRA` |
+| ¿Acme suministra **tornillos** al Puente? | ❌ No se puede saber |
+
+- Solución típica: ternaria **+** las binarias con significado propio
+
+### Alternativas de representación
+
+- **Entidad débil** `SUMINISTRO` con **tres relaciones identificativas** (una por participante)
+- **Entidad regular** con **clave sustituta** `IdSuministro` (identificador artificial, sin significado propio) y tres relaciones 1:N
+
+### Restricciones en relaciones n-arias
+
+- **n-aria**: relación de grado *n* (ternaria = 3-aria)
+
+- **Razón de cardinalidad**: indica qué combinación es **clave**
+  - `1` en PROVEEDOR → cada par (proyecto, repuesto) tiene **un solo** proveedor
+- **(mín, máx)**: cuántas veces participa **cada entidad** por separado
+- Se necesitan **ambas** para describir la relación por completo
 
 ## Resumen
 
