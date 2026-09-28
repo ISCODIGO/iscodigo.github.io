@@ -224,19 +224,19 @@ erDiagram
 
 | Símbolo | Significado |
 | --- | --- |
-| Rectángulo | Tipo de entidad |
-| Rectángulo doble | Tipo de entidad débil |
-| Rombo | Tipo de relación |
-| Rombo doble | Relación identificativa |
-| Óvalo | Atributo |
-| Óvalo con nombre subrayado | Atributo clave (subrayado punteado = clave parcial) |
-| Óvalo doble | Atributo multivalor |
-| Óvalo de línea punteada | Atributo derivado |
-| Óvalos unidos a otro óvalo | Atributo compuesto |
-| Línea doble entidad–relación | Participación total (dependencia de existencia) |
-| Línea sencilla entidad–relación | Participación parcial |
-| 1, M, N junto a cada rama | Razón de cardinalidad |
-| (mín, máx) junto a cada rama | Restricción estructural alternativa |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="10" y="8" width="80" height="24"/></svg> | Tipo de entidad |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="10" y="6" width="80" height="28"/><rect x="14" y="10" width="72" height="20"/></svg> | Tipo de entidad débil |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="50,4 90,20 50,36 10,20"/></svg> | Tipo de relación |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="50,4 90,20 50,36 10,20"/><polygon points="50,10 78,20 50,30 22,20"/></svg> | Relación identificativa |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="50" cy="20" rx="38" ry="14"/></svg> | Atributo |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="50" cy="20" rx="38" ry="14"/><text x="50" y="24" font-size="11" text-anchor="middle" fill="currentColor" stroke="none" text-decoration="underline">Clave</text></svg> | Atributo clave (subrayado punteado = clave parcial) |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="50" cy="20" rx="40" ry="16"/><ellipse cx="50" cy="20" rx="34" ry="11"/></svg> | Atributo multivalor |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="50" cy="20" rx="38" ry="14" stroke-dasharray="4 3"/></svg> | Atributo derivado |
+| <svg width="100" height="60" viewBox="0 0 100 60" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="50" cy="12" rx="24" ry="9"/><ellipse cx="22" cy="48" rx="18" ry="8"/><ellipse cx="78" cy="48" rx="18" ry="8"/><line x1="40" y1="20" x2="26" y2="40"/><line x1="60" y1="20" x2="74" y2="40"/></svg> | Atributo compuesto |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="17" x2="90" y2="17"/><line x1="10" y1="23" x2="90" y2="23"/></svg> | Participación total (dependencia de existencia) |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="20" x2="90" y2="20"/></svg> | Participación parcial |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="26" x2="90" y2="26"/><text x="20" y="18" font-size="11" text-anchor="middle" fill="currentColor" stroke="none">1</text><text x="80" y="18" font-size="11" text-anchor="middle" fill="currentColor" stroke="none">N</text></svg> | Razón de cardinalidad |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="28" x2="90" y2="28"/><text x="50" y="18" font-size="11" text-anchor="middle" fill="currentColor" stroke="none">(0,N)</text></svg> | Restricción estructural alternativa |
 
 Los diagramas ER hacen hincapié en el **esquema**, no en las instancias, porque el esquema cambia rara vez mientras que el contenido de los conjuntos de entidades cambia con frecuencia.
 
