@@ -316,6 +316,7 @@ Notación del diagrama (pata de gallo; el símbolo se lee junto a la entidad del
 - Se necesitan **ambas** para describir la relación por completo
 
 ## Otro tipo de notación
+
 | Símbolo | Significado |
 | --- | --- |
 | <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="20" x2="90" y2="20"/><line x1="70" y1="12" x2="70" y2="28"/><line x1="78" y1="12" x2="78" y2="28"/></svg> | exactamente uno |
