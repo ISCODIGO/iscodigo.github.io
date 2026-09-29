@@ -212,50 +212,6 @@ flowchart LR
 
 Notación del diagrama (pata de gallo; el símbolo se lee junto a la entidad del extremo):
 
-| Símbolo | Significado |
-| --- | --- |
-| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="20" x2="90" y2="20"/><line x1="70" y1="12" x2="70" y2="28"/><line x1="78" y1="12" x2="78" y2="28"/></svg> | exactamente uno |
-| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="20" x2="60" y2="20"/><circle cx="66" cy="20" r="6"/><line x1="72" y1="20" x2="90" y2="20"/><line x1="80" y1="12" x2="80" y2="28"/></svg> | cero o uno |
-| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="20" x2="90" y2="20"/><line x1="66" y1="12" x2="66" y2="28"/><line x1="76" y1="20" x2="90" y2="10"/><line x1="76" y1="20" x2="90" y2="30"/></svg> | uno o más |
-| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="20" x2="60" y2="20"/><circle cx="66" cy="20" r="6"/><line x1="72" y1="20" x2="90" y2="20"/><line x1="76" y1="20" x2="90" y2="10"/><line x1="76" y1="20" x2="90" y2="30"/></svg> | cero o más |
-| `PK` | clave primaria |
-| `UK` | clave alternativa (valor único) |
-
-```mermaid
-erDiagram
-    DEPARTAMENTO ||--|{ EMPLEADO : "TRABAJA_PARA 1:N"
-    EMPLEADO |o--|| DEPARTAMENTO : "ADMINISTRA 1:1 (FechaInicio)"
-    DEPARTAMENTO |o--|{ PROYECTO : "CONTROLA 1:N"
-    EMPLEADO }o--o{ PROYECTO : "TRABAJA_EN M:N (Horas)"
-    EMPLEADO |o--o{ EMPLEADO : "CONTROL 1:N (supervisor/supervisado)"
-    EMPLEADO |o--|{ SUBORDINADO : "SUBORDINADOS_DE (identificativa)"
-
-    EMPLEADO {
-        string Dni PK
-        string Nombre "compuesto: NombreP, Apellido1, Apellido2"
-        string Direccion
-        string Sexo
-        decimal Sueldo
-        date FechaNac
-    }
-    DEPARTAMENTO {
-        string Nombre UK
-        int Numero PK
-        string Ubicaciones "multivalor"
-        int NumEmpleados "derivado"
-    }
-    PROYECTO {
-        string Nombre UK
-        int Numero PK
-        string Ubicacion
-    }
-    SUBORDINADO {
-        string Nombre "clave parcial"
-        string Sexo
-        date FechaNac
-        string Relacion
-    }
-```
 
 ## Notación del diagrama ER
 
@@ -302,6 +258,8 @@ erDiagram
 | `TRABAJA_EN` | EMPLEADO (1,N), PROYECTO (1,N) |
 | `CONTROL` | supervisor (0,N), supervisado (0,1) |
 | `SUBORDINADOS_DE` | EMPLEADO (0,N), SUBORDINADO (1,1) |
+
+[Simulación de Notacion Chen](../../assets/notacion-chen.html)
 
 ## ER vs UML
 
@@ -354,6 +312,52 @@ erDiagram
   - `1` en PROVEEDOR → cada par (proyecto, repuesto) tiene **un solo** proveedor
 - **(mín, máx)**: cuántas veces participa **cada entidad** por separado
 - Se necesitan **ambas** para describir la relación por completo
+
+## Otro tipo de notación
+| Símbolo | Significado |
+| --- | --- |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="20" x2="90" y2="20"/><line x1="70" y1="12" x2="70" y2="28"/><line x1="78" y1="12" x2="78" y2="28"/></svg> | exactamente uno |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="20" x2="60" y2="20"/><circle cx="66" cy="20" r="6"/><line x1="72" y1="20" x2="90" y2="20"/><line x1="80" y1="12" x2="80" y2="28"/></svg> | cero o uno |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="20" x2="90" y2="20"/><line x1="66" y1="12" x2="66" y2="28"/><line x1="76" y1="20" x2="90" y2="10"/><line x1="76" y1="20" x2="90" y2="30"/></svg> | uno o más |
+| <svg width="100" height="40" viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="20" x2="60" y2="20"/><circle cx="66" cy="20" r="6"/><line x1="72" y1="20" x2="90" y2="20"/><line x1="76" y1="20" x2="90" y2="10"/><line x1="76" y1="20" x2="90" y2="30"/></svg> | cero o más |
+| `PK` | clave primaria |
+| `UK` | clave alternativa (valor único) |
+
+```mermaid
+erDiagram
+    DEPARTAMENTO ||--|{ EMPLEADO : "TRABAJA_PARA 1:N"
+    EMPLEADO |o--|| DEPARTAMENTO : "ADMINISTRA 1:1 (FechaInicio)"
+    DEPARTAMENTO |o--|{ PROYECTO : "CONTROLA 1:N"
+    EMPLEADO }o--o{ PROYECTO : "TRABAJA_EN M:N (Horas)"
+    EMPLEADO |o--o{ EMPLEADO : "CONTROL 1:N (supervisor/supervisado)"
+    EMPLEADO |o--|{ SUBORDINADO : "SUBORDINADOS_DE (identificativa)"
+
+    EMPLEADO {
+        string Dni PK
+        string Nombre "compuesto: NombreP, Apellido1, Apellido2"
+        string Direccion
+        string Sexo
+        decimal Sueldo
+        date FechaNac
+    }
+    DEPARTAMENTO {
+        string Nombre UK
+        int Numero PK
+        string Ubicaciones "multivalor"
+        int NumEmpleados "derivado"
+    }
+    PROYECTO {
+        string Nombre UK
+        int Numero PK
+        string Ubicacion
+    }
+    SUBORDINADO {
+        string Nombre "clave parcial"
+        string Sexo
+        date FechaNac
+        string Relacion
+    }
+```
 
 ## Resumen
 
