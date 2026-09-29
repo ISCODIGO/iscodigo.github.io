@@ -315,7 +315,11 @@ Notación del diagrama (pata de gallo; el símbolo se lee junto a la entidad del
 - **(mín, máx)**: cuántas veces participa **cada entidad** por separado
 - Se necesitan **ambas** para describir la relación por completo
 
-## Otro tipo de notación
+## UML
+
+![Diagrama de clases UML equivalente al diagrama ER de EMPRESA](../../assets/uml-empresa.png)
+
+## Otro tipo de notación: Notación de Martin / IE
 
 | Símbolo | Significado |
 | --- | --- |
