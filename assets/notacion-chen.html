@@ -28,7 +28,7 @@ h1{font-size:clamp(1.6rem,4vw,2.2rem);line-height:1.15;margin:0 0 .5rem;font-wei
 .phases li.on{background:var(--hi-bg);color:var(--hi);border-color:var(--hi);font-weight:700}
 .phases li.done{color:var(--ink)}
 .stage{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:1rem;overflow-x:auto}
-svg{display:block;width:100%;height:auto;min-width:520px}
+svg{display:block;width:100%;height:auto;min-width:580px}
 .el{transition:opacity .5s}
 .el.fut{opacity:0}
 .el.past{opacity:.35}
@@ -64,7 +64,7 @@ button.primary{background:var(--hi);color:var(--card);border-color:var(--hi)}
 </ol>
 
 <div class="stage">
-<svg viewBox="0 0 680 560" role="img" aria-labelledby="svgt svgd"><title id="svgt">Diagrama de Chen construido por fases</title><desc id="svgd">Empleado, departamento, proyecto y subordinado con sus atributos y relaciones</desc>
+<svg viewBox="-80 0 760 560" role="img" aria-labelledby="svgt svgd"><title id="svgt">Diagrama de Chen construido por fases</title><desc id="svgd">Empleado, departamento, proyecto y subordinado con sus atributos y relaciones</desc>
 <g class="el k-comp"><ellipse class="sh" cx="115" cy="62" rx="40" ry="14"/><text class="tx" x="115" y="62" text-anchor="middle" dominant-baseline="central">NombreP</text>
 <ellipse class="sh" cx="225" cy="62" rx="42" ry="14"/><text class="tx" x="225" y="62" text-anchor="middle" dominant-baseline="central">Apellido1</text>
 <line class="ln" x1="130" y1="75" x2="155" y2="108"/><line class="ln" x1="210" y1="75" x2="185" y2="108"/>
@@ -74,22 +74,33 @@ button.primary{background:var(--hi);color:var(--card);border-color:var(--hi)}
 <line class="ln" x1="50" y1="139" x2="70" y2="139"/><line class="ln" x1="72" y1="143" x2="100" y2="180"/></g>
 <g class="el k-simple"><ellipse class="sh" cx="250" cy="140" rx="34" ry="14"/><text class="tx" x="250" y="140" text-anchor="middle" dominant-baseline="central">Sueldo</text>
 <line class="ln" x1="240" y1="154" x2="200" y2="180"/></g>
-<g class="el k-der"><ellipse class="sh" cx="475" cy="120" rx="50" ry="14" stroke-dasharray="4 3"/><text class="tx" x="475" y="120" text-anchor="middle" dominant-baseline="central">NumEmpleados</text>
+<g class="el k-der"><ellipse class="sh" cx="470" cy="120" rx="58" ry="14" stroke-dasharray="4 3"/><text class="tx" x="470" y="120" text-anchor="middle" dominant-baseline="central">NumEmpleados</text>
 <line class="ln" x1="490" y1="134" x2="510" y2="180"/></g>
 <g class="el k-multi"><ellipse class="sh" cx="600" cy="120" rx="52" ry="18"/><ellipse class="sh" cx="600" cy="120" rx="46" ry="13"/><text class="tx" x="600" y="120" text-anchor="middle" dominant-baseline="central">Ubicaciones</text>
 <line class="ln" x1="592" y1="138" x2="578" y2="180"/></g>
 <g class="el k-total k-rl"><line class="ln" x1="210" y1="195" x2="268" y2="195"/><line class="ln" x1="210" y1="201" x2="268" y2="201"/>
 <line class="ln" x1="402" y1="195" x2="460" y2="195"/><line class="ln" x1="402" y1="201" x2="460" y2="201"/>
 <path class="ln" d="M196 216V342H270"/><path class="ln" d="M204 216V334H270"/>
-<line class="ln" x1="400" y1="335" x2="460" y2="335"/><line class="ln" x1="400" y1="341" x2="460" y2="341"/></g>
+<line class="ln" x1="400" y1="335" x2="460" y2="335"/><line class="ln" x1="400" y1="341" x2="460" y2="341"/>
+<path class="ln" d="M400 265H477V216"/><path class="ln" d="M400 271H483V216"/>
+<line class="ln" x1="577" y1="289" x2="577" y2="320"/><line class="ln" x1="583" y1="289" x2="583" y2="320"/></g>
+<g class="el k-partial k-rl"><line class="ln" x1="210" y1="213" x2="266" y2="268"/><line class="ln" x1="580" y1="216" x2="580" y2="244"/></g>
 <g class="el k-total k-idl"><line class="ln" x1="97" y1="458" x2="97" y2="490"/><line class="ln" x1="103" y1="458" x2="103" y2="490"/></g>
 <g class="el k-partial k-idl"><line class="ln" x1="100" y1="216" x2="100" y2="402"/></g>
+<g class="el k-partial k-rec"><path class="ln" d="M80 190H0V276"/><path class="ln" d="M80 206H24V290"/>
+<text class="tx" x="-6" y="238" text-anchor="end" style="font-size:11px;fill:var(--muted)">Supervisor</text>
+<text class="tx" x="30" y="252" style="font-size:11px;fill:var(--muted)">Supervisado</text></g>
+<g class="el k-rec"><polygon class="sh" points="-40,300 0,276 40,300 0,324"/><text class="tx" x="0" y="300" text-anchor="middle" dominant-baseline="central">CONTROL</text></g>
 <g class="el k-relattr"><ellipse class="sh" cx="335" cy="410" rx="32" ry="14"/><text class="tx" x="335" y="410" text-anchor="middle" dominant-baseline="central">Horas</text>
-<line class="ln" x1="335" y1="364" x2="335" y2="396"/></g>
+<line class="ln" x1="335" y1="364" x2="335" y2="396"/>
+<ellipse class="sh" cx="430" cy="300" rx="42" ry="14"/><text class="tx" x="430" y="300" text-anchor="middle" dominant-baseline="central">FechaInicio</text>
+<line class="ln" x1="380" y1="278" x2="400" y2="290"/></g>
 <g class="el k-pk"><ellipse class="sh" cx="262" cy="508" rx="38" ry="14"/><text class="tx" x="262" y="508" text-anchor="middle" dominant-baseline="central">Nombre</text>
 <line class="ln" x1="241" y1="517" x2="283" y2="517" stroke-dasharray="3 2"/><line class="ln" x1="170" y1="508" x2="224" y2="508"/></g>
 <g class="el k-rel"><polygon class="sh" points="265,198 335,172 405,198 335,224"/><text class="tx" x="335" y="198" text-anchor="middle" dominant-baseline="central">TRABAJA_PARA</text>
-<polygon class="sh" points="265,338 335,312 405,338 335,364"/><text class="tx" x="335" y="338" text-anchor="middle" dominant-baseline="central">TRABAJA_EN</text></g>
+<polygon class="sh" points="265,268 335,242 405,268 335,294"/><text class="tx" x="335" y="268" text-anchor="middle" dominant-baseline="central">ADMINISTRA</text>
+<polygon class="sh" points="265,338 335,312 405,338 335,364"/><text class="tx" x="335" y="338" text-anchor="middle" dominant-baseline="central">TRABAJA_EN</text>
+<polygon class="sh" points="525,268 580,244 635,268 580,292"/><text class="tx" x="580" y="268" text-anchor="middle" dominant-baseline="central">CONTROLA</text></g>
 <g class="el k-relw"><polygon class="sh" points="15,430 100,402 185,430 100,458"/><polygon class="sh" points="26,430 100,408 174,430 100,452"/><text class="tx" x="100" y="430" text-anchor="middle" dominant-baseline="central">SUBORDINADOS_DE</text></g>
 <g class="el k-ent"><rect class="sh" x="80" y="180" width="130" height="36"/><text class="txb" x="145" y="198" text-anchor="middle" dominant-baseline="central">EMPLEADO</text>
 <rect class="sh" x="460" y="180" width="150" height="36"/><text class="txb" x="535" y="198" text-anchor="middle" dominant-baseline="central">DEPARTAMENTO</text>
@@ -97,7 +108,10 @@ button.primary{background:var(--hi);color:var(--card);border-color:var(--hi)}
 <g class="el k-weak"><rect class="sh" x="30" y="490" width="140" height="36"/><rect class="sh" x="34" y="494" width="132" height="28"/><text class="txb" x="100" y="508" text-anchor="middle" dominant-baseline="central">SUBORDINADO</text></g>
 <g class="el k-card"><text class="card" x="228" y="188">N</text><text class="card" x="446" y="188">1</text>
 <text class="card" x="240" y="326">M</text><text class="card" x="440" y="326">N</text>
-<text class="card" x="110" y="394">1</text><text class="card" x="110" y="480">N</text></g>
+<text class="card" x="110" y="394">1</text><text class="card" x="110" y="480">N</text>
+<text class="card" x="224" y="252">1</text><text class="card" x="490" y="244">1</text>
+<text class="card" x="590" y="236">1</text><text class="card" x="590" y="314">N</text>
+<text class="card" x="-18" y="270">1</text><text class="card" x="30" y="284">N</text></g>
 </svg>
 </div>
 
@@ -126,12 +140,13 @@ const S=[
 {p:2,k:['k-multi'],t:'Atributo multivaluado: óvalo doble',d:'Puede tener varios valores a la vez: un departamento tiene varias Ubicaciones.'},
 {p:2,k:['k-der'],t:'Atributo derivado: óvalo punteado',d:'No se guarda, se calcula. NumEmpleados sale de contar los empleados del departamento.'},
 {p:2,k:['k-pk'],t:'Clave parcial: subrayado discontinuo',d:'El Nombre del subordinado solo es único dentro de un mismo empleado, no en toda la base de datos.'},
-{p:3,k:['k-rel'],r:['k-rl'],t:'Relación: rombo',d:'Por último conectamos las entidades. TRABAJA_PARA une empleados con departamentos; TRABAJA_EN, empleados con proyectos.'},
+{p:3,k:['k-rel'],r:['k-rl'],t:'Relación: rombo',d:'Conectamos las entidades. TRABAJA_PARA indica a qué departamento pertenece cada empleado, ADMINISTRA quién lo dirige, CONTROLA qué proyectos tiene cada departamento y TRABAJA_EN en qué proyectos participa cada empleado.'},
 {p:3,k:['k-relw'],r:['k-idl'],t:'Relación identificadora: rombo doble',d:'Une la entidad débil con su dueña. Gracias a ella, un subordinado se identifica por el Dni del empleado más su Nombre.'},
-{p:3,k:['k-relattr'],t:'Atributo de relación',d:'Horas no pertenece ni al empleado ni al proyecto, sino a la combinación de ambos: por eso cuelga del rombo.'},
-{p:3,k:['k-total'],t:'Participación total: línea doble',d:'Toda ocurrencia debe participar: todo empleado trabaja para un departamento y todo subordinado depende de un empleado.'},
-{p:3,k:['k-partial'],t:'Participación parcial: línea simple',d:'La participación es opcional: no todo empleado tiene subordinados a su cargo.'},
-{p:3,k:['k-card'],t:'Cardinalidad: 1, N, M',d:'Indica cuántas ocurrencias se asocian: N:1 en TRABAJA_PARA, M:N en TRABAJA_EN y 1:N en SUBORDINADOS_DE.'},
+{p:3,k:['k-rec'],t:'Relación recursiva y roles',d:'CONTROL relaciona EMPLEADO consigo mismo. Como las dos líneas llegan a la misma entidad, se etiquetan con su rol: Supervisor y Supervisado.'},
+{p:3,k:['k-relattr'],t:'Atributo de relación',d:'Horas pertenece a la combinación empleado-proyecto, y FechaInicio indica desde cuándo un empleado administra el departamento. Por eso cuelgan de los rombos.'},
+{p:3,k:['k-total'],t:'Participación total: línea doble',d:'Toda ocurrencia debe participar: todo departamento tiene director, todo proyecto es controlado por un departamento y todo subordinado depende de un empleado.'},
+{p:3,k:['k-partial'],t:'Participación parcial: línea simple',d:'La participación es opcional: no todo empleado administra un departamento, supervisa a otros ni tiene subordinados a su cargo.'},
+{p:3,k:['k-card'],t:'Cardinalidad: 1, N, M',d:'Indica cuántas ocurrencias se asocian: N:1 en TRABAJA_PARA, 1:1 en ADMINISTRA, 1:N en CONTROLA, M:N en TRABAJA_EN, 1:N en CONTROL y 1:N en SUBORDINADOS_DE.'},
 {p:4,k:null,t:'Modelo completo',d:'Entidades, luego atributos, luego relaciones: ese es el orden recomendado para construir cualquier diagrama entidad-relación.'}
 ];
 let i=0,tm=null;
