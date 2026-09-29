@@ -259,7 +259,7 @@ Notación del diagrama (pata de gallo; el símbolo se lee junto a la entidad del
 | `CONTROL` | supervisor (0,N), supervisado (0,1) |
 | `SUBORDINADOS_DE` | EMPLEADO (0,N), SUBORDINADO (1,1) |
 
-<iframe src="../../assets/notacion-chen.html" title="Simulación de notación Chen" width="100%" height="600" style="border:1px solid #dce2ea;border-radius:8px" loading="lazy"></iframe>
+<iframe src="../../assets/notacion-chen.html" title="Simulación de notación Chen" width="100%" height="900" style="border:1px solid #dce2ea;border-radius:8px" loading="lazy"></iframe>
 
 [Abrir la simulación en pantalla completa](../../assets/notacion-chen.html)
 
