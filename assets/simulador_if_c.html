@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulador de if en C · diagrama de flujo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --papel:#ffffff;
+    --fondo:#f3f6fa;
+    --cuadricula:#e3eaf3;
+    --tinta:#1b2a41;
+    --tinta-suave:#5b6b82;
+    --linea:#b9c4d3;
+    --azul:#1f5fbf;
+    --azul-claro:#e7effb;
+    --verde:#17803d;
+    --verde-claro:#e3f5e9;
+    --verde-borde:#5cb87e;
+    --rojo:#c0352b;
+    --rojo-claro:#fde8e6;
+    --rojo-borde:#e58a82;
+    --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Consolas,"Courier New",monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fondo);color:var(--tinta);font-family:var(--sans);font-size:16px;line-height:1.6}
+  main{max-width:1100px;margin:0 auto;padding:32px 20px 48px}
+  h1{font-size:28px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
+  .intro{color:var(--tinta-suave);margin:0 0 24px;max-width:70ch}
+  .controles{display:flex;flex-wrap:wrap;gap:20px 32px;align-items:flex-end;margin-bottom:20px}
+  .grupo{display:flex;flex-direction:column;gap:6px}
+  .grupo>span{font-size:13px;color:var(--tinta-suave)}
+  .seg{display:inline-flex;border:1px solid var(--linea);border-radius:8px;overflow:hidden;background:var(--papel)}
+  .seg button{font:inherit;font-size:14px;border:0;background:transparent;color:var(--tinta);padding:8px 14px;cursor:pointer;border-right:1px solid var(--linea)}
+  .seg button:last-child{border-right:0}
+  .seg button:hover{background:var(--fondo)}
+  .seg button.sel{background:var(--azul);color:#fff}
+  .seg.bool button{font-family:var(--mono);font-size:13px}
+  .seg.bool button.sel[data-v="1"]{background:var(--verde)}
+  .seg.bool button.sel[data-v="0"]{background:var(--rojo)}
+  button:focus-visible{outline:2px solid var(--azul);outline-offset:2px}
+  .mesa{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px;align-items:start}
+  @media (max-width:820px){.mesa{grid-template-columns:minmax(0,1fr)}}
+  .hoja{background-color:var(--papel);background-image:linear-gradient(var(--cuadricula) 1px,transparent 1px),linear-gradient(90deg,var(--cuadricula) 1px,transparent 1px);background-size:20px 20px;border:1px solid var(--linea);border-radius:10px;padding:12px}
+  .hoja svg{display:block;width:100%;height:auto}
+  .lado{display:flex;flex-direction:column;gap:16px}
+  .panel{background:var(--papel);border:1px solid var(--linea);border-radius:10px;padding:14px 16px}
+  .panel h2{font-size:14px;font-weight:600;margin:0 0 8px;color:var(--tinta-suave)}
+  .codigo{font-family:var(--mono);font-size:13.5px;line-height:1.8;overflow-x:auto}
+  .cl{white-space:pre;padding:0 8px;border-radius:4px;border-left:3px solid transparent;transition:background .2s}
+  .cl.ok{background:var(--verde-claro);color:var(--verde);border-left-color:var(--verde)}
+  .cl.no{background:var(--rojo-claro);color:var(--rojo);border-left-color:var(--rojo)}
+  .kw{color:var(--azul);font-weight:500}
+  .cm{color:var(--tinta-suave)}
+  .cl.ok .kw,.cl.ok .cm,.cl.no .kw,.cl.no .cm{color:inherit}
+  .explica{font-size:14.5px;margin:0}
+  .leyenda{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--tinta-suave);margin-top:10px}
+  .leyenda i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px;border:1.5px solid}
+  .fn rect,.fn polygon{fill:#fff;stroke:var(--linea);stroke-width:1.2;transition:fill .25s,stroke .25s}
+  .fn text{fill:var(--tinta-suave);font-family:var(--sans);font-size:14px}
+  .fn text.m{font-family:var(--mono);font-size:13.5px}
+  .fn.ok rect,.fn.ok polygon{fill:var(--verde-claro);stroke:var(--verde);stroke-width:2}
+  .fn.ok text{fill:var(--verde);font-weight:500}
+  .fn.no polygon{fill:var(--rojo-claro);stroke:var(--rojo);stroke-width:2}
+  .fn.no text{fill:var(--rojo);font-weight:500}
+  .fe{stroke:var(--linea);stroke-width:1.5;fill:none;transition:stroke .25s}
+  .fe.ok{stroke:var(--verde);stroke-width:3}
+  .lb{fill:var(--tinta-suave);font-family:var(--sans);font-size:12.5px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Simulador de if en C</h1>
+  <p class="intro">Elige una estructura y decide si cada condición es verdadera o falsa. El diagrama de flujo y el código marcan en verde el camino que sigue el programa; un rombo en rojo indica una condición falsa.</p>
+
+  <div class="controles">
+    <div class="grupo">
+      <span>Estructura</span>
+      <div class="seg" id="modos">
+        <button data-m="if">if</button>
+        <button data-m="ifelse">if-else</button>
+        <button data-m="elseif">if · else if · else</button>
+      </div>
+    </div>
+    <div class="grupo">
+      <span id="c1lbl">condicion</span>
+      <div class="seg bool">
+        <button data-c="1" data-v="1">true</button>
+        <button data-c="1" data-v="0">false</button>
+      </div>
+    </div>
+    <div class="grupo" id="c2box">
+      <span>condicion2</span>
+      <div class="seg bool">
+        <button data-c="2" data-v="1">true</button>
+        <button data-c="2" data-v="0">false</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mesa">
+    <div class="hoja" id="flowbox" aria-live="polite"></div>
+    <div class="lado">
+      <div class="panel">
+        <h2>Código en C</h2>
+        <div class="codigo" id="codebox"></div>
+      </div>
+      <div class="panel">
+        <h2>Qué está pasando</h2>
+        <p class="explica" id="explica"></p>
+        <div class="leyenda">
+          <span><i style="background:var(--verde-claro);border-color:var(--verde)"></i>se ejecuta / verdadero</span>
+          <span><i style="background:var(--rojo-claro);border-color:var(--rojo)"></i>condición falsa</span>
+          <span><i style="background:#fff;border-color:var(--linea)"></i>no se ejecuta</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+(function(){
+  var st={m:'ifelse',c1:true,c2:false};
+
+  function P(id,x,y,w,h,t){return '<g class="fn" data-id="'+id+'"><rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(h/2)+'"/><text x="'+(x+w/2)+'" y="'+(y+h/2)+'" text-anchor="middle" dominant-baseline="central">'+t+'</text></g>';}
+  function B(id,x,y,w,h,t){return '<g class="fn" data-id="'+id+'"><rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="4"/><text x="'+(x+w/2)+'" y="'+(y+h/2)+'" text-anchor="middle" dominant-baseline="central">'+t+'</text></g>';}
+  function D(id,cx,cy,t){return '<g class="fn" data-id="'+id+'"><polygon points="'+cx+','+(cy-34)+' '+(cx+100)+','+cy+' '+cx+','+(cy+34)+' '+(cx-100)+','+cy+'"/><text class="m" x="'+cx+'" y="'+cy+'" text-anchor="middle" dominant-baseline="central">'+t+'</text></g>';}
+  function E(id,d){return '<path class="fe" data-id="'+id+'" d="'+d+'" marker-end="url(#arw)"/>';}
+  function L(x,y,t){return '<text class="lb" x="'+x+'" y="'+y+'">'+t+'</text>';}
+  var head=P('ini',180,20,120,36,'Inicio')+E('e1','M240 56 L240 130');
+
+  function kw(s){
+    return s.replace(/(\/\/.*)$/,'<span class="cm">$1</span>')
+            .replace(/\b(if|else)\b/g,'<span class="kw">$1</span>');
+  }
+
+  var MODES={
+    if:{h:300,
+      svg:function(){return E('s1','M340 166 L416 166')+E('n1','M240 200 L240 236')+E('r1','M620 166 L650 166 L650 256 L302 256')+head+D('d1',240,166,'condicion')+L(356,156,'Sí (true)')+B('b1',420,146,200,40,'Instrucción A')+L(250,224,'No (false)')+P('fin',180,238,120,36,'Fin');},
+      path:function(){return st.c1?['ini','e1','s1','b1','r1','fin']:['ini','e1','n1','fin'];},
+      code:[['if (condicion) {','d1'],['    // Instrucción A','b1'],['}',''],['// continúa el programa','fin']],
+      txt:function(){return st.c1?'La condición es verdadera, así que se ejecuta la Instrucción A y luego el programa continúa.':'La condición es falsa. Como no hay else, el bloque del if se salta por completo y el programa continúa sin hacer nada extra.';}
+    },
+    ifelse:{h:360,
+      svg:function(){return E('s1','M340 166 L416 166')+E('n1','M240 200 L240 232')+E('e3','M240 276 L240 296')+E('r1','M620 166 L650 166 L650 318 L302 318')+head+D('d1',240,166,'condicion')+L(356,156,'Sí (true)')+B('b1',420,146,200,40,'Instrucción A')+L(250,220,'No (false)')+B('b3',140,236,200,40,'Instrucción B')+P('fin',180,300,120,36,'Fin');},
+      path:function(){return st.c1?['ini','e1','s1','b1','r1','fin']:['ini','e1','n1','b3','e3','fin'];},
+      code:[['if (condicion) {','d1'],['    // Instrucción A','b1'],['} else {',''],['    // Instrucción B','b3'],['}',''],['// continúa el programa','fin']],
+      txt:function(){return st.c1?'La condición es verdadera: se ejecuta la Instrucción A y el else se ignora.':'La condición es falsa: se salta el bloque del if y se ejecuta la Instrucción B del else. Con if-else siempre se ejecuta exactamente una de las dos ramas.';}
+    },
+    elseif:{h:470,
+      svg:function(){return E('s1','M340 166 L416 166')+E('n1','M240 200 L240 234')+E('s2','M340 270 L416 270')+E('n2','M240 304 L240 334')+E('e3','M240 378 L240 406')+E('r1','M620 166 L650 166 L650 428 L302 428')+E('r2','M620 270 L650 270 L650 428 L302 428')+head+D('d1',240,166,'condicion1')+L(356,156,'Sí (true)')+B('b1',420,146,200,40,'Instrucción A')+L(250,222,'No (false)')+D('d2',240,270,'condicion2')+L(356,260,'Sí (true)')+B('b2',420,250,200,40,'Instrucción B')+L(250,324,'No (false)')+B('b3',140,338,200,40,'Instrucción C')+P('fin',180,410,120,36,'Fin');},
+      path:function(){return st.c1?['ini','e1','s1','b1','r1','fin']:(st.c2?['ini','e1','n1','s2','b2','r2','fin']:['ini','e1','n1','n2','b3','e3','fin']);},
+      code:[['if (condicion1) {','d1'],['    // Instrucción A','b1'],['} else if (condicion2) {','d2'],['    // Instrucción B','b2'],['} else {',''],['    // Instrucción C','b3'],['}',''],['// continúa el programa','fin']],
+      txt:function(){
+        if(st.c1)return 'condicion1 es verdadera: se ejecuta la Instrucción A y el resto de la cadena se salta. Fíjate que condicion2 ni siquiera se evalúa, por eso su rombo queda sin color.';
+        return st.c2?'condicion1 es falsa, así que se evalúa condicion2. Como es verdadera, se ejecuta la Instrucción B.':'Ninguna condición se cumple, así que se ejecuta la Instrucción C del else final.';
+      }
+    }
+  };
+
+  function draw(){
+    var m=MODES[st.m],on={};
+    m.path().forEach(function(k){on[k]=1;});
+    var dia={d1:st.c1};
+    if(st.m==='elseif'&&!st.c1)dia.d2=st.c2;
+
+    var fb=document.getElementById('flowbox');
+    fb.innerHTML='<svg viewBox="0 0 680 '+m.h+'" role="img" aria-label="Diagrama de flujo de la estructura seleccionada"><defs><marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>'+m.svg()+'</svg>';
+    var s=fb.querySelector('svg');
+    fb.querySelectorAll('[data-id]').forEach(function(el){
+      var id=el.getAttribute('data-id');
+      if(id in dia)el.classList.add(dia[id]?'ok':'no');
+      else if(on[id])el.classList.add('ok');
+    });
+    var firstNode=s.querySelector('.fn');
+    fb.querySelectorAll('path.fe.ok').forEach(function(p){s.insertBefore(p,firstNode);});
+
+    document.getElementById('codebox').innerHTML=m.code.map(function(r){
+      var c='';
+      if(r[1] in dia)c=dia[r[1]]?' ok':' no';
+      else if(r[1]&&on[r[1]])c=' ok';
+      return '<div class="cl'+c+'">'+kw(r[0])+'</div>';
+    }).join('');
+
+    document.getElementById('explica').textContent=m.txt();
+    document.getElementById('c2box').style.display=st.m==='elseif'?'flex':'none';
+    document.getElementById('c1lbl').textContent=st.m==='elseif'?'condicion1':'condicion';
+    document.querySelectorAll('#modos button').forEach(function(b){b.classList.toggle('sel',b.getAttribute('data-m')===st.m);});
+    document.querySelectorAll('.bool button').forEach(function(b){
+      var v=st['c'+b.getAttribute('data-c')];
+      b.classList.toggle('sel',(b.getAttribute('data-v')==='1')===v);
+      b.setAttribute('aria-pressed',(b.getAttribute('data-v')==='1')===v);
+    });
+  }
+
+  document.querySelectorAll('#modos button').forEach(function(b){
+    b.addEventListener('click',function(){st.m=b.getAttribute('data-m');draw();});
+  });
+  document.querySelectorAll('.bool button').forEach(function(b){
+    b.addEventListener('click',function(){st['c'+b.getAttribute('data-c')]=b.getAttribute('data-v')==='1';draw();});
+  });
+  draw();
+})();
+</script>
+</body>
+</html>

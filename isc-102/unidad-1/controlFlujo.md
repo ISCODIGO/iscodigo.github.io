@@ -10,6 +10,8 @@ El **control de flujo** es la capacidad de un programa para alterar el orden en 
 
 Gracias a la **programación estructurada**, podemos combinar estas instrucciones en unidades lógicas con un solo punto de entrada y uno de salida (Capítulo 5, Sección 5.1).
 
+[Simulacion de Decisiones](../../assets/simulador_if_c.html)
+
 ### 1. Declaraciones y Bloques
 En C, una sentencia compuesta o **bloque** es un grupo de declaraciones y sentencias encerradas entre llaves `{ }`. El programa trata a este conjunto como una única unidad (Capítulo 5, Sección 5.1).
 
