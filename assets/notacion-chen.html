@@ -40,6 +40,28 @@ svg{display:block;width:100%;height:auto;min-width:580px}
 .card{font-size:16px;font-weight:700;fill:var(--hi);font-family:inherit}
 @media (prefers-reduced-motion:no-preference){.hl{animation:pul 1.6s ease-in-out infinite}}
 @keyframes pul{0%,100%{opacity:1}50%{opacity:.65}}
+.occ{margin:0}
+.occ[hidden]{display:none}
+.occ-h{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 .5rem}
+#occsvg{min-width:560px}
+#main.off{display:none}
+.set{fill:var(--paper);stroke:var(--hair);stroke-width:1}
+.setname{font-size:13px;font-weight:700;fill:var(--ink);font-family:inherit}
+.dot{fill:var(--ink)}
+.sq{fill:var(--hi)}
+.lbl{font-size:13px;font-style:italic;fill:var(--ink);font-family:inherit}
+.idle{font-size:13px;font-style:italic;fill:var(--muted);font-family:inherit}
+.occ-ln{fill:none;stroke:var(--hi);stroke-width:1.4;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .5s ease-out}
+.occ-ln.go{stroke-dashoffset:0}
+.reading{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:.75rem;font-size:.95rem;opacity:0;transition:opacity .5s}
+.reading.go{opacity:1}
+.reading b{color:var(--hi)}
+.reading h3{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 .35rem}
+.reading p{margin:0 0 .3rem}
+.dot.off{fill:var(--card);stroke:var(--muted);stroke-width:1.2}
+.lbl.off{fill:var(--muted)}
+.res{display:inline-block;margin-top:.25rem;padding:.2rem .7rem;border-radius:999px;background:var(--hi-bg);color:var(--hi);font-weight:700}
+@media (prefers-reduced-motion:reduce){.occ-ln,.reading{transition:none}}
 .caption{min-height:6.5rem;margin:1.25rem 0 0}
 .caption h2{font-size:1.2rem;margin:0 0 .3rem}
 .caption p{margin:0;color:var(--muted);max-width:66ch}
@@ -53,6 +75,22 @@ button.primary{background:var(--hi);color:var(--card);border-color:var(--hi)}
 .bar{height:3px;background:var(--hair);border-radius:2px;margin-top:1rem;overflow:hidden}
 .bar span{display:block;height:100%;background:var(--hi);width:0;transition:width .4s}
 .hint{color:var(--muted);font-size:.85rem;margin-top:1.5rem}
+
+/* Ajuste: toda la simulación cabe en 900px de alto */
+main{height:900px;max-height:900px;display:flex;flex-direction:column;padding:1rem 1.25rem;overflow:hidden}
+.phases{margin:0 0 .6rem;flex:none}
+.stage{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:.75rem;overflow:hidden}
+#main{flex:1 1 auto;min-height:0;min-width:0;width:100%;height:100%}
+.occ:not([hidden]){flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+#occsvg{flex:1 1 auto;min-height:0;min-width:0;width:100%;height:100%}
+.occ-h{margin:0 0 .25rem}
+.reading{flex:none;margin-top:.4rem;gap:.5rem 1rem;font-size:.9rem}
+.reading p{margin:0 0 .15rem}
+.caption{flex:none;min-height:4.8rem;margin:.75rem 0 0}
+.caption h2{font-size:1.1rem}
+.controls{flex:none;margin-top:.6rem}
+.bar{flex:none;margin-top:.6rem}
+.hint{flex:none;margin:.5rem 0 0;font-size:.8rem}
 </style>
 </head>
 <body>
@@ -64,7 +102,7 @@ button.primary{background:var(--hi);color:var(--card);border-color:var(--hi)}
 </ol>
 
 <div class="stage">
-<svg viewBox="-80 0 760 560" role="img" aria-labelledby="svgt svgd"><title id="svgt">Diagrama de Chen construido por fases</title><desc id="svgd">Empleado, departamento, proyecto y subordinado con sus atributos y relaciones</desc>
+<svg id="main" viewBox="-80 0 760 560" role="img" aria-labelledby="svgt svgd"><title id="svgt">Diagrama de Chen construido por fases</title><desc id="svgd">Empleado, departamento, proyecto y subordinado con sus atributos y relaciones</desc>
 <g class="el k-comp"><ellipse class="sh" cx="115" cy="62" rx="40" ry="14"/><text class="tx" x="115" y="62" text-anchor="middle" dominant-baseline="central">NombreP</text>
 <ellipse class="sh" cx="225" cy="62" rx="42" ry="14"/><text class="tx" x="225" y="62" text-anchor="middle" dominant-baseline="central">Apellido1</text>
 <line class="ln" x1="130" y1="75" x2="155" y2="108"/><line class="ln" x1="210" y1="75" x2="185" y2="108"/>
@@ -90,18 +128,18 @@ button.primary{background:var(--hi);color:var(--card);border-color:var(--hi)}
 <g class="el k-partial k-rec"><path class="ln" d="M80 190H0V276"/><path class="ln" d="M80 206H24V290"/>
 <text class="tx" x="-6" y="238" text-anchor="end" style="font-size:11px;fill:var(--muted)">Supervisor</text>
 <text class="tx" x="30" y="252" style="font-size:11px;fill:var(--muted)">Supervisado</text></g>
-<g class="el k-rec"><polygon class="sh" points="-40,300 0,276 40,300 0,324"/><text class="tx" x="0" y="300" text-anchor="middle" dominant-baseline="central">CONTROL</text></g>
+<g class="el k-rec r-CT"><polygon class="sh" points="-40,300 0,276 40,300 0,324"/><text class="tx" x="0" y="300" text-anchor="middle" dominant-baseline="central">CONTROL</text></g>
 <g class="el k-relattr"><ellipse class="sh" cx="335" cy="410" rx="32" ry="14"/><text class="tx" x="335" y="410" text-anchor="middle" dominant-baseline="central">Horas</text>
 <line class="ln" x1="335" y1="364" x2="335" y2="396"/>
 <ellipse class="sh" cx="430" cy="300" rx="42" ry="14"/><text class="tx" x="430" y="300" text-anchor="middle" dominant-baseline="central">FechaInicio</text>
 <line class="ln" x1="380" y1="278" x2="400" y2="290"/></g>
 <g class="el k-pk"><ellipse class="sh" cx="262" cy="508" rx="38" ry="14"/><text class="tx" x="262" y="508" text-anchor="middle" dominant-baseline="central">Nombre</text>
 <line class="ln" x1="241" y1="517" x2="283" y2="517" stroke-dasharray="3 2"/><line class="ln" x1="170" y1="508" x2="224" y2="508"/></g>
-<g class="el k-rel"><polygon class="sh" points="265,198 335,172 405,198 335,224"/><text class="tx" x="335" y="198" text-anchor="middle" dominant-baseline="central">TRABAJA_PARA</text>
-<polygon class="sh" points="265,268 335,242 405,268 335,294"/><text class="tx" x="335" y="268" text-anchor="middle" dominant-baseline="central">ADMINISTRA</text>
-<polygon class="sh" points="265,338 335,312 405,338 335,364"/><text class="tx" x="335" y="338" text-anchor="middle" dominant-baseline="central">TRABAJA_EN</text>
-<polygon class="sh" points="525,268 580,244 635,268 580,292"/><text class="tx" x="580" y="268" text-anchor="middle" dominant-baseline="central">CONTROLA</text></g>
-<g class="el k-relw"><polygon class="sh" points="15,430 100,402 185,430 100,458"/><polygon class="sh" points="26,430 100,408 174,430 100,452"/><text class="tx" x="100" y="430" text-anchor="middle" dominant-baseline="central">SUBORDINADOS_DE</text></g>
+<g class="el k-rel r-TP"><polygon class="sh" points="265,198 335,172 405,198 335,224"/><text class="tx" x="335" y="198" text-anchor="middle" dominant-baseline="central">TRABAJA_PARA</text></g>
+<g class="el k-rel r-ADM"><polygon class="sh" points="265,268 335,242 405,268 335,294"/><text class="tx" x="335" y="268" text-anchor="middle" dominant-baseline="central">ADMINISTRA</text></g>
+<g class="el k-rel r-TE"><polygon class="sh" points="265,338 335,312 405,338 335,364"/><text class="tx" x="335" y="338" text-anchor="middle" dominant-baseline="central">TRABAJA_EN</text></g>
+<g class="el k-rel r-CTA"><polygon class="sh" points="525,268 580,244 635,268 580,292"/><text class="tx" x="580" y="268" text-anchor="middle" dominant-baseline="central">CONTROLA</text></g>
+<g class="el k-relw r-SD"><polygon class="sh" points="15,430 100,402 185,430 100,458"/><polygon class="sh" points="26,430 100,408 174,430 100,452"/><text class="tx" x="100" y="430" text-anchor="middle" dominant-baseline="central">SUBORDINADOS_DE</text></g>
 <g class="el k-ent"><rect class="sh" x="80" y="180" width="130" height="36"/><text class="txb" x="145" y="198" text-anchor="middle" dominant-baseline="central">EMPLEADO</text>
 <rect class="sh" x="460" y="180" width="150" height="36"/><text class="txb" x="535" y="198" text-anchor="middle" dominant-baseline="central">DEPARTAMENTO</text>
 <rect class="sh" x="460" y="320" width="150" height="36"/><text class="txb" x="535" y="338" text-anchor="middle" dominant-baseline="central">PROYECTO</text></g>
@@ -113,6 +151,11 @@ button.primary{background:var(--hi);color:var(--card);border-color:var(--hi)}
 <text class="card" x="590" y="236">1</text><text class="card" x="590" y="314">N</text>
 <text class="card" x="-18" y="270">1</text><text class="card" x="30" y="284">N</text></g>
 </svg>
+<div class="occ" id="occ" hidden>
+  <p class="occ-h" id="occh"></p>
+  <svg id="occsvg" viewBox="0 0 680 300" role="img" aria-label="Diagrama de ocurrencias"></svg>
+  <div class="reading" id="reading"></div>
+</div>
 </div>
 
 <div class="caption" aria-live="polite">
@@ -144,11 +187,91 @@ const S=[
 {p:3,k:['k-relw'],r:['k-idl'],t:'Relación identificadora: rombo doble',d:'Une la entidad débil con su dueña. Gracias a ella, un subordinado se identifica por el Dni del empleado más su Nombre.'},
 {p:3,k:['k-rec'],t:'Relación recursiva y roles',d:'CONTROL relaciona EMPLEADO consigo mismo. Como las dos líneas llegan a la misma entidad, se etiquetan con su rol: Supervisor y Supervisado.'},
 {p:3,k:['k-relattr'],t:'Atributo de relación',d:'Horas pertenece a la combinación empleado-proyecto, y FechaInicio indica desde cuándo un empleado administra el departamento. Por eso cuelgan de los rombos.'},
-{p:3,k:['k-total'],t:'Participación total: línea doble',d:'Toda ocurrencia debe participar: todo departamento tiene director, todo proyecto es controlado por un departamento y todo subordinado depende de un empleado.'},
+{p:3,o:'ADM',k:['r-ADM'],t:'Análisis de ocurrencias: ADMINISTRA',d:'Antes de anotar cardinalidad y participación se analizan ejemplos concretos. Cada instancia r une un empleado con un departamento. Los puntos huecos son ocurrencias que no participan.'},
+{p:3,o:'TP',k:['r-TP'],t:'Análisis de ocurrencias: TRABAJA_PARA',d:'Cada empleado aparece en exactamente una instancia, mientras que un mismo departamento se repite en varias. No hay puntos huecos en ningún lado.'},
+{p:3,o:'CTA',k:['r-CTA'],t:'Análisis de ocurrencias: CONTROLA',d:'Un departamento puede aparecer en varias instancias, o en ninguna (d2). Cada proyecto aparece exactamente una vez.'},
+{p:3,o:'TE',k:['r-TE'],t:'Análisis de ocurrencias: TRABAJA_EN',d:'Aquí tanto empleados como proyectos se repiten: un empleado trabaja en varios proyectos y un proyecto tiene varios empleados.'},
+{p:3,o:'CT',k:['r-CT'],t:'Análisis de ocurrencias: CONTROL',d:'Es recursiva: el mismo conjunto EMPLEADO aparece dos veces, una por cada rol. Un supervisor aparece en varias instancias; un supervisado, como máximo en una.'},
+{p:3,o:'SD',k:['r-SD'],t:'Análisis de ocurrencias: SUBORDINADOS_DE',d:'Cada subordinado pertenece a exactamente un empleado; un empleado puede tener varios subordinados o ninguno.'},
+{p:3,k:['k-total'],t:'Participación total: línea doble',d:'Trasladamos al diagrama lo que vimos en las ocurrencias. Toda ocurrencia debe participar: todo departamento tiene director, todo proyecto es controlado por un departamento y todo subordinado depende de un empleado.'},
 {p:3,k:['k-partial'],t:'Participación parcial: línea simple',d:'La participación es opcional: no todo empleado administra un departamento, supervisa a otros ni tiene subordinados a su cargo.'},
-{p:3,k:['k-card'],t:'Cardinalidad: 1, N, M',d:'Indica cuántas ocurrencias se asocian: N:1 en TRABAJA_PARA, 1:1 en ADMINISTRA, 1:N en CONTROLA, M:N en TRABAJA_EN, 1:N en CONTROL y 1:N en SUBORDINADOS_DE.'},
+{p:3,k:['k-card'],t:'Cardinalidad: 1, N, M',d:'Con el análisis anterior ya podemos anotarla en el diagrama: N:1 en TRABAJA_PARA, 1:1 en ADMINISTRA, 1:N en CONTROLA, M:N en TRABAJA_EN, 1:N en CONTROL y 1:N en SUBORDINADOS_DE.'},
 {p:4,k:null,t:'Modelo completo',d:'Entidades, luego atributos, luego relaciones: ese es el orden recomendado para construir cualquier diagrama entidad-relación.'}
 ];
+const O={
+ ADM:{rel:'ADMINISTRA',L:['EMPLEADO','e',7],R:['DEPARTAMENTO','d',3],P:[[3,1],[6,2],[5,3]],
+  a:'Cada empleado administra <b>como máximo 1</b> departamento.',
+  b:'Cada departamento es administrado por <b>exactamente 1</b> empleado.',res:'1 : 1',
+  pa:'e1, e2, e4 y e7 no administran nada: EMPLEADO participa de forma <b>parcial</b>.',
+  pb:'d1, d2 y d3 están todos enlazados: DEPARTAMENTO participa de forma <b>total</b>.'},
+ TP:{rel:'TRABAJA_PARA',L:['EMPLEADO','e',7],R:['DEPARTAMENTO','d',3],P:[[1,1],[2,3],[3,1],[4,2],[5,2],[6,3],[7,1]],
+  a:'Cada empleado trabaja para <b>exactamente 1</b> departamento.',
+  b:'Cada departamento tiene <b>muchos (N)</b> empleados: d1 tiene tres.',res:'N : 1',
+  pa:'Todos los empleados están enlazados: EMPLEADO participa de forma <b>total</b>.',
+  pb:'Todos los departamentos tienen empleados: DEPARTAMENTO participa de forma <b>total</b>.'},
+ CTA:{rel:'CONTROLA',L:['DEPARTAMENTO','d',3],R:['PROYECTO','p',5],P:[[1,1],[1,2],[3,3],[3,4],[3,5]],
+  a:'Cada departamento controla <b>muchos (N)</b> proyectos.',
+  b:'Cada proyecto es controlado por <b>exactamente 1</b> departamento.',res:'1 : N',
+  pa:'d2 no controla ningún proyecto: DEPARTAMENTO participa de forma <b>parcial</b>.',
+  pb:'Todos los proyectos están enlazados: PROYECTO participa de forma <b>total</b>.'},
+ TE:{rel:'TRABAJA_EN',L:['EMPLEADO','e',5],R:['PROYECTO','p',4],P:[[1,1],[1,2],[2,2],[3,1],[3,3],[4,3],[4,4],[5,2]],
+  a:'Cada empleado trabaja en <b>muchos (M)</b> proyectos: e1 está en dos.',
+  b:'Cada proyecto tiene <b>muchos (N)</b> empleados: p2 tiene tres.',res:'M : N',
+  pa:'Todos los empleados trabajan en algún proyecto: participación <b>total</b>.',
+  pb:'Todos los proyectos tienen empleados: participación <b>total</b>.'},
+ CT:{rel:'CONTROL',L:['EMPLEADO (supervisor)','e',7],R:['EMPLEADO (supervisado)','e',7],P:[[7,1],[7,4],[1,2],[1,3],[4,5],[4,6]],
+  a:'Un supervisor supervisa a <b>muchos (N)</b> empleados: e7 supervisa a e1 y e4.',
+  b:'Un supervisado tiene <b>como máximo 1</b> supervisor.',res:'1 : N',
+  pa:'e2, e3, e5 y e6 no supervisan a nadie: el rol supervisor es <b>parcial</b>.',
+  pb:'e7 no tiene supervisor: el rol supervisado también es <b>parcial</b>.'},
+ SD:{rel:'SUBORDINADOS_DE',L:['EMPLEADO','e',5],R:['SUBORDINADO','s',4],P:[[1,1],[1,2],[3,3],[4,4]],
+  a:'Cada empleado tiene <b>muchos (N)</b> subordinados.',
+  b:'Cada subordinado depende de <b>exactamente 1</b> empleado.',res:'1 : N',
+  pa:'e2 y e5 no tienen subordinados: EMPLEADO participa de forma <b>parcial</b>.',
+  pb:'Todo subordinado depende de alguien: SUBORDINADO participa de forma <b>total</b> (siempre, por ser entidad débil).'}
+};
+const NS='http://www.w3.org/2000/svg';
+function mk(tag,at,txt){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(txt!=null)e.textContent=txt;return e;}
+function sub(parent,x,y,pre,n,anchor,cls){const t=mk('text',{x,y,'text-anchor':anchor,'dominant-baseline':'central',class:cls||'lbl'});t.appendChild(document.createTextNode(pre));const ts=mk('tspan',{'baseline-shift':'sub','font-size':'10'},String(n));t.appendChild(ts);parent.appendChild(t);}
+let occTimers=[];
+function renderOcc(key){
+  occTimers.forEach(clearTimeout);occTimers=[];
+  const d=O[key],svg=document.getElementById('occsvg');svg.innerHTML='';
+  const nL=d.L[2],nR=d.R[2],nP=d.P.length,n=Math.max(nL,nR,nP),gap=32,top=56;
+  const H=top+n*gap+62;svg.setAttribute('viewBox','0 0 680 '+H);
+  const cy=top+n*gap/2+8, ry=n*gap/2+30;
+  const X=[130,340,550];
+  [[X[0],d.L[0]],[X[1],d.rel],[X[2],d.R[0]]].forEach(([x,name])=>{
+    svg.appendChild(mk('ellipse',{cx:x,cy,rx:62,ry,class:'set'}));
+    svg.appendChild(mk('text',{x,y:22,'text-anchor':'middle',class:'setname'},name));
+  });
+  const ys=c=>Array.from({length:c},(_,i)=>top+(n-c)*gap/2+gap/2+i*gap);
+  const yL=ys(nL),yR=ys(nR),yP=ys(nP);
+  const g=mk('g',{});svg.appendChild(g);
+  const lines=[];
+  d.P.forEach(([l,r],i)=>{
+    const a=mk('line',{x1:X[0]+6,y1:yL[l-1],x2:X[1],y2:yP[i],class:'occ-ln',pathLength:1});
+    const b=mk('line',{x1:X[1],y1:yP[i],x2:X[2]-6,y2:yR[r-1],class:'occ-ln',pathLength:1});
+    g.appendChild(a);g.appendChild(b);lines.push([a,b]);
+  });
+  const uL=new Set(d.P.map(q=>q[0])),uR=new Set(d.P.map(q=>q[1]));
+  yL.forEach((y,i)=>{const on=uL.has(i+1);svg.appendChild(mk('circle',{cx:X[0]+6,cy:y,r:3.5,class:on?'dot':'dot off'}));sub(svg,X[0]-8,y,d.L[1],i+1,'end',on?'lbl':'lbl off');});
+  yR.forEach((y,i)=>{const on=uR.has(i+1);svg.appendChild(mk('circle',{cx:X[2]-6,cy:y,r:3.5,class:on?'dot':'dot off'}));sub(svg,X[2]+8,y,d.R[1],i+1,'start',on?'lbl':'lbl off');});
+  yP.forEach((y,i)=>{svg.appendChild(mk('rect',{x:X[1]-4,y:y-4,width:8,height:8,class:'sq'}));sub(svg,X[1]-12,y,'r',i+1,'end');});
+  [X[0],X[1],X[2]].forEach(x=>svg.appendChild(mk('text',{x,y:cy+ry-16,'text-anchor':'middle',class:'idle'},'⋮')));
+  document.getElementById('occh').textContent='Diagrama de ocurrencias de '+d.rel;
+  const rd=document.getElementById('reading');rd.classList.remove('go');
+  rd.innerHTML='<div><h3>Cardinalidad</h3><p>'+d.a+'</p><p>'+d.b+'</p><span class="res">'+d.res+'</span></div><div><h3>Participación</h3><p>'+d.pa+'</p><p>'+d.pb+'</p></div>';
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  requestAnimationFrame(()=>{
+    lines.forEach(([a,b],i)=>{
+      if(reduce){a.classList.add('go');b.classList.add('go');return;}
+      occTimers.push(setTimeout(()=>a.classList.add('go'),150+i*380));
+      occTimers.push(setTimeout(()=>b.classList.add('go'),350+i*380));
+    });
+    occTimers.push(setTimeout(()=>rd.classList.add('go'),reduce?0:400+lines.length*380));
+  });
+}
 let i=0,tm=null;
 const els=document.querySelectorAll('.el');
 const $=id=>document.getElementById(id);
@@ -167,16 +290,17 @@ function show(n){
     e.classList.toggle('hl',isHl);
   });
   [1,2,3].forEach(p=>{const el=$('ph'+p);el.classList.toggle('on',s.p===p);el.classList.toggle('done',s.p>p);});
+  const oc=$('occ');if(s.o){oc.hidden=false;$('main').classList.add('off');renderOcc(s.o);}else{oc.hidden=true;$('main').classList.remove('off');}
   $('st').textContent=s.t;
   $('sd').textContent=s.d;
   $('cnt').textContent='Paso '+(i+1)+' de '+S.length;
   $('bar').style.width=((i+1)/S.length*100)+'%';
 }
-function stop(){clearInterval(tm);tm=null;$('bplay').textContent='Reproducir';}
+function stop(){clearTimeout(tm);tm=null;$('bplay').textContent='Reproducir';}
 function toggle(){
   if(tm){stop();return;}
   $('bplay').textContent='Pausar';
-  tm=setInterval(()=>show(i+1),4000);
+  const tick=()=>{show(i+1);tm=setTimeout(tick,S[i].o?7500:4000);};tm=setTimeout(tick,S[i].o?7500:4000);
 }
 $('bn').onclick=()=>{stop();show(i+1)};
 $('bp').onclick=()=>{stop();show(i-1)};
