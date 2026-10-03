@@ -3,7 +3,7 @@ layout: post
 title: "Análisis de Algoritmos"
 parent: "Unidad I: Introducción a Estructuras de Datos, Modelado y Algoritmos Básicos"
 grand_parent: "ISC-211 Estructuras de Datos"
-nav_order: 3
+nav_order: 4
 ---
 
 ## Notación asintótica

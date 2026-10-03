@@ -3,7 +3,7 @@ layout: post
 title: "Recursión"
 parent: "Unidad I: Introducción a Estructuras de Datos, Modelado y Algoritmos Básicos"
 grand_parent: "ISC-211 Estructuras de Datos"
-nav_order: 2
+nav_order: 3
 ---
 
 ## Introducción
