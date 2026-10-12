@@ -16,6 +16,12 @@ Resumen del capítulo 2 del libro de texto (Elmasri & Navathe): modelos de datos
 **[3. Modelado de datos con el modelo Entidad-Relación (ER)](./modelo-entidad-relacion.md)**
 Resumen del capítulo 3 del libro de texto (Elmasri & Navathe): el diseño conceptual, entidades, atributos y claves, tipos de relación y restricciones estructurales, entidades débiles, diagramas ER de la base de datos EMPRESA, notación UML y relaciones de grado mayor que dos.
 
+**[4. Modelo Entidad-Relación Extendido (EER)](./modelo-eer.md)**
+Resumen del capítulo 4 del libro de texto (Elmasri & Navathe): subclases, superclases y herencia, especialización y generalización, restricciones de disyunción y completitud, jerarquías y entramados, categorías (tipos unión), notación UML y conceptos de abstracción de datos.
+
+**[5. Dependencias funcionales y normalización](./normalizacion.md)**
+Resumen del capítulo 10 del libro de texto (Elmasri & Navathe): directrices informales de diseño, anomalías de actualización, dependencias funcionales y reglas de inferencia, clausura y cobertura mínima, formas normales 1FN, 2FN, 3FN y BCNF.
+
 --
 
 [⬅️ Volver al índice general de la clase](../index.md)
