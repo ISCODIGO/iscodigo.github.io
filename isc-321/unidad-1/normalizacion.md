@@ -125,16 +125,19 @@ DF3: NumProyecto → {NombreProyecto, UbicaciónProyecto}
   - `NúmeroDpto → DniDirector` y `DniDirector → TeléfonoDirector` ⇒ `NúmeroDpto → TeléfonoDirector`
 - Notación abreviada: `{X, Y} → Z` se escribe `XY → Z`
 
-| Regla | Nombre | Enunciado |
-| --- | --- | --- |
-| RI1 | **Reflexiva** | Si `X ⊇ Y` ⇒ `X → Y` (DF **trivial**) |
-| RI2 | **Aumento** | `X → Y` ⇒ `XZ → YZ` |
-| RI3 | **Transitiva** | `X → Y`, `Y → Z` ⇒ `X → Z` |
-| RI4 | Descomposición | `X → YZ` ⇒ `X → Y` |
-| RI5 | Unión | `X → Y`, `X → Z` ⇒ `X → YZ` |
-| RI6 | Seudotransitiva | `X → Y`, `WY → Z` ⇒ `WX → Z` |
+| Regla | Nombre | Enunciado | Ejemplo |
+| --- | --- | --- | --- |
+| RI1 | **Reflexiva** | Si `X ⊇ Y` ⇒ `X → Y` (DF **trivial**) | `{Dni, NombreE} → NombreE` |
+| RI2 | **Aumento** | `X → Y` ⇒ `XZ → YZ` | `Dni → NombreE` ⇒ `{Dni, NumProyecto} → {NombreE, NumProyecto}` |
+| RI3 | **Transitiva** | `X → Y`, `Y → Z` ⇒ `X → Z` | `NúmeroDpto → DniDirector`, `DniDirector → TeléfonoDirector` ⇒ `NúmeroDpto → TeléfonoDirector` |
+| RI4 | Descomposición | `X → YZ` ⇒ `X → Y` | `NumProyecto → {NombreProyecto, UbicaciónProyecto}` ⇒ `NumProyecto → NombreProyecto` |
+| RI5 | Unión | `X → Y`, `X → Z` ⇒ `X → YZ` | `Dni → NombreE`, `Dni → Dirección` ⇒ `Dni → {NombreE, Dirección}` |
+| RI6 | Seudotransitiva | `X → Y`, `WY → Z` ⇒ `WX → Z` | `NombreE → Dni`, `{Dni, NumProyecto} → Horas` ⇒ `{NombreE, NumProyecto} → Horas` (si `NombreE` fuera único) |
 
 - **Axiomas de Armstrong** (RI1–RI3): **sólidos** y **completos** → bastan para obtener F⁺
+  - **Sólidos**: todo lo que se deduce con ellos es verdad (nunca producen una DF falsa)
+  - **Completos**: aplicándolos una y otra vez se obtienen **todas** las DF de F⁺
+  - RI4–RI6 no agregan poder: se demuestran a partir de RI1–RI3, solo son atajos
 - ⚠️ `X → A` y `Y → B` **no** implican `XY → AB`; `XY → A` **no** implica `X → A` ni `Y → A`
 
 ### Clausura de un conjunto de atributos (X⁺)
