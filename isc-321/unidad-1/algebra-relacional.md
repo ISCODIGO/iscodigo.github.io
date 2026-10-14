@@ -56,11 +56,43 @@ Ejemplo: si t es la tupla de José Pérez en EMPLEADO, entonces `t[Sueldo] = 300
 
 ### Claves
 
-- **Superclave (SK)**: conjunto de atributos tal que dos tuplas distintas nunca tienen el mismo valor: `t1[SK] ≠ t2[SK]`. Toda relación tiene al menos una: **todos** sus atributos
-- **Clave**: superclave **mínima**; si se le quita cualquier atributo deja de ser superclave. `{Dni}` es clave de EMPLEADO; `{Dni, Nombre}` es superclave pero no clave
-- **Clave candidata**: cada una de las claves cuando hay varias
-- **Clave principal (primary key)**: la clave candidata elegida para identificar las tuplas. Por la **integridad de entidad**, no puede ser NULL
-- **Foreign key (FK)**: atributos de R1 con el mismo dominio que la clave principal de R2; su valor debe existir en R2 o ser NULL (**integridad referencial**). Ej.: `EMPLEADO.Dno` → `DEPARTAMENTO.NúmeroDpto`
+Todas las claves responden a la misma pregunta: **¿qué atributos bastan para distinguir una tupla de las demás?** Lo que cambia entre un tipo y otro es si sobran atributos, si hay varias opciones y cuál se elige.
+
+- **Superclave (SK)**: conjunto de atributos tal que dos tuplas distintas nunca tienen el mismo valor: `t1[SK] ≠ t2[SK]`
+  - Basta con que **identifique**; puede tener atributos de **sobra**
+  - Toda relación tiene al menos una: el conjunto de **todos** sus atributos (porque no hay tuplas duplicadas)
+  - Ej. en EMPLEADO: `{Dni}`, `{Dni, Nombre}`, `{Dni, Sueldo, Dno}` y `{Nombre, Apellido1, …, Dno}` son superclaves
+- **Clave**: superclave **mínima**; si se le quita cualquier atributo deja de ser superclave
+  - No tiene atributos de sobra: **todos** son necesarios para identificar
+  - `{Dni}` es clave de EMPLEADO; `{Dni, Nombre}` es superclave pero **no** clave, porque al quitar Nombre, `{Dni}` sigue identificando
+  - Una clave puede tener varios atributos: en TRABAJA_EN la clave es `{DniEmpleado, NumProy}`; ninguno de los dos por separado identifica una tupla (un empleado trabaja en varios proyectos y un proyecto tiene varios empleados)
+- **Clave candidata**: nombre que reciben las claves cuando una relación tiene **más de una**
+  - En DEPARTAMENTO, tanto `{NúmeroDpto}` como `{NombreDpto}` son claves (no hay dos departamentos con el mismo número ni con el mismo nombre) → ambas son candidatas
+  - En PROYECTO pasa lo mismo con `{NumProyecto}` y `{NombreProyecto}`
+- **Clave principal (primary key)**: la clave candidata **elegida** por el diseñador para identificar las tuplas; se indica **subrayando** sus atributos en el esquema
+  - Se suele preferir la candidata con **menos atributos** o la más **estable** (un número de departamento cambia menos que su nombre) → en DEPARTAMENTO se elige `NúmeroDpto`
+  - Las demás candidatas pasan a ser **claves alternativas** (o *únicas*: `UNIQUE` en SQL)
+  - Por la **integridad de entidad**, ningún atributo de la clave principal puede ser NULL: si lo fuera, no se podría identificar la tupla
+- **Foreign key (FK)**: atributos de R1 que **hacen referencia** a la clave principal de R2 (mismo dominio); su valor debe existir en R2 o ser NULL (**integridad referencial**)
+  - Ej.: `EMPLEADO.Dno` → `DEPARTAMENTO.NúmeroDpto`: un empleado solo puede estar en un departamento que exista
+  - A diferencia de las anteriores, **no identifica** tuplas de su propia relación: puede repetirse (varios empleados tienen `Dno = 5`) y puede ser NULL
+  - Puede referenciar a la **misma** relación: `EMPLEADO.SuperDni` → `EMPLEADO.Dni`
+
+> La superclave y la clave se deciden por el **significado** de los atributos (el esquema), no por los datos actuales. Aunque hoy no haya dos empleados con el mismo Sueldo, `{Sueldo}` **no** es clave, porque nada impide que mañana dos empleados ganen lo mismo.
+
+Relación entre los conceptos:
+
+```
+Superclaves  ⊇  Claves (= claves candidatas)  ⊇  Clave principal (una sola)
+```
+
+| Concepto | ¿Identifica tuplas? | ¿Puede tener atributos de sobra? | ¿Cuántas por relación? | ¿Admite NULL? |
+| --- | --- | --- | --- | --- |
+| Superclave | Sí | Sí | Muchas (al menos una) | — |
+| Clave / clave candidata | Sí | No (es mínima) | Una o más | — |
+| Clave principal | Sí | No | Exactamente una | No |
+| Clave alternativa | Sí | No | Cero o más | Según el diseño |
+| Foreign key | No (en su relación) | — | Cero o más | Sí |
 
 ### Base de datos relacional
 
