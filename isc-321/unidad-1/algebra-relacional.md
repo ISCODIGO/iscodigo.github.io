@@ -7,6 +7,66 @@ nav_order: 6
 mermaid: true
 ---
 
+## Antecedentes: conceptos del modelo relacional
+
+El álgebra relacional opera sobre **relaciones**, así que primero conviene fijar el vocabulario del modelo relacional (capítulo 5 del libro).
+
+### Terminología formal e informal
+
+| Término formal | Término informal | Ejemplo en EMPRESA |
+| --- | --- | --- |
+| Relación | Tabla | EMPLEADO |
+| Tupla | Fila | `<José, Pérez, Pérez, 123456789, …, 5>` |
+| Atributo | Columna (cabecera) | Sueldo |
+| Dominio | Tipo de dato de la columna | *DocumentoNacionalIdentidad* para Dni |
+| Esquema de relación | Definición de la tabla | `EMPLEADO(Nombre, Apellido1, …, Dno)` |
+| Estado de relación | Contenido actual de la tabla | Las 8 filas de EMPLEADO en el anexo |
+
+### Definiciones
+
+- **Dominio (D)**: conjunto de valores **atómicos** (indivisibles). Tiene un nombre, un tipo de dato y un formato. Ej.: *DocumentoNacionalIdentidad* = conjunto de DNI válidos
+- **Atributo (Ai)**: nombre del **papel** que juega un dominio dentro de una relación; su dominio se escribe `dom(Ai)`. Varios atributos pueden compartir dominio (Dni y SuperDni)
+- **Esquema de relación**: `R(A1, A2, …, An)`, un nombre de relación más una lista de atributos. Describe la relación y es relativamente **estático**
+- **Grado (aridad)**: número de atributos `n` del esquema. EMPLEADO tiene grado 10
+- **Tupla**: lista ordenada de n valores `t = <v1, v2, …, vn>`, donde cada `vi` pertenece a `dom(Ai)` o es **NULL**. Representa un **hecho** del mundo real (un empleado, un departamento…)
+- **Relación (estado de relación)** `r(R)`: **conjunto** de tuplas `r = {t1, t2, …, tm}`. Cambia con el tiempo, a medida que cambia el mundo real
+  - Formalmente es un subconjunto del producto cartesiano de los dominios: `r(R) ⊆ dom(A1) × dom(A2) × … × dom(An)`
+  - El número de tuplas de r se escribe `|r|` (en EMPLEADO, `|r| = 8`)
+
+### Características de las relaciones
+
+- **Las tuplas no tienen orden**: una relación es un conjunto; mostrarla ordenada de otra forma no la cambia
+- **No hay tuplas duplicadas**: todos los elementos de un conjunto son distintos (por eso la PROYECCIÓN elimina duplicados)
+- **Los valores son atómicos**: no se permiten atributos compuestos ni multivalor (*principio de primera forma normal*). Por eso el atributo multivalor *Ubicaciones* de DEPARTAMENTO se guarda en la relación aparte LOCALIZACIONES_DPTO
+- **NULL**: valor especial para un dato *desconocido*, *no disponible* o *no aplicable* (p. ej. SuperDni de Eduardo Ochoa, que no tiene supervisor)
+- **Interpretación**: el esquema es una *aserción* (“un empleado tiene nombre, Dni, sueldo…”) y cada tupla es un *hecho* que la cumple
+
+### Notación
+
+| Notación | Significado |
+| --- | --- |
+| `Q, R, S` | Nombres de relación (esquemas) |
+| `q, r, s` | Estados de relación |
+| `t, u, v` | Tuplas |
+| `R.A` | Atributo A de la relación R (ej. `EMPLEADO.Sueldo`); útil cuando dos relaciones usan el mismo nombre de atributo |
+| `t[Ai]` o `t.Ai` | Valor del atributo Ai en la tupla t |
+| `t[Au, Aw, …, Az]` | Subtupla de t con solo esos atributos |
+
+Ejemplo: si t es la tupla de José Pérez en EMPLEADO, entonces `t[Sueldo] = 30000` y `t[Nombre, Dno] = <José, 5>`.
+
+### Claves
+
+- **Superclave (SK)**: conjunto de atributos tal que dos tuplas distintas nunca tienen el mismo valor: `t1[SK] ≠ t2[SK]`. Toda relación tiene al menos una: **todos** sus atributos
+- **Clave**: superclave **mínima**; si se le quita cualquier atributo deja de ser superclave. `{Dni}` es clave de EMPLEADO; `{Dni, Nombre}` es superclave pero no clave
+- **Clave candidata**: cada una de las claves cuando hay varias
+- **Clave principal (primary key)**: la clave candidata elegida para identificar las tuplas. Por la **integridad de entidad**, no puede ser NULL
+- **Foreign key (FK)**: atributos de R1 con el mismo dominio que la clave principal de R2; su valor debe existir en R2 o ser NULL (**integridad referencial**). Ej.: `EMPLEADO.Dno` → `DEPARTAMENTO.NúmeroDpto`
+
+### Base de datos relacional
+
+- **Esquema de base de datos**: conjunto de esquemas de relación más las restricciones de integridad. Ej.: `EMPRESA = {EMPLEADO, DEPARTAMENTO, LOCALIZACIONES_DPTO, PROYECTO, TRABAJA_EN, SUBORDINADO}`
+- **Estado de base de datos**: conjunto de estados de relación en un momento dado. El [anexo](#anexo-estado-de-la-base-de-datos-empresa) muestra un estado posible de EMPRESA
+
 ## ¿Qué es el álgebra relacional?
 
 - Es el **conjunto de operaciones básicas** del modelo relacional: permite especificar peticiones de recuperación
@@ -29,12 +89,19 @@ mermaid: true
 
 ```text
 EMPLEADO(Nombre, Apellido1, Apellido2, Dni, FechaNac, Dirección, Sexo, Sueldo, SuperDni, Dno)
+
 DEPARTAMENTO(NombreDpto, NúmeroDpto, DniDirector, FechaIngresoDirector)
+
 LOCALIZACIONES_DPTO(NúmeroDpto, UbicaciónDpto)
+
 PROYECTO(NombreProyecto, NumProyecto, UbicacionProyecto, NumDptoProyecto)
+
 TRABAJA_EN(DniEmpleado, NumProy, Horas)
+
 SUBORDINADO(DniEmpleado, NombreSubordinado, Sexo, FechaNac, Relación)
 ```
+
+> Los datos de cada tabla están en el [anexo](#anexo-estado-de-la-base-de-datos-empresa).
 
 ## Operaciones unarias
 
@@ -55,6 +122,8 @@ SUBORDINADO(DniEmpleado, NombreSubordinado, Sexo, FechaNac, Relación)
 σSueldo>30000(EMPLEADO)
 σ(Dno=4 AND Sueldo>25000) OR (Dno=5 AND Sueldo>30000)(EMPLEADO)
 ```
+
+> Con los datos del anexo, la última selección devuelve a Alberto Campos, Juana Sainz y Fernando Ojeda.
 
 Propiedades:
 
@@ -150,6 +219,8 @@ RESULTADO2(Dni) ← πSuperDni(DEP5_EMPS)
 RESULTADO      ← RESULTADO1 ∪ RESULTADO2
 ```
 
+> Resultado: 123456789, 333445555, 666884444, 453453453 y 888665555. El Dni 333445555 está en ambos operandos, pero aparece una sola vez.
+
 Propiedades:
 
 - ∪ y ∩ son **conmutativas**: `R ∪ S = S ∪ R`, `R ∩ S = S ∩ R`
@@ -174,7 +245,7 @@ SUBORDINADOS_ACTUALES  ← σDni=DniEmpleado(EMPLEADOS_SUBORDINADOS)
 RESULTADO              ← πNombre, Apellido1, NombreSubordinado(SUBORDINADOS_ACTUALES)
 ```
 
-> `EMPLEADOS_SUBORDINADOS` combina a cada empleada con **todos** los subordinados (21 tuplas sin sentido); la selección deja solo las que coinciden por Dni.
+> `EMPLEADOS_SUBORDINADOS` combina a cada empleada con **todos** los subordinados (21 tuplas sin sentido); la selección deja solo las que coinciden por Dni. Resultado: Juana Sainz con su subordinado Alfonso.
 
 ## Operaciones binarias: CONCATENACIÓN y DIVISIÓN
 
@@ -197,6 +268,8 @@ Ejemplo: nombre del director de cada departamento.
 DIRECTOR_DPTO ← DEPARTAMENTO ⋈DniDirector=Dni EMPLEADO
 RESULTADO     ← πNombreDpto, Apellido1, Nombre(DIRECTOR_DPTO)
 ```
+
+> Resultado: Investigación–Campos, Alberto; Administración–Sainz, Juana; Sede Central–Ochoa, Eduardo.
 
 > DniDirector es una **foreign key**: la integridad referencial garantiza que cada director tiene su tupla en EMPLEADO.
 
@@ -226,6 +299,8 @@ Si ya se llaman igual, basta con:
 ```text
 LOC_DPTO ← DEPARTAMENTO * LOCALIZACIONES_DPTO
 ```
+
+> Resultado: 5 tuplas, una por cada localización (Investigación aparece 3 veces: Valencia, Sevilla y Madrid).
 
 Otras ideas:
 
@@ -260,6 +335,8 @@ DNI_PNOS    ← πDniEmpleado, NumProy(TRABAJA_EN)
 DNIS(Dni)   ← DNI_PNOS ÷ PEREZ_PNOS
 RESULTADO   ← πNombre, Apellido1(DNIS * EMPLEADO)
 ```
+
+> `PEREZ_PNOS = {1, 2}`; los únicos que trabajan en ambos proyectos son 123456789 y 453453453 → José Pérez y Aurora Oliva.
 
 Ejemplo abstracto (X = {A}, Y = {B}):
 
@@ -335,6 +412,8 @@ flowchart BT
     class S,J1,J2,PI op
 ```
 
+> Resultado de Q2: proyectos 10 y 30, ambos del departamento 4, dirigido por Sainz (Cerquillas, 67; 20-06-1941).
+
 > Los árboles de consulta se retoman en el procesamiento y optimización de consultas.
 
 ## Operaciones relacionales adicionales
@@ -390,6 +469,8 @@ RESULTADO2(Dni)      ← πDni1(SUPERVISION ⋈Dni2=Dni RESULTADO1)     -- nivel
 RESULTADO            ← RESULTADO2 ∪ RESULTADO1
 ```
 
+> Nivel 1: 333445555 y 987654321. Nivel 2: 123456789, 999887777, 666884444, 453453453 y 987987987.
+
 > Se propuso el **cierre transitivo** de relaciones para recorrer la recursión completa.
 
 ### CONCATENACIÓN EXTERNA (OUTER JOIN)
@@ -410,16 +491,16 @@ TEMP      ← EMPLEADO ⟕Dni=DniDirector DEPARTAMENTO
 RESULTADO ← πNombre, Apellido1, Apellido2, NombreDpto(TEMP)
 ```
 
-| Nombre | Apellido1 | NombreDpto |
-| --- | --- | --- |
-| José | Pérez | NULL |
-| Alberto | Campos | Investigación |
-| Alicia | Jiménez | NULL |
-| Juana | Sainz | Administración |
-| Fernando | Ojeda | NULL |
-| Aurora | Oliva | NULL |
-| Luis | Pajares | NULL |
-| Eduardo | Ochoa | Sede Central |
+| Nombre | Apellido1 | Apellido2 | NombreDpto |
+| --- | --- | --- | --- |
+| José | Pérez | Pérez | NULL |
+| Alberto | Campos | Sastre | Investigación |
+| Alicia | Jiménez | Celaya | NULL |
+| Juana | Sainz | Oreja | Administración |
+| Fernando | Ojeda | Ordóñez | NULL |
+| Aurora | Oliva | Avezuela | NULL |
+| Luis | Pajares | Morera | NULL |
+| Eduardo | Ochoa | Paredes | Sede Central |
 
 ### UNIÓN EXTERNA (OUTER UNION)
 
@@ -445,6 +526,8 @@ EMPS_INVESTIGACION ← DPTO_INVESTIGACION ⋈NúmeroDpto=Dno EMPLEADO
 RESULTADO          ← πNombre, Apellido1, Dirección(EMPS_INVESTIGACION)
 ```
 
+> Resultado: José Pérez, Alberto Campos, Fernando Ojeda y Aurora Oliva, con sus direcciones.
+
 **Q3.** Empleados que trabajan en **todos** los proyectos del departamento 5 (división).
 
 ```text
@@ -453,6 +536,8 @@ EMP_PROYECTO(Dni, NumProy) ← πDniEmpleado, NumProy(TRABAJA_EN)
 DNI_EMPS_RESULTADO         ← EMP_PROYECTO ÷ PROYECTOS_DEPT5
 RESULTADO                  ← πApellido1, Nombre(DNI_EMPS_RESULTADO * EMPLEADO)
 ```
+
+> Resultado: **relación vacía**. Los proyectos del departamento 5 son {1, 2, 3} y ningún empleado trabaja en los tres.
 
 **Q4.** Proyectos en los que participa algún Pérez, como trabajador o como director del departamento que lo controla (unión).
 
@@ -465,6 +550,8 @@ DEPTS_DIRECTOR_PEREZ(NumProy)          ← πNumProyecto(DEPTS_ADMINISTRADOS_PER
 RESULTADO                              ← PROYS_PEREZ ∪ DEPTS_DIRECTOR_PEREZ
 ```
 
+> Resultado: {1, 2}. José Pérez trabaja en 1 y 2, y ningún Pérez dirige un departamento.
+
 **Q5.** Empleados con dos o más subordinados (agregación).
 
 ```text
@@ -472,6 +559,8 @@ T1(Dni, NumSubordinados) ← DniEmpleado ℑ COUNT NombreSubordinado(SUBORDINADO
 T2                       ← σNumSubordinados≥2(T1)
 RESULTADO                ← πApellido1, Nombre(T2 * EMPLEADO)
 ```
+
+> Resultado: Campos, Alberto (3 subordinados) y Pérez, José (3 subordinados).
 
 **Q6.** Empleados **sin** subordinados (diferencia).
 
@@ -482,6 +571,8 @@ EMPS_SIN_SUBORDINADOS      ← TODOS_EMPLEADOS − EMPS_CON_SUBORDINADOS
 RESULTADO                  ← πApellido1, Nombre(EMPS_SIN_SUBORDINADOS * EMPLEADO)
 ```
 
+> Resultado: Jiménez, Alicia; Ojeda, Fernando; Oliva, Aurora; Pajares, Luis; Ochoa, Eduardo.
+
 **Q7.** Directores con al menos un subordinado (intersección).
 
 ```text
@@ -490,6 +581,8 @@ EMPS_CON_SUBORDINADOS(Dni)  ← πDniEmpleado(SUBORDINADO)
 DIRECTORES_CON_SUBORDINADOS ← DIRECTORES ∩ EMPS_CON_SUBORDINADOS
 RESULTADO                   ← πApellido1, Nombre(DIRECTORES_CON_SUBORDINADOS * EMPLEADO)
 ```
+
+> Resultado: Campos, Alberto y Sainz, Juana.
 
 > Una misma consulta admite varias formulaciones: se puede cambiar el orden de las operaciones o sustituir unas por otras (p. ej. la ∩ de Q7 por una concatenación natural).
 
@@ -502,5 +595,84 @@ RESULTADO                   ← πApellido1, Nombre(DIRECTORES_CON_SUBORDINADOS 
 5. ¿Qué papel juega la foreign key al especificar las concatenaciones más comunes?
 6. ¿Qué es la operación FUNCIÓN AGREGADA? ¿Para qué se usa?
 7. ¿En qué se diferencian la CONCATENACIÓN EXTERNA y la INTERNA? ¿Y la UNIÓN EXTERNA de la UNIÓN?
+
+## Anexo: estado de la base de datos EMPRESA
+
+Datos de ejemplo sobre los que se evalúan todas las consultas de esta nota (Figura 5.6 del libro).
+
+### EMPLEADO
+
+| Nombre | Apellido1 | Apellido2 | Dni | FechaNac | Dirección | Sexo | Sueldo | SuperDni | Dno |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| José | Pérez | Pérez | 123456789 | 01-09-1965 | Eloy I, 98 | H | 30000 | 333445555 | 5 |
+| Alberto | Campos | Sastre | 333445555 | 08-12-1955 | Avda. Ríos, 9 | H | 40000 | 888665555 | 5 |
+| Alicia | Jiménez | Celaya | 999887777 | 12-05-1968 | Gran Vía, 38 | M | 25000 | 987654321 | 4 |
+| Juana | Sainz | Oreja | 987654321 | 20-06-1941 | Cerquillas, 67 | M | 43000 | 888665555 | 4 |
+| Fernando | Ojeda | Ordóñez | 666884444 | 15-09-1962 | Portillo, s/n | H | 38000 | 333445555 | 5 |
+| Aurora | Oliva | Avezuela | 453453453 | 31-07-1972 | Antón, 6 | M | 25000 | 333445555 | 5 |
+| Luis | Pajares | Morera | 987987987 | 29-03-1969 | Enebros, 90 | H | 25000 | 987654321 | 4 |
+| Eduardo | Ochoa | Paredes | 888665555 | 10-11-1937 | Las Peñas, 1 | H | 55000 | NULL | 1 |
+
+### DEPARTAMENTO
+
+| NombreDpto | NúmeroDpto | DniDirector | FechaIngresoDirector |
+| --- | --- | --- | --- |
+| Investigación | 5 | 333445555 | 22-05-1988 |
+| Administración | 4 | 987654321 | 01-01-1995 |
+| Sede Central | 1 | 888665555 | 19-06-1981 |
+
+### LOCALIZACIONES_DPTO
+
+| NúmeroDpto | UbicaciónDpto |
+| --- | --- |
+| 1 | Madrid |
+| 4 | Gijón |
+| 5 | Valencia |
+| 5 | Sevilla |
+| 5 | Madrid |
+
+### PROYECTO
+
+| NombreProyecto | NumProyecto | UbicacionProyecto | NumDptoProyecto |
+| --- | --- | --- | --- |
+| ProductoX | 1 | Valencia | 5 |
+| ProductoY | 2 | Sevilla | 5 |
+| ProductoZ | 3 | Madrid | 5 |
+| Computación | 10 | Gijón | 4 |
+| Reorganización | 20 | Madrid | 1 |
+| Comunicaciones | 30 | Gijón | 4 |
+
+### TRABAJA_EN
+
+| DniEmpleado | NumProy | Horas |
+| --- | --- | --- |
+| 123456789 | 1 | 32,5 |
+| 123456789 | 2 | 7,5 |
+| 666884444 | 3 | 40,0 |
+| 453453453 | 1 | 20,0 |
+| 453453453 | 2 | 20,0 |
+| 333445555 | 2 | 10,0 |
+| 333445555 | 3 | 10,0 |
+| 333445555 | 10 | 10,0 |
+| 333445555 | 20 | 10,0 |
+| 999887777 | 30 | 30,0 |
+| 999887777 | 10 | 10,0 |
+| 987987987 | 10 | 35,0 |
+| 987987987 | 30 | 5,0 |
+| 987654321 | 30 | 20,0 |
+| 987654321 | 20 | 15,0 |
+| 888665555 | 20 | NULL |
+
+### SUBORDINADO
+
+| DniEmpleado | NombreSubordinado | Sexo | FechaNac | Relación |
+| --- | --- | --- | --- | --- |
+| 333445555 | Alicia | M | 05-04-1986 | Hija |
+| 333445555 | Teodoro | H | 25-10-1983 | Hijo |
+| 333445555 | Luisa | M | 03-05-1958 | Esposa |
+| 987654321 | Alfonso | H | 28-02-1942 | Esposo |
+| 123456789 | Miguel | H | 04-01-1988 | Hijo |
+| 123456789 | Alicia | M | 30-12-1988 | Hija |
+| 123456789 | Elisa | M | 05-05-1967 | Esposa |
 
 [⬅️ Volver a Unidad I](./index.md)
