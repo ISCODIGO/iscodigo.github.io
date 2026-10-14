@@ -42,7 +42,7 @@ mermaid: true
   - Por trabajo → {`SECRETARIA`, `INGENIERO`, `TÉCNICO`}
   - Por contrato → {`PERSONAL_FIJO`, `PERSONAL_TEMPORAL`}
 - Sirve para:
-  - Atributos propios: `PulsacionesPorMinuto` solo en `SECRETARIA`
+  - Atributos propios: `Idiomas` solo en `SECRETARIA`
   - Relaciones propias: solo `PERSONAL_TEMPORAL` se relaciona con `SINDICATO`
 
 ```mermaid
@@ -50,7 +50,7 @@ flowchart TD
     E["<b>EMPLEADO</b><br/>Nombre, Dni, FechaNac, Dirección, TipoTrabajo"]
 
     E --- D1(("d"))
-    D1 --> S["<b>SECRETARIA</b><br/>PulsacionesPorMinuto"]
+    D1 --> S["<b>SECRETARIA</b><br/>Idiomas"]
     D1 --> T["<b>TÉCNICO</b><br/>GradoE"]
     D1 --> I["<b>INGENIERO</b><br/>Especialización"]
 
