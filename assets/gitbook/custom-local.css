@@ -1,0 +1,8 @@
+/* Estilos propios del sitio; el tema jekyll-gitbook carga este archivo al final de custom.css */
+
+/* Tablas anchas: barra de desplazamiento horizontal en vez de cortar columnas */
+.markdown-section table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
