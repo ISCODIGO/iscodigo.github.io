@@ -35,11 +35,76 @@ El álgebra relacional opera sobre **relaciones**, así que primero conviene fij
 
 ### Características de las relaciones
 
-- **Las tuplas no tienen orden**: una relación es un conjunto; mostrarla ordenada de otra forma no la cambia
-- **No hay tuplas duplicadas**: todos los elementos de un conjunto son distintos (por eso la PROYECCIÓN elimina duplicados)
-- **Los valores son atómicos**: no se permiten atributos compuestos ni multivalor (*principio de primera forma normal*). Por eso el atributo multivalor *Ubicaciones* de DEPARTAMENTO se guarda en la relación aparte LOCALIZACIONES_DPTO
-- **NULL**: valor especial para un dato *desconocido*, *no disponible* o *no aplicable* (p. ej. SuperDni de Eduardo Ochoa, que no tiene supervisor)
-- **Interpretación**: el esquema es una *aserción* (“un empleado tiene nombre, Dni, sueldo…”) y cada tupla es un *hecho* que la cumple
+Una relación **parece** una tabla, pero no es exactamente lo mismo: como se define como un **conjunto** de tuplas, hereda las propiedades de los conjuntos matemáticos. Estas son las consecuencias.
+
+#### 1. Las tuplas no tienen orden
+
+- En un conjunto los elementos no están en ninguna posición: `{a, b, c}` y `{c, a, b}` son el **mismo** conjunto
+- Igual con una relación: si mostramos EMPLEADO ordenado por Apellido1, por Sueldo o tal como se insertó, sigue siendo **la misma relación**
+- El orden que vemos en pantalla es solo una forma de **presentarla**; no forma parte de los datos
+- Consecuencia práctica: no se puede preguntar por “la tercera fila” ni depender de que las filas salgan en cierto orden. En SQL, si se necesita un orden, hay que pedirlo explícitamente con `ORDER BY`
+
+#### 2. El orden de los valores dentro de una tupla
+
+- En la definición formal, una tupla es una lista **ordenada** `<v1, v2, …, vn>`: el primer valor corresponde a A1, el segundo a A2, etc. Si se intercambian dos valores, cambia el significado
+  - `<José, Pérez, …, 30000, …>` dice que José gana 30000; mover el 30000 a la posición de Dni no tendría sentido
+- Hay una definición alternativa en la que la tupla es un **conjunto de pares** `(atributo, valor)`: `t = {(Nombre, José), (Sueldo, 30000), (Dno, 5), …}`. Ahí el orden de las columnas tampoco importa, porque cada valor va acompañado de su atributo
+- En la práctica se usa la primera (es más simple de escribir), pero hay que tener claro que lo que identifica un valor es **su atributo**, no su posición
+
+#### 3. No hay tuplas duplicadas
+
+- Un conjunto no puede contener dos veces el mismo elemento, así que una relación **no tiene dos tuplas idénticas** en todos sus atributos
+- Por eso **toda relación tiene al menos una superclave**: el conjunto de todos sus atributos (ver [Claves](#claves))
+- Efecto en el álgebra: cuando una operación produciría filas repetidas, el resultado las **elimina**. Ej.: `π Sexo, Sueldo (EMPLEADO)` produce `<M, 25000>` una sola vez, aunque Alicia Jiménez y Aurora Oliva tienen ese mismo par
+- Diferencia con SQL: una tabla SQL sí puede tener filas repetidas (es un *multiconjunto* o *bolsa*); para eliminarlas hay que usar `DISTINCT`
+
+#### 4. Los valores son atómicos
+
+- Cada valor de una tupla es **indivisible** desde el punto de vista del modelo: un solo número, una sola fecha, un solo texto
+- No se permiten:
+  - **Atributos compuestos** (un valor con partes): en el modelo ER, *Nombre* podría componerse de nombre + apellidos; en el modelo relacional se guardan como atributos separados (Nombre, Apellido1, Apellido2)
+  - **Atributos multivalor** (varios valores en una celda): un departamento puede tener varias ubicaciones, pero no se puede guardar `{Valencia, Sevilla, Madrid}` en una sola celda de DEPARTAMENTO
+- La solución para el multivalor es crear **otra relación** con una tupla por valor. Por eso existe LOCALIZACIONES_DPTO, donde el departamento 5 aparece tres veces:
+
+| NúmeroDpto | UbicaciónDpto |
+| --- | --- |
+| 5 | Valencia |
+| 5 | Sevilla |
+| 5 | Madrid |
+
+- A esta regla se le llama **principio de la primera forma normal (1FN)**; se estudia a fondo en normalización
+
+#### 5. Valores NULL
+
+- **NULL** es un valor especial que indica que **no hay valor**. Puede significar tres cosas distintas:
+
+| Significado | Ejemplo |
+| --- | --- |
+| **No aplicable**: el atributo no tiene sentido para esa tupla | SuperDni de Eduardo Ochoa: es el jefe máximo, no tiene supervisor |
+| **Desconocido**: el valor existe pero no lo sabemos | Horas de Eduardo Ochoa en el proyecto 20 (TRABAJA_EN): trabaja en él, pero no se registraron sus horas |
+| **No disponible**: existe, se conoce, pero no se ha guardado | El teléfono de un empleado que no lo quiso dar |
+
+- NULL **no es cero ni cadena vacía**: `Sueldo = 0` significa “gana cero”, `Sueldo = NULL` significa “no sabemos/no aplica”
+- Comparar con NULL no da verdadero ni falso: `NULL = NULL` es **desconocido**. Por eso una SELECCIÓN como `σ SuperDni = '333445555' (EMPLEADO)` nunca devuelve a Eduardo Ochoa, y en SQL hay que usar `IS NULL` en vez de `= NULL`
+- Conviene evitar NULL cuando sea posible, porque complica el significado de las consultas
+
+#### 6. Interpretación (significado) de una relación
+
+- El **esquema** se lee como una **afirmación** general:
+  > EMPLEADO(Nombre, …, Sueldo, SuperDni, Dno): “existe un empleado con este nombre, que gana este sueldo, lo supervisa este Dni y trabaja en este departamento”
+- Cada **tupla** es un **hecho** concreto que cumple esa afirmación:
+  > `<José, Pérez, Pérez, 123456789, …, 30000, 333445555, 5>`: “José Pérez gana 30000, lo supervisa Alberto Campos y trabaja en el departamento 5”
+- Algunas relaciones representan **entidades** (EMPLEADO, DEPARTAMENTO) y otras **relaciones entre entidades** (TRABAJA_EN dice qué empleado trabaja en qué proyecto y cuántas horas)
+- Visto así, una relación es un conjunto de **proposiciones verdaderas**: lo que está en la tabla es cierto; lo que no está, se asume falso (*suposición de mundo cerrado*)
+
+#### Resumen: relación vs. tabla
+
+| Propiedad | Relación (modelo formal) | Tabla SQL |
+| --- | --- | --- |
+| Orden de filas | No existe | No garantizado, se usa `ORDER BY` |
+| Filas duplicadas | No permitidas | Permitidas, se eliminan con `DISTINCT` |
+| Valores en una celda | Atómicos | Atómicos (en el uso normal) |
+| Valor ausente | NULL | NULL |
 
 ### Notación
 
