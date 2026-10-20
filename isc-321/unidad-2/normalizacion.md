@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Dependencias funcionales y normalización"
-parent: "Unidad I: Introducción a las Bases de Datos Relacionales y conceptos básicos"
+parent: "Unidad II: Gestión de Transacciones, Consultas Cruzadas, Vistas y Restricciones"
 grand_parent: "ISC-321 Fundamentos de Bases de Datos"
-nav_order: 5
+nav_order: 2
 mermaid: true
 ---
 

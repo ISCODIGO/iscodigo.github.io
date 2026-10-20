@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Álgebra relacional"
-parent: "Unidad I: Introducción a las Bases de Datos Relacionales y conceptos básicos"
+parent: "Unidad II: Álgebra relacional, SQL y Normalización"
 grand_parent: "ISC-321 Fundamentos de Bases de Datos"
-nav_order: 6
+nav_order: 1
 mermaid: true
 ---
 

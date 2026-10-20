@@ -19,12 +19,6 @@ Resumen del capítulo 3 del libro de texto (Elmasri & Navathe): el diseño conce
 **[4. Modelo Entidad-Relación Extendido (EER)](./modelo-eer.md)**
 Resumen del capítulo 4 del libro de texto (Elmasri & Navathe): subclases, superclases y herencia, especialización y generalización, restricciones de disyunción y completitud, jerarquías y entramados, categorías (tipos unión), notación UML y conceptos de abstracción de datos.
 
-**[5. Álgebra relacional](./algebra-relacional.md)**
-Resumen del capítulo 6 del libro de texto (Elmasri & Navathe): selección, proyección y renombrado, operaciones de conjuntos, producto cartesiano, concatenación (theta, equijoin, natural) y división, árboles de consulta, agregación, cierre recursivo, concatenaciones y unión externas, y ejemplos sobre la base de datos EMPRESA.
-
-**[6. Dependencias funcionales y normalización](./normalizacion.md)**
-Resumen del capítulo 10 del libro de texto (Elmasri & Navathe): directrices informales de diseño, anomalías de actualización, dependencias funcionales y reglas de inferencia, clausura y cobertura mínima, formas normales 1FN, 2FN, 3FN y BCNF.
-
 --
 
 [⬅️ Volver al índice general de la clase](../index.md)
