@@ -332,6 +332,34 @@ Propiedades:
 - Si `|R| = nR` y `|S| = nS`, entonces `|R × S| = nR · nS`
 - Por sí solo no tiene sentido; es útil cuando va **seguido de una SELECCIÓN** que relaciona atributos de ambas relaciones
 
+Ejemplo simple:
+
+**ALUMNO**
+
+| Nombre | Carrera |
+| --- | --- |
+| Ana | ISC |
+| Luis | IND |
+
+**CURSO**
+
+| Código | Curso |
+| --- | --- |
+| C1 | Bases de Datos |
+| C2 | Redes |
+| C3 | Cálculo |
+
+`ALUMNO × CURSO` → `2 · 3 = 6` tuplas, cada alumno combinado con **todos** los cursos:
+
+| Nombre | Carrera | Código | Curso |
+| --- | --- | --- | --- |
+| Ana | ISC | C1 | Bases de Datos |
+| Ana | ISC | C2 | Redes |
+| Ana | ISC | C3 | Cálculo |
+| Luis | IND | C1 | Bases de Datos |
+| Luis | IND | C2 | Redes |
+| Luis | IND | C3 | Cálculo |
+
 Ejemplo: nombres de los subordinados de cada empleada.
 
 ```text
@@ -380,9 +408,63 @@ SUBORDINADOS_ACTUALES ← NOMBRES_EMPLEADOS ⋈Dni=DniEmpleado SUBORDINADO
 
 | Variante | Condición | Característica |
 | --- | --- | --- |
-| **THETA JOIN** (asociación) | `Ai θ Bj`, con `θ ∈ {=, <, ≤, >, ≥, ≠}`, unidas con AND | Forma general |
-| **EQUIJOIN** | Solo comparaciones de **igualdad** | Quedan pares de atributos con valores idénticos (uno es superfluo) |
-| **CONCATENACIÓN NATURAL** (`*`) | Igualdad entre atributos con el **mismo nombre** | Equijoin que **elimina** el atributo de conexión repetido |
+| **THETA JOIN** (asociación) | `Ai θ Bj`, con `θ ∈ {=, <, ≤, >, ≥, ≠}`, unidas con AND | Es la **forma general**: admite cualquier comparación, no solo igualdad. El resultado conserva **todos** los atributos de ambas relaciones (`n + m`). Las otras dos variantes son casos particulares de esta |
+| **EQUIJOIN** | Solo comparaciones de **igualdad** | Es un theta join donde `θ` siempre es `=`. Como los atributos comparados deben ser iguales, en cada tupla del resultado aparecen **dos columnas con el mismo valor** (p. ej. `EMP.NumDpto` y `DPTO.NumDpto`); una de ellas sobra porque no aporta información |
+| **CONCATENACIÓN NATURAL** (`*`) | Igualdad entre atributos con el **mismo nombre** | Es un equijoin que **elimina** la columna repetida, dejando el atributo de conexión **una sola vez**. No se escribe la condición: se asume la igualdad entre todos los atributos con el mismo nombre. Si los nombres no coinciden, hay que **renombrar** antes |
+
+Ejemplo con dos relaciones pequeñas:
+
+**EMP**
+
+| Nombre | Sueldo | NumDpto |
+| --- | --- | --- |
+| Ana | 3000 | 1 |
+| Luis | 2000 | 1 |
+| Eva | 2200 | 2 |
+
+**DPTO**
+
+| NumDpto | SueldoMin |
+| --- | --- |
+| 1 | 2500 |
+| 2 | 1800 |
+
+- **THETA JOIN** — empleados que ganan **más** que el mínimo de *cualquier* departamento:
+
+```text
+EMP ⋈Sueldo>SueldoMin DPTO
+```
+
+| Nombre | Sueldo | EMP.NumDpto | DPTO.NumDpto | SueldoMin |
+| --- | --- | --- | --- | --- |
+| Ana | 3000 | 1 | 1 | 2500 |
+| Ana | 3000 | 1 | 2 | 1800 |
+| Luis | 2000 | 1 | 2 | 1800 |
+| Eva | 2200 | 2 | 2 | 1800 |
+
+- **EQUIJOIN** — cada empleado con su departamento; `NumDpto` aparece **dos veces** con el mismo valor:
+
+```text
+EMP ⋈EMP.NumDpto=DPTO.NumDpto DPTO
+```
+
+| Nombre | Sueldo | EMP.NumDpto | DPTO.NumDpto | SueldoMin |
+| --- | --- | --- | --- | --- |
+| Ana | 3000 | 1 | 1 | 2500 |
+| Luis | 2000 | 1 | 1 | 2500 |
+| Eva | 2200 | 2 | 2 | 1800 |
+
+- **CONCATENACIÓN NATURAL** — igual que el equijoin, pero `NumDpto` queda **una sola vez**:
+
+```text
+EMP * DPTO
+```
+
+| Nombre | Sueldo | NumDpto | SueldoMin |
+| --- | --- | --- | --- |
+| Ana | 3000 | 1 | 2500 |
+| Luis | 2000 | 1 | 2500 |
+| Eva | 2200 | 2 | 1800 |
 
 Si los atributos de conexión no se llaman igual, primero se **renombra**:
 
@@ -420,10 +502,39 @@ Otras ideas:
 
 ### DIVISIÓN (÷)
 
-- Útil para consultas con **“todos”** (cuantificación universal)
-- `R(Z) ÷ S(X)` con `X ⊆ Z`; sea `Y = Z − X`. El resultado `T(Y)` contiene una tupla t si t aparece en R **combinada con cada una** de las tuplas de S
+- Responde preguntas con la palabra **“todos”**: *¿qué alumnos cursan **todos** los cursos?*
+- `R ÷ S` devuelve los valores de R que aparecen **emparejados con cada una** de las tuplas de S
+- Los atributos de S deben estar en R; el resultado tiene **los atributos de R que no están en S**
 
-Ejemplo: empleados que trabajan en **todos** los proyectos en los que trabaja José Pérez.
+Ejemplo: alumnos que cursan **todos** los cursos.
+
+**CURSA**
+
+| Alumno | Curso |
+| --- | --- |
+| Ana | BD |
+| Ana | Redes |
+| Luis | BD |
+| Eva | BD |
+| Eva | Redes |
+
+**CURSO**
+
+| Curso |
+| --- |
+| BD |
+| Redes |
+
+`CURSA ÷ CURSO`:
+
+| Alumno |
+| --- |
+| Ana |
+| Eva |
+
+> Ana y Eva aparecen con BD **y** con Redes; Luis solo con BD, así que queda fuera.
+
+Ejemplo en EMPRESA: empleados que trabajan en **todos** los proyectos de José Pérez.
 
 ```text
 PEREZ       ← σNombre='José' AND Apellido1='Pérez'(EMPLEADO)
@@ -433,28 +544,9 @@ DNIS(Dni)   ← DNI_PNOS ÷ PEREZ_PNOS
 RESULTADO   ← πNombre, Apellido1(DNIS * EMPLEADO)
 ```
 
-> `PEREZ_PNOS = {1, 2}`; los únicos que trabajan en ambos proyectos son 123456789 y 453453453 → José Pérez y Aurora Oliva.
+> Pérez trabaja en los proyectos {1, 2}; solo José Pérez y Aurora Oliva trabajan en ambos.
 
-Ejemplo abstracto (X = {A}, Y = {B}):
-
-| R.A | R.B |
-| --- | --- |
-| a1 | b1 |
-| a2 | b1 |
-| a3 | b1 |
-| a4 | b1 |
-| a1 | b2 |
-| a3 | b2 |
-| a2 | b3 |
-| a3 | b3 |
-| a4 | b3 |
-| a1 | b4 |
-| a2 | b4 |
-| a3 | b4 |
-
-`S = {a1, a2, a3}` → `T = R ÷ S = {b1, b4}`, porque solo b1 y b4 aparecen con **las tres** tuplas de S.
-
-La división se puede expresar con π, × y −:
+La división se puede expresar con π, × y − (Y = atributos de R que no están en S):
 
 ```text
 T1 ← πY(R)
@@ -683,15 +775,6 @@ RESULTADO                   ← πApellido1, Nombre(DIRECTORES_CON_SUBORDINADOS 
 
 > Una misma consulta admite varias formulaciones: se puede cambiar el orden de las operaciones o sustituir unas por otras (p. ej. la ∩ de Q7 por una concatenación natural).
 
-## Preguntas de repaso
-
-1. Enumere las operaciones del álgebra relacional y el objetivo de cada una.
-2. ¿Qué es la compatibilidad de unión? ¿Por qué la necesitan UNIÓN, INTERSECCIÓN y DIFERENCIA?
-3. ¿En qué consultas es necesario renombrar atributos?
-4. Compare THETA JOIN, EQUIJOIN y CONCATENACIÓN NATURAL. ¿Por qué hace falta el THETA JOIN?
-5. ¿Qué papel juega la foreign key al especificar las concatenaciones más comunes?
-6. ¿Qué es la operación FUNCIÓN AGREGADA? ¿Para qué se usa?
-7. ¿En qué se diferencian la CONCATENACIÓN EXTERNA y la INTERNA? ¿Y la UNIÓN EXTERNA de la UNIÓN?
 
 ## Anexo: estado de la base de datos EMPRESA
 
