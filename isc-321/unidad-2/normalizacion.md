@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Dependencias funcionales y normalización"
-parent: "Unidad II: Gestión de Transacciones, Consultas Cruzadas, Vistas y Restricciones"
+parent: "Unidad II: Álgebra relacional, SQL y Normalización"
 grand_parent: "ISC-321 Fundamentos de Bases de Datos"
-nav_order: 2
+nav_order: 3
 mermaid: true
 ---
 
@@ -398,4 +398,4 @@ flowchart TD
 - Meta práctica: **3FN o BCNF**; 1FN y 2FN son solo pasos intermedios
 - Siguiente paso: propiedades de la descomposición, **4FN** y **5FN** (capítulo 11)
 
-[⬅️ Volver a Unidad I](./index.md)
+[⬅️ Volver a Unidad II](./index.md)
