@@ -24,6 +24,12 @@ nav_order: 2
 | Tupla | Fila |
 | Atributo | Columna |
 
+### SQL estándar vs. motores reales
+
+- El libro usa **SQL-99 estándar**. Ningún motor lo implementa completo y cada uno tiene su propio **dialecto**
+- Se consideran cuatro motores: **SQL Server**, **PostgreSQL**, **Oracle** y **SQLite**
+- Las **notas** indican lo que no funciona en alguno de ellos y la alternativa. Si no hay nota, funciona en los cuatro
+
 ## Esquema y catálogo
 
 - Un **esquema SQL** agrupa las tablas y demás elementos que pertenecen a la **misma aplicación** de base de datos
@@ -38,6 +44,12 @@ CREATE SCHEMA EMPRESA AUTHORIZATION Jperez;
 - Un **catálogo** es una colección de esquemas con nombre dentro de un **entorno SQL** (una instalación de un DBMS)
   - Siempre contiene el esquema especial **`INFORMATION_SCHEMA`**, que describe todos los esquemas del catálogo y sus elementos
   - La integridad referencial solo se puede definir entre tablas de esquemas del **mismo catálogo**
+
+> **Nota:**
+>
+> - **SQL Server**: `CREATE SCHEMA` debe ir sola en su lote (seguida de `GO`)
+> - **Oracle**: cada esquema es un usuario; se crea con `CREATE USER`. No tiene `INFORMATION_SCHEMA` (usa el diccionario de datos: `USER_TABLES`, `ALL_TAB_COLUMNS`…)
+> - **SQLite**: no tiene esquemas ni `INFORMATION_SCHEMA`. Cada base es un archivo; se usa `ATTACH DATABASE 'empresa.db' AS EMPRESA` y la tabla `sqlite_schema`
 
 ## CREATE TABLE
 
@@ -119,16 +131,16 @@ CREATE TABLE SUBORDINADO (
 
 ### Referencias circulares y tablas aún no creadas
 
-- Algunas claves foráneas de la Figura 8.1 dan error si se ejecutan tal cual:
-  - `SuperDni` de EMPLEADO apunta a la **misma** tabla (referencia recursiva)
-  - `Dno` de EMPLEADO apunta a DEPARTAMENTO, que **todavía no existe**; y DEPARTAMENTO a su vez apunta a EMPLEADO (ciclo)
-- Solución: crear las tablas **sin** esas restricciones y agregarlas después con `ALTER TABLE`:
+- La Figura 8.1 da error si se ejecuta tal cual: `Dno` de EMPLEADO apunta a DEPARTAMENTO, que **todavía no existe**; y DEPARTAMENTO a su vez apunta a EMPLEADO (ciclo)
+- Solución: crear EMPLEADO **sin** la FK de `Dno` y agregarla después de crear DEPARTAMENTO con `ALTER TABLE`:
 
 ```sql
 ALTER TABLE EMPLEADO
   ADD CONSTRAINT EMPDEPTFK
   FOREIGN KEY (Dno) REFERENCES DEPARTAMENTO(NúmeroDpto);
 ```
+
+> **Nota (SQLite):** la Figura 8.1 se ejecuta tal cual, porque las claves foráneas solo se revisan al modificar datos; además no soporta `ALTER TABLE … ADD CONSTRAINT`. Las claves foráneas están **desactivadas** por defecto y hay que activarlas en cada conexión con `PRAGMA foreign_keys = ON;`
 
 ## Tipos de datos
 
@@ -158,6 +170,25 @@ Detalles de las cadenas:
 
 Las fechas y horas se pueden comparar con `<`: una fecha anterior es **menor** que una posterior.
 
+> **Nota:** tipos y expresiones que no funcionan en todos los motores
+>
+> | Del libro | No funciona en | Alternativa |
+> | --- | --- | --- |
+> | `CLOB` | SQL Server, PostgreSQL | `VARCHAR(MAX)`, `TEXT` |
+> | `BLOB` | SQL Server, PostgreSQL | `VARBINARY(MAX)`, `BYTEA` |
+> | `BIT(n)`, `BIT VARYING(n)` | Todos menos PostgreSQL | SQL Server: `BIT` es un solo 0/1; Oracle: `RAW(n)` |
+> | `BOOLEAN` | SQL Server, Oracle (antes de 23ai) | `BIT`, `NUMBER(1)` |
+> | `TIME` | Oracle | `DATE` o `TIMESTAMP` |
+> | `TIMESTAMP` | SQL Server (ahí es un contador de versión de fila) | `DATETIME2` |
+> | `… WITH TIME ZONE` | SQL Server, SQLite | SQL Server: `DATETIMEOFFSET` |
+> | `INTERVAL` | SQL Server, SQLite | Funciones de fecha (`DATEADD`, `date()`) |
+> | Literal `DATE '2002-09-27'` | SQL Server, SQLite | `'2002-09-27'` |
+> | `'abc' \|\| 'XYZ'` | SQL Server | `'abc' + 'XYZ'` o `CONCAT('abc', 'XYZ')` |
+> | `'Pérez' ≠ 'PÉREZ'` | SQL Server (por defecto no distingue mayúsculas) | Intercalación `…_CS_…` |
+>
+> - **Oracle**: `DATE` también guarda la hora
+> - **SQLite**: no tiene tipos de fecha (se guardan como texto `'AAAA-MM-DD'`) y **no valida** longitudes ni precisión: un `VARCHAR(15)` acepta 100 caracteres
+
 ### Dominios
 
 - En lugar de repetir el tipo en cada atributo, se puede declarar un **dominio** con nombre:
@@ -169,7 +200,8 @@ CREATE DOMAIN TIPO_DNI AS CHAR(9);
 - Luego se usa `TIPO_DNI` en `Dni`, `SuperDni`, `DniDirector`, `DniEmpleado`…
 - Ventajas: si cambia el tipo, se cambia en **un solo lugar**; el esquema es más **legible**
 - Un dominio puede tener `DEFAULT` y `CHECK`
-- Ojo: muchas implementaciones de SQL **no** soportan `CREATE DOMAIN`
+
+> **Nota:** `CREATE DOMAIN` solo existe en **PostgreSQL** (y en Oracle desde 23ai, con otra sintaxis). En SQL Server lo más parecido es `CREATE TYPE TIPO_DNI FROM CHAR(9);`, sin `CHECK` ni `DEFAULT`. SQLite no tiene nada equivalente.
 
 ## Restricciones en SQL
 
@@ -185,8 +217,12 @@ CREATE DOMAIN TIPO_DNI AS CHAR(9);
 NúmeroDpto INT NOT NULL CHECK (NúmeroDpto > 0 AND NúmeroDpto < 21);
 
 CREATE DOMAIN NUM_D AS INTEGER
-  CHECK (NUM_D > 0 AND NUM_D < 21);
+  CHECK (VALUE > 0 AND VALUE < 21);
 ```
+
+- Dentro del `CHECK` de un dominio, el valor se nombra con la palabra clave **`VALUE`** (el libro escribe `NUM_D`, que no es válido)
+
+> **Nota (Oracle):** `DEFAULT` debe ir **antes** de `NOT NULL` (`Dno INT DEFAULT 1 NOT NULL`).
 
 ### Claves
 
@@ -213,6 +249,11 @@ CREATE DOMAIN NUM_D AS INTEGER
   - **atributos multivalor**, como LOCALIZACIONES_DPTO
   - **entidades débiles**, como SUBORDINADO
 
+> **Nota:**
+>
+> - **Oracle**: no tiene `ON UPDATE` ni `ON DELETE SET DEFAULT`
+> - **SQL Server**: no permite acciones en una FK hacia la misma tabla (`SuperDni`) ni en ciclos de FKs (error *"may cause cycles or multiple cascade paths"*)
+
 ### Nombrar restricciones
 
 - Con la palabra clave **`CONSTRAINT nombre`** se le da nombre a una restricción
@@ -224,7 +265,7 @@ Ejemplo con todo lo anterior (Figura 8.2):
 ```sql
 CREATE TABLE EMPLEADO (
   ...,
-  Dno INT NOT NULL DEFAULT 1,
+  Dno INT DEFAULT 1 NOT NULL,
   CONSTRAINT EMPPK
     PRIMARY KEY (Dni),
   CONSTRAINT SUPERFKEMP
@@ -237,7 +278,7 @@ CREATE TABLE EMPLEADO (
 
 CREATE TABLE DEPARTAMENTO (
   ...,
-  DniDirector CHAR(9) NOT NULL DEFAULT '888665555',
+  DniDirector CHAR(9) DEFAULT '888665555' NOT NULL,
   ...,
   CONSTRAINT DEPTPK
     PRIMARY KEY (NúmeroDpto),
@@ -261,6 +302,8 @@ Lectura de `SUPERFKEMP`:
 - Si se **elimina** un supervisor → el `SuperDni` de sus supervisados pasa a `NULL`
 - Si se **corrige** el `Dni` de un supervisor → el nuevo valor se propaga en **cascada** al `SuperDni` de sus supervisados
 
+> **Nota:** la Figura 8.2 no funciona tal cual en **SQL Server** (`SUPERFKEMP` y el ciclo EMPLEADO ↔ DEPARTAMENTO deben quedar sin acciones) ni en **Oracle** (quitar los `ON UPDATE` y los `SET DEFAULT`).
+
 ### CHECK sobre tuplas
 
 - Un `CHECK` al **final** del `CREATE TABLE` puede involucrar **varios atributos** de la misma fila
@@ -271,7 +314,9 @@ Lectura de `SUPERFKEMP`:
 CHECK (FechaCreaciónDpto <= FechaIngresoDirector)
 ```
 
-- Para restricciones que abarcan **varias filas o tablas** se usa `CREATE ASSERTION` (sección 8.7), que requiere consultas completas
+- Para restricciones que abarcan **varias filas o tablas** el estándar tiene `CREATE ASSERTION` (sección 8.7)
+
+> **Nota:** `CREATE ASSERTION` no existe en **ninguno** de los cuatro motores; en la práctica se usan triggers.
 
 ## Cambiar el esquema: DROP y ALTER
 
@@ -285,7 +330,7 @@ Los comandos de **evolución del esquema** permiten agregar o quitar tablas, atr
   - **`RESTRICT`**: solo lo elimina si **nada** depende de él; si no, el comando falla
 
 ```sql
-DROP SCHEMA EMPRESA CASCADE;   -- el esquema y todas sus tablas, dominios, etc.
+DROP SCHEMA EMPRESA CASCADE;    -- el esquema y todas sus tablas, dominios, etc.
 DROP TABLE SUBORDINADO CASCADE; -- la tabla y las FK / vistas que la referencian
 ```
 
@@ -298,6 +343,8 @@ DROP TABLE SUBORDINADO CASCADE; -- la tabla y las FK / vistas que la referencian
 
 - `DROP TABLE` elimina los datos **y la definición** de la tabla del catálogo
 - `DELETE` (sección 8.6) elimina **solo las filas**; la tabla sigue existiendo
+
+> **Nota:** `CASCADE` y `RESTRICT` solo existen en **PostgreSQL**. En los demás se escribe `DROP TABLE SUBORDINADO;` sin opción, y falla si una FK la referencia (Oracle permite `CASCADE CONSTRAINTS`). Para `DROP SCHEMA`: en SQL Server el esquema debe estar vacío, en Oracle se usa `DROP USER EMPRESA CASCADE` y en SQLite `DETACH DATABASE EMPRESA`.
 
 ### ALTER
 
@@ -313,6 +360,8 @@ ALTER TABLE EMPRESA.EMPLEADO ADD COLUMN Trabajo VARCHAR(12);
 - Por eso **no** se permite `NOT NULL` sin `DEFAULT` al agregar una columna
 - Los valores se cargan después con `UPDATE`
 
+> **Nota:** **SQL Server** y **Oracle** no aceptan la palabra `COLUMN`: `ALTER TABLE EMPLEADO ADD Trabajo VARCHAR(12);`
+
 **Eliminar una columna** (hay que elegir `CASCADE` o `RESTRICT`)
 
 ```sql
@@ -322,6 +371,8 @@ ALTER TABLE EMPRESA.EMPLEADO DROP COLUMN Dirección CASCADE;
 - `CASCADE`: borra también las vistas y restricciones que usan la columna
 - `RESTRICT`: falla si algo la referencia
 
+> **Nota:** `CASCADE` / `RESTRICT` solo existen en **PostgreSQL**; en los demás se omiten (`DROP COLUMN Dirección;`). **SQLite** no permite eliminar columnas que formen parte de una clave, `UNIQUE`, índice o FK.
+
 **Cambiar el valor por defecto**
 
 ```sql
@@ -329,16 +380,29 @@ ALTER TABLE EMPRESA.DEPARTAMENTO ALTER COLUMN DniDirector DROP DEFAULT;
 ALTER TABLE EMPRESA.DEPARTAMENTO ALTER COLUMN DniDirector SET DEFAULT '333445555';
 ```
 
+> **Nota:** esta forma solo funciona en **PostgreSQL**.
+>
+> ```sql
+> -- SQL Server: el DEFAULT es una restricción con nombre
+> ALTER TABLE DEPARTAMENTO DROP CONSTRAINT DF_DniDirector;
+> ALTER TABLE DEPARTAMENTO ADD CONSTRAINT DF_DniDirector DEFAULT '333445555' FOR DniDirector;
+>
+> -- Oracle
+> ALTER TABLE DEPARTAMENTO MODIFY (DniDirector DEFAULT NULL);
+> ALTER TABLE DEPARTAMENTO MODIFY (DniDirector DEFAULT '333445555');
+>
+> -- SQLite: no se puede; hay que recrear la tabla
+> ```
+
 **Quitar y agregar restricciones** (para quitarla, debe tener **nombre**)
 
 ```sql
 ALTER TABLE EMPRESA.EMPLEADO DROP CONSTRAINT SUPERFKEMP CASCADE;
-
-ALTER TABLE EMPRESA.EMPLEADO
-  ADD CONSTRAINT SUPERFKEMP
-  FOREIGN KEY (SuperDni) REFERENCES EMPLEADO(Dni)
-  ON DELETE SET NULL;
 ```
+
+- Después se puede agregar una restricción nueva con `ALTER TABLE ... ADD CONSTRAINT ...` (con o sin nombre)
+
+> **Nota:** `CASCADE` no existe en **SQL Server**. **SQLite** no permite agregar ni quitar restricciones: hay que crear una tabla nueva, copiar los datos y renombrarla.
 
 ## Resumen de comandos DDL
 
