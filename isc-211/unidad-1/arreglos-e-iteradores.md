@@ -3,7 +3,7 @@ layout: post
 title: "Arreglos e Iteradores"
 parent: "Unidad I: Introducción a Estructuras de Datos, Modelado y Algoritmos Básicos"
 grand_parent: "ISC-211 Estructuras de Datos"
-nav_order: 4
+nav_order: 3
 ---
 
 Resumen basado en Goodrich, Tamassia y Goldwasser, *Data Structures and Algorithms in Java* (6.ª ed.): secciones 3.1 (Usando arreglos), 7.2 (Arreglos dinámicos) y 7.4 (Iteradores).
