@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Referencias a Objetos y Listas"
-parent: "Unidad I: Introducción a Estructuras de Datos, Modelado y Algoritmos Básicos"
+parent: "Unidad II: Recursión, Listas, Genéricos y Pilas"
 grand_parent: "ISC-211 Estructuras de Datos"
-nav_order: 6
+nav_order: 2
 ---
 
 Resumen basado en Goodrich, Tamassia y Goldwasser, *Data Structures and Algorithms in Java* (6.ª ed.): secciones 1.2–1.3 (Clases, objetos y arreglos), 3.5–3.6 (Equivalencia y clonación), 7.1 (El ADT Lista) y 7.5 (Java Collections Framework).
@@ -106,7 +106,7 @@ Ejemplo del libro sobre una lista de caracteres inicialmente vacía:
 | `set(2, G)` | D | (B, E, G, C, F) |
 | `get(2)` | G | (B, E, G, C, F) |
 
-La implementación más directa es un **arreglo**, donde `A[i]` guarda (una referencia a) el elemento con índice `i`. Así, `get` y `set` son O(1), mientras que `add` y `remove` deben desplazar elementos (O(n)), como se ve en [Arreglos e Iteradores](./arreglos-e-iteradores.md). Si se quiere que la lista no tenga capacidad fija, se usa un arreglo dinámico.
+La implementación más directa es un **arreglo**, donde `A[i]` guarda (una referencia a) el elemento con índice `i`. Así, `get` y `set` son O(1), mientras que `add` y `remove` deben desplazar elementos (O(n)), como se ve en [Arreglos e Iteradores](../unidad-1/arreglos-e-iteradores.md). Si se quiere que la lista no tenga capacidad fija, se usa un arreglo dinámico.
 
 ## Listas en el *Java Collections Framework*
 
@@ -138,4 +138,4 @@ El método `listIterator()` de una lista devuelve un `ListIterator`, un iterador
 
 Los iteradores de estas listas son **fail-fast**: si la lista se modifica por fuera de un iterador (con sus propios métodos o con otro iterador), ese iterador queda invalidado y al usarlo lanza `ConcurrentModificationException`.
 
-[⬅️ Volver a la Unidad I](./index.md)
+[⬅️ Volver a la Unidad II](./index.md)

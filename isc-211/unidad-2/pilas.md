@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Pilas (Stacks)"
-parent: "Unidad I: Introducción a Estructuras de Datos, Modelado y Algoritmos Básicos"
+parent: "Unidad II: Recursión, Listas, Genéricos y Pilas"
 grand_parent: "ISC-211 Estructuras de Datos"
-nav_order: 8
+nav_order: 4
 ---
 
 Resumen basado en Goodrich, Tamassia y Goldwasser, *Data Structures and Algorithms in Java* (6.ª ed.): sección 6.1 (Pilas).
@@ -141,7 +141,7 @@ public class ArrayStack<E> implements Stack<E> {
 
 El espacio es **O(N)**, donde `N` es la capacidad del arreglo, sin importar cuántos elementos `n ≤ N` haya realmente.
 
-**Desventaja:** la capacidad es fija. Si se reserva de más se desperdicia memoria, y si la pila se llena, `push` lanza `IllegalStateException`. Esto se resuelve con una lista enlazada (abajo) o con un arreglo dinámico (ver [Arreglos e Iteradores](./arreglos-e-iteradores.md)).
+**Desventaja:** la capacidad es fija. Si se reserva de más se desperdicia memoria, y si la pila se llena, `push` lanza `IllegalStateException`. Esto se resuelve con una lista enlazada (abajo) o con un arreglo dinámico (ver [Arreglos e Iteradores](../unidad-1/arreglos-e-iteradores.md)).
 
 ### ¿Por qué `data[t] = null` en `pop`?
 
@@ -277,4 +277,4 @@ public static boolean isHTMLMatched(String html) {
 }
 ```
 
-[⬅️ Volver a la Unidad I](./index.md)
+[⬅️ Volver a la Unidad II](./index.md)

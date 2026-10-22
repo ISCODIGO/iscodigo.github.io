@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Tipos Genéricos"
-parent: "Unidad I: Introducción a Estructuras de Datos, Modelado y Algoritmos Básicos"
+parent: "Unidad II: Recursión, Listas, Genéricos y Pilas"
 grand_parent: "ISC-211 Estructuras de Datos"
-nav_order: 7
+nav_order: 3
 ---
 
 Resumen basado en Goodrich, Tamassia y Goldwasser, *Data Structures and Algorithms in Java* (6.ª ed.): sección 2.5.2 (Genéricos).
@@ -170,4 +170,4 @@ public static <T extends Comparable<T>> T max(T[] data) {
 - No se puede hacer `new E[n]`; se usa `(E[]) new Object[n]`.
 - `<T extends Comparable<T>>` restringe el tipo a los que se pueden comparar.
 
-[⬅️ Volver a la Unidad I](./index.md)
+[⬅️ Volver a la Unidad II](./index.md)

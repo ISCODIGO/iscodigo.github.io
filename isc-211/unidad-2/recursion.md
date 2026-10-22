@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Recursión"
-parent: "Unidad I: Introducción a Estructuras de Datos, Modelado y Algoritmos Básicos"
+parent: "Unidad II: Recursión, Listas, Genéricos y Pilas"
 grand_parent: "ISC-211 Estructuras de Datos"
-nav_order: 3
+nav_order: 1
 ---
 
 ## Introducción
@@ -37,4 +37,4 @@ Todo algoritmo recursivo puede escribirse también de forma iterativa (no existe
 - Si existe una solución iterativa simple y natural, se prefiere sobre la recursiva (p. ej., sumar los números de 1 a n: una versión recursiva dejaría n llamadas pendientes en la pila, con riesgo de desbordarla).
 - La recursión conviene cuando la naturaleza del problema es recursiva y las estructuras adicionales necesarias para "iterarlo" no compensan la sobrecarga de la pila.
 
-[⬅️ Volver a Unidad I](./index.md)
+[⬅️ Volver a la Unidad II](./index.md)
