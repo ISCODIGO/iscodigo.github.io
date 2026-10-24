@@ -251,6 +251,40 @@ public class SinglyLinkedList<E> {
 
 Observa los **casos especiales** con la lista vacía: al insertar el primer nodo, `head` y `tail` deben apuntar a él; al eliminar el último, ambos deben quedar en `null`.
 
+### Iterador para `SinglyLinkedList`
+
+Para recorrer la lista con *for-each*, `SinglyLinkedList` debe implementar `Iterable<E>` (ver [Iteradores](../unidad-1/arreglos-e-iteradores.md#la-interfaz-iterable-y-el-ciclo-for-each)). La idea es la misma del `ArrayIterator`, pero el cursor es una referencia al **siguiente nodo** en vez de un índice: avanzar es `cursor = cursor.getNext()`.
+
+```java
+public class SinglyLinkedList<E> implements Iterable<E> {
+    // ... Node, head, tail, size y métodos anteriores ...
+
+    private class NodeIterator implements Iterator<E> {
+        private Node<E> cursor = head;   // siguiente nodo a visitar
+
+        public boolean hasNext() { return cursor != null; }
+
+        public E next() throws NoSuchElementException {
+            if (cursor == null) throw new NoSuchElementException("No hay más elementos");
+            E answer = cursor.getElement();
+            cursor = cursor.getNext();
+            return answer;
+        }
+    }
+
+    public Iterator<E> iterator() {
+        return new NodeIterator();
+    }
+}
+```
+
+Cada paso es O(1), así que recorrer toda la lista es O(n), sin importar cómo esté guardada:
+
+```java
+for (String s : lista)
+    System.out.println(s);
+```
+
 ## Lista circularmente enlazada
 
 Hay aplicaciones donde los datos tienen un **orden cíclico**, sin principio ni fin fijos: los turnos de un juego (A, B, C, A, B, …) o la ruta de un autobús.
