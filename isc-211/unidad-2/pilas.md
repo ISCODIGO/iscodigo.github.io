@@ -3,7 +3,7 @@ layout: post
 title: "Pilas (Stacks)"
 parent: "Unidad II: Recursión, Listas, Genéricos y Pilas"
 grand_parent: "ISC-211 Estructuras de Datos"
-nav_order: 4
+nav_order: 5
 ---
 
 Resumen basado en Goodrich, Tamassia y Goldwasser, *Data Structures and Algorithms in Java* (6.ª ed.): sección 6.1 (Pilas).
@@ -165,7 +165,7 @@ System.out.println(S.top());            // (7, 9)     imprime 9
 
 ## Implementación con lista enlazada
 
-Una lista simplemente enlazada (sección 3.2 del libro) no tiene límite de capacidad y usa memoria proporcional a los elementos que contiene. Como en esa lista solo se puede insertar y eliminar en tiempo constante **al inicio**, el tope de la pila se coloca al frente de la lista.
+Una [lista simplemente enlazada](./listas-enlazadas.md) (sección 3.2 del libro) no tiene límite de capacidad y usa memoria proporcional a los elementos que contiene. Como en esa lista solo se puede insertar y eliminar en tiempo constante **al inicio**, el tope de la pila se coloca al frente de la lista.
 
 Se usa el **patrón adaptador** (*adapter*): una clase nueva que guarda una instancia de una clase existente como campo oculto e implementa sus métodos usando los de esa instancia.
 
