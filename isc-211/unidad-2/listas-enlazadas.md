@@ -3,7 +3,7 @@ layout: post
 title: "Listas Enlazadas"
 parent: "Unidad II: Recursión, Listas, Genéricos y Pilas"
 grand_parent: "ISC-211 Estructuras de Datos"
-nav_order: 4
+nav_order: 3
 ---
 
 Resumen basado en Goodrich, Tamassia y Goldwasser, *Data Structures and Algorithms in Java* (6.ª ed.): secciones 7.2 (Listas con arreglo), 3.2 (Listas simplemente enlazadas), 3.3 (Listas circulares), 3.4 (Listas doblemente enlazadas) y 3.5.2 (Equivalencia en listas enlazadas).

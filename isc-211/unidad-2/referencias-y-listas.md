@@ -3,7 +3,7 @@ layout: post
 title: "Referencias a Objetos y Listas"
 parent: "Unidad II: Recursión, Listas, Genéricos y Pilas"
 grand_parent: "ISC-211 Estructuras de Datos"
-nav_order: 2
+nav_order: 1
 ---
 
 Resumen basado en Goodrich, Tamassia y Goldwasser, *Data Structures and Algorithms in Java* (6.ª ed.): secciones 1.2–1.3 (Clases, objetos y arreglos), 3.5–3.6 (Equivalencia y clonación), 7.1 (El ADT Lista) y 7.5 (Java Collections Framework).

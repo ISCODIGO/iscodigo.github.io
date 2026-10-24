@@ -3,7 +3,7 @@ layout: post
 title: "Recursión"
 parent: "Unidad II: Recursión, Listas, Genéricos y Pilas"
 grand_parent: "ISC-211 Estructuras de Datos"
-nav_order: 1
+nav_order: 5
 ---
 
 ## Introducción

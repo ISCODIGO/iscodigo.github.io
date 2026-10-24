@@ -3,7 +3,7 @@ layout: post
 title: "Pilas (Stacks)"
 parent: "Unidad II: Recursión, Listas, Genéricos y Pilas"
 grand_parent: "ISC-211 Estructuras de Datos"
-nav_order: 5
+nav_order: 4
 ---
 
 Resumen basado en Goodrich, Tamassia y Goldwasser, *Data Structures and Algorithms in Java* (6.ª ed.): sección 6.1 (Pilas).
@@ -276,5 +276,71 @@ public static boolean isHTMLMatched(String html) {
     return buffer.isEmpty();
 }
 ```
+
+### La pila de llamadas
+
+La propia máquina virtual de Java usa una pila para ejecutar los métodos: la **pila de llamadas** (*call stack*). Cada vez que se invoca un método se **apila** un **marco de activación** (*frame*) con:
+
+- los **parámetros** y **variables locales** del método,
+- el **punto de retorno**: la instrucción del método que llamó, donde se debe continuar al terminar.
+
+El método en ejecución siempre es el del **tope**. Cuando termina (con `return` o al llegar al final), su marco se **desapila** y el control vuelve al método que quedó en el tope, en el punto de retorno guardado. Por el principio LIFO, el último método llamado es el primero en terminar.
+
+```java
+public static void main(String[] args) {
+    int r = a(2);
+    System.out.println(r);
+}
+static int a(int x) { return b(x + 1) * 2; }
+static int b(int y) { return y * 10; }
+```
+
+| Paso | Evento | Pila (tope a la derecha) |
+|---|---|---|
+| 1 | inicia `main` | (main) |
+| 2 | `main` llama `a(2)` | (main, a[x=2]) |
+| 3 | `a` llama `b(3)` | (main, a[x=2], b[y=3]) |
+| 4 | `b` devuelve 30 | (main, a[x=2]) |
+| 5 | `a` devuelve 60 | (main[r=60]) |
+| 6 | `main` imprime 60 y termina | () |
+
+#### Llamadas recursivas
+
+En la [recursión](./recursion.md) cada llamada tiene su **propio marco**, así que cada una guarda su propio valor de `n` aunque todas ejecuten el mismo código:
+
+```java
+public static int factorial(int n) {
+    if (n == 0) return 1;            // caso base
+    return n * factorial(n - 1);     // queda pendiente la multiplicación
+}
+```
+
+Para `factorial(3)` la pila crece hasta el caso base y luego se vacía resolviendo las multiplicaciones pendientes:
+
+```
+        apilar ↑          ↓ desapilar
+     ┌─────────────┐
+     │ factorial(0)│  devuelve 1
+     ├─────────────┤
+     │ factorial(1)│  1 * 1 = 1
+     ├─────────────┤
+     │ factorial(2)│  2 * 1 = 2
+     ├─────────────┤
+     │ factorial(3)│  3 * 2 = 6
+     └─────────────┘
+```
+
+| Paso | Evento | Pila (tope a la derecha) |
+|---|---|---|
+| 1 | llama `factorial(3)` | (f[n=3]) |
+| 2 | llama `factorial(2)` | (f[n=3], f[n=2]) |
+| 3 | llama `factorial(1)` | (f[n=3], f[n=2], f[n=1]) |
+| 4 | llama `factorial(0)` | (f[n=3], f[n=2], f[n=1], f[n=0]) |
+| 5 | `f[n=0]` devuelve 1 | (f[n=3], f[n=2], f[n=1]) |
+| 6 | `f[n=1]` devuelve 1·1 = 1 | (f[n=3], f[n=2]) |
+| 7 | `f[n=2]` devuelve 2·1 = 2 | (f[n=3]) |
+| 8 | `f[n=3]` devuelve 3·2 = 6 | () |
+
+La pila de llamadas tiene un tamaño limitado. Si una recursión no llega al caso base (o es demasiado profunda), los marcos se acumulan hasta agotarla y Java lanza `StackOverflowError`. Por eso la recursión usa **O(n)** de memoria extra cuando se anidan `n` llamadas.
 
 [⬅️ Volver a la Unidad II](./index.md)
