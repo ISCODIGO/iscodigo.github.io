@@ -13,7 +13,10 @@ Resumen del capítulo 6 del libro de texto (Elmasri & Navathe): selección, proy
 **[2. SQL: definición de datos y restricciones](./sql-ddl.md)**
 Resumen de las secciones 8.1–8.3 del libro de texto (Elmasri & Navathe): esquemas y catálogos, CREATE TABLE para el esquema EMPRESA, tipos de datos y dominios, restricciones (NOT NULL, DEFAULT, CHECK, claves, integridad referencial y acciones referenciales), y evolución del esquema con DROP y ALTER.
 
-**[3. Dependencias funcionales y normalización](./normalizacion.md)**
+**[3. SQL: consultas y manipulación de datos](./sql-dml.md)**
+Resumen de las secciones 8.4–8.6 del libro de texto (Elmasri & Navathe), complementado con temas de los motores actuales: SELECT-FROM-WHERE, operadores lógicos (AND, OR, NOT), patrones con LIKE, ORDER BY, LIMIT y OFFSET, funciones de cadena, numéricas y de fecha, valores NULL y lógica de tres valores, IN, expresiones CASE, e INSERT, UPDATE y DELETE.
+
+**[4. Dependencias funcionales y normalización](./normalizacion.md)**
 Resumen del capítulo 10 del libro de texto (Elmasri & Navathe): directrices informales de diseño, anomalías de actualización, dependencias funcionales y reglas de inferencia, clausura y cobertura mínima, formas normales 1FN, 2FN, 3FN y BCNF.
 
 --
