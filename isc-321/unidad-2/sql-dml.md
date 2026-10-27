@@ -31,7 +31,7 @@ WHERE  <condición>;
 **C0.** Fecha de nacimiento y dirección de José Pérez Pérez
 
 ```sql
-SELECT FechaNac, Dirección
+SELECT FechaNac, Direccion
 FROM   EMPLEADO
 WHERE  Nombre = 'José' AND Apellido1 = 'Pérez' AND Apellido2 = 'Pérez';
 ```
@@ -39,13 +39,13 @@ WHERE  Nombre = 'José' AND Apellido1 = 'Pérez' AND Apellido2 = 'Pérez';
 **C1.** Nombre y dirección de los empleados del departamento 'Investigación' (selección + concatenación)
 
 ```sql
-SELECT Nombre, Apellido1, Dirección
+SELECT Nombre, Apellido1, Direccion
 FROM   EMPLEADO, DEPARTAMENTO
-WHERE  NombreDpto = 'Investigación' AND NúmeroDpto = Dno;
+WHERE  NombreDpto = 'Investigación' AND NumeroDpto = Dno;
 ```
 
 - `NombreDpto = 'Investigación'` es una **condición de selección**
-- `NúmeroDpto = Dno` es una **condición de concatenación** (*join*)
+- `NumeroDpto = Dno` es una **condición de concatenación** (*join*)
 - Si se omite la condición de concatenación se obtiene el **producto cartesiano** de las tablas: resultados incorrectos y enormes
 
 ### Alias, asterisco y DISTINCT
@@ -116,7 +116,7 @@ SELECT * FROM EMPLEADO WHERE NOT Dno = 5;
 -- C12. Empleados cuya dirección está en Madrid
 SELECT Nombre, Apellido1
 FROM   EMPLEADO
-WHERE  Dirección LIKE '%Madrid%';
+WHERE  Direccion LIKE '%Madrid%';
 
 -- Empleados cuyo apellido NO empieza con P
 SELECT Nombre, Apellido1
@@ -128,7 +128,7 @@ WHERE  Apellido1 NOT LIKE 'P%';
 
 ```sql
 -- Coincide con la cadena literal 'AB_CD%EF'
-WHERE Código LIKE 'AB\_CD\%EF' ESCAPE '\'
+WHERE Codigo LIKE 'AB\_CD\%EF' ESCAPE '\'
 ```
 
 - Un apóstrofe dentro de una cadena se escribe **doble**: `'O''Brien'`
@@ -151,7 +151,7 @@ WHERE Código LIKE 'AB\_CD\%EF' ESCAPE '\'
 -- y dentro de cada departamento por apellido y nombre
 SELECT   NombreDpto, Apellido1, Nombre, NombreProyecto
 FROM     DEPARTAMENTO, EMPLEADO, TRABAJA_EN, PROYECTO
-WHERE    NúmeroDpto = Dno AND Dni = DniEmpleado AND NumProy = NumProyecto
+WHERE    NumeroDpto = Dno AND Dni = DniEmpleado AND NumProy = NumProyecto
 ORDER BY NombreDpto DESC, Apellido1 ASC, Nombre ASC;
 ```
 
@@ -321,7 +321,7 @@ SELECT Nombre, Apellido1 FROM EMPLEADO WHERE SuperDni = NULL;
 - `COALESCE(a, b, ...)` devuelve el **primer valor no nulo**; útil para mostrar un valor por defecto
 
 ```sql
-SELECT Nombre, COALESCE(Dirección, 'Sin dirección') AS Dirección
+SELECT Nombre, COALESCE(Direccion, 'Sin dirección') AS Direccion
 FROM   EMPLEADO;
 ```
 
@@ -451,7 +451,7 @@ CREATE TABLE INFO_DEPTS (
 
 INSERT INTO INFO_DEPTS (NombreDeDpto, NumDeEmpleados, TotalSueldos)
 SELECT   NombreDpto, COUNT(*), SUM(Sueldo)
-FROM     DEPARTAMENTO JOIN EMPLEADO ON NúmeroDpto = Dno
+FROM     DEPARTAMENTO JOIN EMPLEADO ON NumeroDpto = Dno
 GROUP BY NombreDpto;
 ```
 
@@ -470,13 +470,13 @@ GROUP BY NombreDpto;
 ```sql
 -- U5. Cambiar ubicación y departamento del proyecto 10
 UPDATE PROYECTO
-SET    UbicaciónProyecto = 'Valencia', NumDptoProyecto = 5
+SET    UbicacionProyecto = 'Valencia', NumDptoProyecto = 5
 WHERE  NumProyecto = 10;
 
 -- U6. Subir 10% a los empleados de 'Investigación'
 UPDATE EMPLEADO
 SET    Sueldo = Sueldo * 1.1
-WHERE  Dno IN (SELECT NúmeroDpto
+WHERE  Dno IN (SELECT NumeroDpto
                FROM   DEPARTAMENTO
                WHERE  NombreDpto = 'Investigación');
 ```
@@ -510,7 +510,7 @@ DELETE FROM EMPLEADO WHERE Dni = '123456789';
 
 -- U4C. Todos los empleados de 'Investigación'
 DELETE FROM EMPLEADO
-WHERE  Dno IN (SELECT NúmeroDpto
+WHERE  Dno IN (SELECT NumeroDpto
                FROM   DEPARTAMENTO
                WHERE  NombreDpto = 'Investigación');
 

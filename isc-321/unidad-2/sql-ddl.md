@@ -66,41 +66,41 @@ CREATE TABLE EMPLEADO (
   Apellido2   VARCHAR(15),
   Dni         CHAR(9)       NOT NULL,
   FechaNac    DATE,
-  Dirección   VARCHAR(30),
+  Direccion   VARCHAR(30),
   Sexo        CHAR,
   Sueldo      DECIMAL(10,2),
   SuperDni    CHAR(9),
   Dno         INT           NOT NULL,
   PRIMARY KEY (Dni),
   FOREIGN KEY (SuperDni) REFERENCES EMPLEADO(Dni),
-  FOREIGN KEY (Dno) REFERENCES DEPARTAMENTO(NúmeroDpto)
+  FOREIGN KEY (Dno) REFERENCES DEPARTAMENTO(NumeroDpto)
 );
 
 CREATE TABLE DEPARTAMENTO (
   NombreDpto           VARCHAR(15) NOT NULL,
-  NúmeroDpto           INT         NOT NULL,
+  NumeroDpto           INT         NOT NULL,
   DniDirector          CHAR(9)     NOT NULL,
   FechaIngresoDirector DATE,
-  PRIMARY KEY (NúmeroDpto),
+  PRIMARY KEY (NumeroDpto),
   UNIQUE (NombreDpto),
   FOREIGN KEY (DniDirector) REFERENCES EMPLEADO(Dni)
 );
 
 CREATE TABLE LOCALIZACIONES_DPTO (
-  NúmeroDpto    INT         NOT NULL,
-  UbicaciónDpto VARCHAR(15) NOT NULL,
-  PRIMARY KEY (NúmeroDpto, UbicaciónDpto),
-  FOREIGN KEY (NúmeroDpto) REFERENCES DEPARTAMENTO(NúmeroDpto)
+  NumeroDpto    INT         NOT NULL,
+  UbicacionDpto VARCHAR(15) NOT NULL,
+  PRIMARY KEY (NumeroDpto, UbicacionDpto),
+  FOREIGN KEY (NumeroDpto) REFERENCES DEPARTAMENTO(NumeroDpto)
 );
 
 CREATE TABLE PROYECTO (
   NombreProyecto    VARCHAR(15) NOT NULL,
   NumProyecto       INT         NOT NULL,
-  UbicaciónProyecto VARCHAR(15),
+  UbicacionProyecto VARCHAR(15),
   NumDptoProyecto   INT         NOT NULL,
   PRIMARY KEY (NumProyecto),
   UNIQUE (NombreProyecto),
-  FOREIGN KEY (NumDptoProyecto) REFERENCES DEPARTAMENTO(NúmeroDpto)
+  FOREIGN KEY (NumDptoProyecto) REFERENCES DEPARTAMENTO(NumeroDpto)
 );
 
 CREATE TABLE TRABAJA_EN (
@@ -117,7 +117,7 @@ CREATE TABLE SUBORDINADO (
   NombSubordinado VARCHAR(15) NOT NULL,
   Sexo            CHAR,
   FechaNac        DATE,
-  Relación        VARCHAR(8),
+  Relacion        VARCHAR(8),
   PRIMARY KEY (DniEmpleado, NombSubordinado),
   FOREIGN KEY (DniEmpleado) REFERENCES EMPLEADO(Dni)
 );
@@ -137,7 +137,7 @@ CREATE TABLE SUBORDINADO (
 ```sql
 ALTER TABLE EMPLEADO
   ADD CONSTRAINT EMPDEPTFK
-  FOREIGN KEY (Dno) REFERENCES DEPARTAMENTO(NúmeroDpto);
+  FOREIGN KEY (Dno) REFERENCES DEPARTAMENTO(NumeroDpto);
 ```
 
 > **Nota (SQLite):** la Figura 8.1 se ejecuta tal cual, porque las claves foráneas solo se revisan al modificar datos; además no soporta `ALTER TABLE … ADD CONSTRAINT`. Las claves foráneas están **desactivadas** por defecto y hay que activarlas en cada conexión con `PRAGMA foreign_keys = ON;`
@@ -214,7 +214,7 @@ CREATE DOMAIN TIPO_DNI AS CHAR(9);
 - **`CHECK`** después del atributo o dominio: restringe los valores permitidos
 
 ```sql
-NúmeroDpto INT NOT NULL CHECK (NúmeroDpto > 0 AND NúmeroDpto < 21);
+NumeroDpto INT NOT NULL CHECK (NumeroDpto > 0 AND NumeroDpto < 21);
 
 CREATE DOMAIN NUM_D AS INTEGER
   CHECK (VALUE > 0 AND VALUE < 21);
@@ -227,7 +227,7 @@ CREATE DOMAIN NUM_D AS INTEGER
 ### Claves
 
 - **`PRIMARY KEY`**: uno o más atributos que forman la clave primaria
-  - Si es de un solo atributo, puede ir junto a él: `NúmeroDpto INT PRIMARY KEY`
+  - Si es de un solo atributo, puede ir junto a él: `NumeroDpto INT PRIMARY KEY`
 - **`UNIQUE`**: claves **alternativas** (candidatas secundarias), p. ej. `UNIQUE (NombreDpto)`
 
 ### Integridad referencial
@@ -272,7 +272,7 @@ CREATE TABLE EMPLEADO (
     FOREIGN KEY (SuperDni) REFERENCES EMPLEADO(Dni)
     ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT EMPDEPTFK
-    FOREIGN KEY (Dno) REFERENCES DEPARTAMENTO(NúmeroDpto)
+    FOREIGN KEY (Dno) REFERENCES DEPARTAMENTO(NumeroDpto)
     ON DELETE SET DEFAULT ON UPDATE CASCADE
 );
 
@@ -281,7 +281,7 @@ CREATE TABLE DEPARTAMENTO (
   DniDirector CHAR(9) DEFAULT '888665555' NOT NULL,
   ...,
   CONSTRAINT DEPTPK
-    PRIMARY KEY (NúmeroDpto),
+    PRIMARY KEY (NumeroDpto),
   CONSTRAINT DEPTSK
     UNIQUE (NombreDpto),
   CONSTRAINT DEPTMGRFK
@@ -291,8 +291,8 @@ CREATE TABLE DEPARTAMENTO (
 
 CREATE TABLE LOCALIZACIONES_DPTO (
   ...,
-  PRIMARY KEY (NúmeroDpto, UbicaciónDpto),
-  FOREIGN KEY (NúmeroDpto) REFERENCES DEPARTAMENTO(NúmeroDpto)
+  PRIMARY KEY (NumeroDpto, UbicacionDpto),
+  FOREIGN KEY (NumeroDpto) REFERENCES DEPARTAMENTO(NumeroDpto)
     ON DELETE CASCADE ON UPDATE CASCADE
 );
 ```
@@ -308,10 +308,10 @@ Lectura de `SUPERFKEMP`:
 
 - Un `CHECK` al **final** del `CREATE TABLE` puede involucrar **varios atributos** de la misma fila
 - Se evalúa **fila por fila**, cada vez que se inserta o modifica una tupla
-- Ej.: si DEPARTAMENTO tuviera `FechaCreaciónDpto`, el director no puede haber ingresado antes de que existiera el departamento:
+- Ej.: si DEPARTAMENTO tuviera `FechaCreacionDpto`, el director no puede haber ingresado antes de que existiera el departamento:
 
 ```sql
-CHECK (FechaCreaciónDpto <= FechaIngresoDirector)
+CHECK (FechaCreacionDpto <= FechaIngresoDirector)
 ```
 
 - Para restricciones que abarcan **varias filas o tablas** el estándar tiene `CREATE ASSERTION` (sección 8.7)
@@ -365,13 +365,13 @@ ALTER TABLE EMPRESA.EMPLEADO ADD COLUMN Trabajo VARCHAR(12);
 **Eliminar una columna** (hay que elegir `CASCADE` o `RESTRICT`)
 
 ```sql
-ALTER TABLE EMPRESA.EMPLEADO DROP COLUMN Dirección CASCADE;
+ALTER TABLE EMPRESA.EMPLEADO DROP COLUMN Direccion CASCADE;
 ```
 
 - `CASCADE`: borra también las vistas y restricciones que usan la columna
 - `RESTRICT`: falla si algo la referencia
 
-> **Nota:** `CASCADE` / `RESTRICT` solo existen en **PostgreSQL**; en los demás se omiten (`DROP COLUMN Dirección;`). **SQLite** no permite eliminar columnas que formen parte de una clave, `UNIQUE`, índice o FK.
+> **Nota:** `CASCADE` / `RESTRICT` solo existen en **PostgreSQL**; en los demás se omiten (`DROP COLUMN Direccion;`). **SQLite** no permite eliminar columnas que formen parte de una clave, `UNIQUE`, índice o FK.
 
 **Cambiar el valor por defecto**
 
