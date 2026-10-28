@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Listas Enlazadas"
-parent: "Unidad II: Recursión, Listas, Genéricos y Pilas"
+parent: "Unidad II: Recursión, Listas, Genéricos, Pilas y Colas"
 grand_parent: "ISC-211 Estructuras de Datos"
 nav_order: 3
 ---

@@ -1,12 +1,12 @@
 ---
 layout: post
 title: "Pilas (Stacks)"
-parent: "Unidad II: Recursión, Listas, Genéricos y Pilas"
+parent: "Unidad II: Recursión, Listas, Genéricos, Pilas y Colas"
 grand_parent: "ISC-211 Estructuras de Datos"
 nav_order: 4
 ---
 
-Resumen basado en Goodrich, Tamassia y Goldwasser, *Data Structures and Algorithms in Java* (6.ª ed.): sección 6.1 (Pilas).
+Resumen basado en Goodrich, Tamassia y Goldwasser, *Data Structures and Algorithms in Java* (6.ª ed.): sección 6.1 (Pilas). Se complementa con la sección 8.2 del libro de texto.
 
 ## ¿Qué es una pila?
 
@@ -190,6 +190,49 @@ public class LinkedStack<E> implements Stack<E> {
 ```
 
 Todos los métodos son **O(1)**.
+
+## La pila en el libro de texto
+
+El libro de texto (sección 8.2) presenta la misma estructura con otros nombres y en C++. Su ADT es:
+
+```
+Pila(T)
+  top: int
+  espacioPila: arreglo o lista ligada que guarda los datos de tipo T
+  Constructor: hace top = -1 (pila vacía)
+  push(dato), pop(), getTop()
+```
+
+| Goodrich | Libro de texto |
+|---|---|
+| `push(e)` | `push(dato)` |
+| `pop()` | `pop()` |
+| `top()` | `getTop()` |
+| `isEmpty()` | `pilaVacia()` |
+| — | `pilaLlena()` (solo con arreglo) |
+
+Diferencias en la implementación con arreglo de tamaño `MAX`:
+
+- En lugar de lanzar una excepción o devolver `null`, `push` y `pop` devuelven un **booleano**: `true` si la operación se pudo hacer y `false` si la pila estaba llena (o vacía). Quien llama decide qué hacer.
+- `getTop()` **no valida** nada: el programador debe asegurarse antes de que `pilaVacia()` devuelve `false`.
+- `pop` no borra el dato del arreglo, solo reduce `top`; esa casilla se sobrescribe en el siguiente `push`.
+
+Algoritmo de `push` según el libro:
+
+1. Si la pila está llena, indicar que no se pudo insertar (el dato se pierde).
+2. Si tiene espacio: incrementar `top`, colocar el dato en `espacioPila[top]` e indicar éxito.
+
+```java
+public boolean push(E dato) {
+    if (pilaLlena()) return false;
+    data[++top] = dato;
+    return true;
+}
+```
+
+Con lista ligada, los métodos de la pila son **envolturas** de la lista: `push` = `insertarInicio`, `pop` = `eliminarInicio`, `getTop` = `getPrimero` y `pilaVacia` = `listaVacia`. Ya no se necesita `pilaLlena`. Es la misma idea del patrón adaptador de la sección anterior.
+
+La pila también puede construirse sobre una **deque** (ver [Colas y Deques](./colas.md#pilas-y-colas-con-una-deque)).
 
 ## Aplicaciones
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Unidad II: Recursión, Listas, Genéricos y Pilas"
+title: "Unidad II: Recursión, Listas, Genéricos, Pilas y Colas"
 parent: "ISC-211 Estructuras de Datos"
 nav_order: 2
 ---
@@ -18,9 +18,12 @@ Resumen de la sección 2.5.2 de Goodrich: clases, interfaces y métodos genéric
 Resumen de las secciones 7.2 y 3.2–3.5 de Goodrich: lista implementada con arreglo, listas simplemente enlazadas, circulares y doblemente enlazadas (con centinelas), su implementación en Java y comparación de costos con arreglos.
 
 **[4. Pilas (Stacks)](./pilas.md)**
-Resumen de la sección 6.1 de Goodrich: el ADT Pila, implementación con arreglo y con lista enlazada, y aplicaciones (invertir un arreglo, paréntesis balanceados y etiquetas HTML).
+Resumen de la sección 6.1 de Goodrich y 8.2 del libro de texto: el ADT Pila, implementación con arreglo y con lista enlazada, y aplicaciones (invertir un arreglo, paréntesis balanceados y etiquetas HTML).
 
-**[5. Recursión](./recursion.md)**
+**[5. Colas (Queues) y Deques](./colas.md)**
+Resumen de las secciones 8.3–8.4 del libro de texto: el ADT Cola (FIFO), implementación con arreglo (cola circular) y con lista ligada, la deque con lista doblemente enlazada y su uso para implementar pilas y colas.
+
+**[6. Recursión](./recursion.md)**
 Resumen del capítulo 2 del libro de texto: algoritmos recursivos, sus componentes, recursión infinita e iteración vs. recursión.
 
 
