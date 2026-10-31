@@ -27,7 +27,18 @@ color_scheme: light
 exclude:
   - isc-211/books/
   - isc-321/books/
-  # Presentaciones Marp: el fuente de las diapositivas, no páginas del sitio.
-  - isc-333/unidad-1/hilos/
-  - isc-333/unidad-3/cap7/
-  - isc-333/unidad-3/cap8/
+  # Presentaciones Marp: se excluyen el fuente y los scripts de compilación;
+  # el .html generado y sus imágenes sí se publican.
+  - isc-333/unidad-1/hilos/*.md
+  - isc-333/unidad-1/hilos/*.py
+  - isc-333/unidad-1/hilos/*.sh
+  - isc-333/unidad-1/hilos/*.js
+  - isc-333/unidad-1/hilos/*.json
+  - isc-333/unidad-3/cap7/*.md
+  - isc-333/unidad-3/cap7/*.sh
+  - isc-333/unidad-3/cap7/*.js
+  - isc-333/unidad-3/cap8/*.md
+  - isc-333/unidad-3/cap8/*.sh
+  - isc-333/unidad-3/cap8/*.js
+  # Animaciones de ISC-211: aún no se publican.
+  - isc-211/unidad-2/animaciones.html

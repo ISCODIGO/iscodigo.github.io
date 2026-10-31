@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISC-211 · Animaciones: listas, pilas, colas, deques y recursión</title>
+<style>
+  :root { --azul:#1e6fd9; --verde:#2e9e44; --rojo:#c0392b; --amar:#d4a017; --morado:#7d3cbd; --gris:#5b6670; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background:#f5f7fa; color:#1f2a33; }
+  header { background:#1f2a33; color:#fff; padding:12px 20px; display:flex; flex-wrap:wrap; gap:12px 24px; align-items:center; }
+  header h1 { font-size:18px; margin:0; flex:1 1 auto; }
+  header label { font-size:13px; display:flex; align-items:center; gap:6px; }
+  nav { display:flex; flex-wrap:wrap; gap:4px; padding:10px 20px 0; background:#e4e9ef; }
+  nav button { border:0; background:transparent; padding:10px 14px; border-radius:8px 8px 0 0; cursor:pointer; font-size:14px; color:var(--gris); }
+  nav button.on { background:#fff; color:#1f2a33; font-weight:600; }
+  main { max-width:1100px; margin:0 auto; padding:20px; }
+  section { display:none; background:#fff; border-radius:10px; padding:18px 22px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  section.on { display:block; }
+  h2 { margin:0 0 4px; font-size:20px; }
+  p.desc { margin:0 0 14px; color:var(--gris); font-size:14px; }
+  .ctrl { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:10px; }
+  .ctrl input, .ctrl select { width:70px; padding:6px 8px; border:1px solid #c5ced8; border-radius:6px; font-size:14px; }
+  .ctrl select { width:auto; }
+  button.op { padding:7px 12px; border:1px solid var(--azul); background:#fff; color:var(--azul); border-radius:6px; cursor:pointer; font-size:13px; font-family:ui-monospace, monospace; }
+  button.op:hover:not(:disabled) { background:var(--azul); color:#fff; }
+  button.op.sec { border-color:var(--gris); color:var(--gris); }
+  button.op.sec:hover:not(:disabled) { background:var(--gris); color:#fff; }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  .status { font-family:ui-monospace, monospace; font-size:14px; background:#f0f3f7; padding:6px 10px; border-radius:6px; display:inline-block; margin:6px 0; }
+  .stage { display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start; }
+  .log { list-style:none; margin:10px 0 0; padding:8px 12px; background:#1f2a33; color:#d8e1ea; border-radius:8px; font-family:ui-monospace, monospace; font-size:12.5px; height:150px; overflow-y:auto; flex:1 1 300px; }
+  .log li { padding:2px 0; }
+  .log li.err { color:#ff8a80; }
+  .log li.ok { color:#8be28b; }
+
+  /* ---- Arreglos ---- */
+  .arr { display:flex; gap:6px; padding:26px 4px 40px; flex-wrap:wrap; }
+  .arr.vert { flex-direction:column-reverse; padding:4px 90px 4px 30px; gap:4px; }
+  .arr.ring { position:relative; width:360px; height:360px; padding:0; }
+  .ring .cell { position:absolute; }
+  .cell { position:relative; width:56px; height:56px; border:2px solid #34495e; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; background:#fff; transition:background .25s, border-color .25s; }
+  .vert .cell { width:110px; height:44px; }
+  .cell .idx { position:absolute; top:-18px; font-size:11px; color:#8a96a3; font-weight:400; }
+  .vert .cell .idx { top:auto; left:-24px; }
+  .cell .tag { position:absolute; top:60px; font-size:11px; font-weight:700; color:var(--rojo); white-space:nowrap; font-family:ui-monospace, monospace; }
+  .vert .cell .tag { top:auto; left:118px; }
+  .ring .cell .tag { top:auto; }
+  .cell.empty { background:#f4f6f8; border-style:dashed; border-color:#a9b4bf; }
+  .cell.waste { background:repeating-linear-gradient(45deg,#eceff2,#eceff2 5px,#dde2e7 5px,#dde2e7 10px); }
+  .cell.new  { background:#d4f8d4; border-color:var(--verde); animation:pop .4s; }
+  .cell.del  { background:#fdd; border-color:var(--rojo); animation:shake .4s; }
+  .cell.move { background:#fff3c4; border-color:var(--amar); }
+  .cell.read { background:#d6eaff; border-color:var(--azul); }
+  .ringcenter { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); text-align:center; font-family:ui-monospace, monospace; font-size:12px; color:var(--gris); }
+  @keyframes pop { from { transform:scale(.3); } to { transform:scale(1); } }
+  @keyframes shake { 25% { transform:translateX(-4px); } 75% { transform:translateX(4px); } }
+
+  /* ---- Recursión ---- */
+  .rec-grid { display:grid; grid-template-columns: minmax(260px,1fr) minmax(240px,1fr); gap:18px; }
+  .code { background:#1f2a33; color:#d8e1ea; border-radius:8px; padding:10px 0; font-family:ui-monospace, monospace; font-size:13px; margin:0; }
+  .code div { padding:1px 14px; white-space:pre; }
+  .code div.hl { background:#3d5a80; color:#fff; }
+  .stack { display:flex; flex-direction:column-reverse; gap:4px; min-height:120px; }
+  .frame { border:2px solid #34495e; border-radius:6px; padding:6px 10px; font-family:ui-monospace, monospace; font-size:13px; background:#fff; animation:pop .3s; }
+  .frame.wait { background:#fff3c4; border-color:var(--amar); }
+  .frame.top  { background:#d6eaff; border-color:var(--azul); }
+  .frame.ret  { background:#d4f8d4; border-color:var(--verde); }
+  .frame.main { background:#eceff2; border-style:dashed; animation:none; }
+  .tree { width:100%; min-height:200px; border:1px solid #e1e6ec; border-radius:8px; margin-top:14px; }
+  .tree .tn, .tree line { opacity:0; transition:opacity .3s; }
+  .tree .tn.on, .tree line.on { opacity:1; }
+  .tree line { stroke:#8a96a3; stroke-width:1.5; }
+  .tree rect { fill:#fff; stroke:#34495e; stroke-width:1.5; }
+  .tree .act rect  { fill:#d6eaff; stroke:var(--azul); stroke-width:2.5; }
+  .tree .wait rect { fill:#fff3c4; stroke:var(--amar); }
+  .tree .done rect { fill:#d4f8d4; stroke:var(--verde); }
+  .tree .memo rect { fill:#ead9fb; stroke:var(--morado); }
+  .tree text { font-family:ui-monospace, monospace; font-size:12px; text-anchor:middle; }
+  .tree text.v { font-weight:700; fill:var(--verde); }
+  .legend { font-size:12px; color:var(--gris); margin-top:6px; }
+  .legend span { display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:middle; margin:0 4px 0 10px; border:1px solid #999; }
+  h3 { font-size:14px; margin:12px 0 6px; color:var(--gris); text-transform:uppercase; letter-spacing:.04em; }
+  @media (max-width:760px) { .rec-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ISC-211 · Animaciones de estructuras de datos</h1>
+  <label>Velocidad <input id="speed" type="range" min="0.25" max="3" step="0.25" value="1"> <span id="speedv">1×</span></label>
+  <label><input id="pause" type="checkbox"> Paso a paso</label>
+  <button id="next" class="op" style="color:#fff;border-color:#fff;background:transparent" disabled>Siguiente ▶</button>
+</header>
+
+<nav id="tabs">
+  <button data-t="lista" class="on">Lista (arreglo)</button>
+  <button data-t="pila">Pila</button>
+  <button data-t="cola">Cola (arreglo simple)</button>
+  <button data-t="circ">Cola circular</button>
+  <button data-t="deque">Deque</button>
+  <button data-t="rec">Recursión</button>
+</nav>
+
+<main>
+
+<!-- ================= LISTA ================= -->
+<section id="lista" class="on">
+  <h2>Lista implementada con arreglo</h2>
+  <p class="desc">Insertar o eliminar en la posición <code>i</code> obliga a <b>desplazar</b> los elementos siguientes: O(n). Acceder por índice es O(1).</p>
+  <div class="ctrl">
+    valor <input id="lista-v" type="number" placeholder="aleat.">
+    índice <input id="lista-i" type="number" value="0">
+    <button class="op" data-run="listaAdd">add(valor)</button>
+    <button class="op" data-run="listaInsert">add(i, valor)</button>
+    <button class="op" data-run="listaRemove">remove(i)</button>
+    <button class="op" data-run="listaGet">get(i)</button>
+    <button class="op" data-run="listaSet">set(i, valor)</button>
+    <button class="op" data-run="listaSearch">indexOf(valor)</button>
+    <button class="op sec" data-run="listaReset">Reiniciar</button>
+  </div>
+  <div class="status" id="lista-st"></div>
+  <div class="arr" id="lista-arr"></div>
+  <ul class="log" id="lista-log"></ul>
+</section>
+
+<!-- ================= PILA ================= -->
+<section id="pila">
+  <h2>Pila (LIFO) con arreglo</h2>
+  <p class="desc">Se inserta y se elimina solo por el <b>tope</b>. <code>push</code>, <code>pop</code> y <code>top</code> son O(1).</p>
+  <div class="ctrl">
+    valor <input id="pila-v" type="number" placeholder="aleat.">
+    <button class="op" data-run="pilaPush">push(valor)</button>
+    <button class="op" data-run="pilaPop">pop()</button>
+    <button class="op" data-run="pilaTop">top()</button>
+    <button class="op" data-run="pilaEmpty">isEmpty()</button>
+    <button class="op sec" data-run="pilaReset">Reiniciar</button>
+  </div>
+  <div class="status" id="pila-st"></div>
+  <div class="stage">
+    <div class="arr vert" id="pila-arr"></div>
+    <ul class="log" id="pila-log" style="height:400px"></ul>
+  </div>
+</section>
+
+<!-- ================= COLA SIMPLE ================= -->
+<section id="cola">
+  <h2>Cola (FIFO) con arreglo simple</h2>
+  <p class="desc">Se encola por <code>rear</code> y se desencola por <code>front</code>. Al avanzar <code>front</code>, las celdas del inicio quedan <b>desperdiciadas</b>: la cola puede "llenarse" aunque haya espacio. Compactar lo resuelve, pero cuesta O(n).</p>
+  <div class="ctrl">
+    valor <input id="cola-v" type="number" placeholder="aleat.">
+    <button class="op" data-run="colaEnq">enqueue(valor)</button>
+    <button class="op" data-run="colaDeq">dequeue()</button>
+    <button class="op" data-run="colaFront">first()</button>
+    <button class="op" data-run="colaCompact">compactar</button>
+    <button class="op sec" data-run="colaReset">Reiniciar</button>
+  </div>
+  <div class="status" id="cola-st"></div>
+  <div class="arr" id="cola-arr"></div>
+  <ul class="log" id="cola-log"></ul>
+</section>
+
+<!-- ================= COLA CIRCULAR ================= -->
+<section id="circ">
+  <h2>Cola circular</h2>
+  <p class="desc">Los índices "dan la vuelta" con el operador módulo: <code>rear = (rear + 1) % N</code>, <code>front = (front + 1) % N</code>. No hay espacio desperdiciado y todas las operaciones son O(1).</p>
+  <div class="ctrl">
+    valor <input id="circ-v" type="number" placeholder="aleat.">
+    <button class="op" data-run="circEnq">enqueue(valor)</button>
+    <button class="op" data-run="circDeq">dequeue()</button>
+    <button class="op" data-run="circFront">first()</button>
+    <button class="op sec" data-run="circReset">Reiniciar</button>
+  </div>
+  <div class="status" id="circ-st"></div>
+  <div class="stage">
+    <div class="arr ring" id="circ-arr"></div>
+    <ul class="log" id="circ-log" style="height:360px"></ul>
+  </div>
+</section>
+
+<!-- ================= DEQUE ================= -->
+<section id="deque">
+  <h2>Deque (cola doble) con arreglo circular</h2>
+  <p class="desc">Permite insertar y eliminar por <b>ambos extremos</b> en O(1). <code>addFirst</code> retrocede <code>front = (front − 1 + N) % N</code>; el último está en <code>(front + size − 1) % N</code>.</p>
+  <div class="ctrl">
+    valor <input id="deque-v" type="number" placeholder="aleat.">
+    <button class="op" data-run="dqAddFirst">addFirst(valor)</button>
+    <button class="op" data-run="dqAddLast">addLast(valor)</button>
+    <button class="op" data-run="dqRemoveFirst">removeFirst()</button>
+    <button class="op" data-run="dqRemoveLast">removeLast()</button>
+    <button class="op" data-run="dqFirst">first()</button>
+    <button class="op" data-run="dqLast">last()</button>
+    <button class="op sec" data-run="dqReset">Reiniciar</button>
+  </div>
+  <div class="status" id="deque-st"></div>
+  <div class="stage">
+    <div class="arr ring" id="deque-arr"></div>
+    <ul class="log" id="deque-log" style="height:360px"></ul>
+  </div>
+</section>
+
+<!-- ================= RECURSIÓN ================= -->
+<section id="rec">
+  <h2>Recursión: pila de llamadas y árbol de recursión</h2>
+  <p class="desc">Cada llamada crea un <b>marco</b> (frame) en la pila con sus propias variables. Al llegar al caso base, los marcos se van resolviendo y retirando en orden inverso.</p>
+  <div class="ctrl">
+    función <select id="rec-f">
+      <option value="factorial">factorial(n)</option>
+      <option value="fibonacci">fibonacci(n)</option>
+      <option value="memo">fibonacciMemo(n)</option>
+      <option value="suma">suma(arr, n)</option>
+    </select>
+    n <input id="rec-n" type="number" value="4" min="0">
+    <button class="op" data-run="recRun">Ejecutar</button>
+  </div>
+  <div class="status" id="rec-st">llamadas = 0 · profundidad máx. = 0</div>
+  <div class="rec-grid">
+    <div>
+      <h3>Código</h3>
+      <pre class="code" id="rec-code"></pre>
+      <ul class="log" id="rec-log" style="height:180px"></ul>
+    </div>
+    <div>
+      <h3>Pila de llamadas</h3>
+      <div class="stack" id="rec-stack"></div>
+    </div>
+  </div>
+  <h3>Árbol de recursión</h3>
+  <svg class="tree" id="rec-tree"></svg>
+  <div class="legend"><span style="background:#d6eaff"></span>ejecutando <span style="background:#fff3c4"></span>esperando resultado <span style="background:#d4f8d4"></span>terminada <span style="background:#ead9fb"></span>reutilizada de memo</div>
+</section>
+
+</main>
+
+<script>
+const CAP = 8;
+const $ = s => document.querySelector(s);
+const ops = {};
+
+// ---------- utilidades comunes ----------
+let busy = false, nextRes = null;
+const speed = () => +$('#speed').value;
+$('#speed').oninput = () => $('#speedv').textContent = speed() + '×';
+$('#pause').onchange = () => { if (!$('#pause').checked && nextRes) { nextRes(); nextRes = null; } };
+$('#next').onclick = () => { if (nextRes) { nextRes(); nextRes = null; } };
+
+function step(ms = 650) {
+  if ($('#pause').checked) {
+    $('#next').disabled = false;
+    return new Promise(r => nextRes = () => { $('#next').disabled = true; r(); });
+  }
+  return new Promise(r => setTimeout(r, ms / speed()));
+}
+
+function log(p, msg, kind = '') {
+  const li = document.createElement('li');
+  li.className = kind; li.innerHTML = msg;
+  const ul = $('#' + p + '-log');
+  ul.appendChild(li); ul.scrollTop = ul.scrollHeight;
+}
+
+function val(p) {
+  const v = $('#' + p + '-v').value.trim();
+  return v === '' ? Math.floor(Math.random() * 90) + 10 : +v;
+}
+
+function tagsOf(m) {
+  const t = {};
+  for (const [name, i] of Object.entries(m)) if (i != null && i >= 0) (t[i] = t[i] || []).push(name);
+  return t;
+}
+
+function draw(sel, arr, { tags = {}, hi = {}, cls = {}, ring = false, center = '' } = {}) {
+  const el = $(sel);
+  el.innerHTML = '';
+  const n = arr.length, R = 130;
+  arr.forEach((v, i) => {
+    const c = document.createElement('div');
+    c.className = 'cell' + (v == null ? ' empty' : '') + (cls[i] ? ' ' + cls[i] : '') + (hi[i] ? ' ' + hi[i] : '');
+    c.innerHTML = `<span class="idx">${i}</span><span>${v ?? ''}</span>` + (tags[i] ? `<span class="tag">${tags[i].join(' ')}</span>` : '');
+    if (ring) {
+      const a = 2 * Math.PI * i / n - Math.PI / 2;
+      c.style.left = 180 + R * Math.cos(a) - 28 + 'px';
+      c.style.top = 180 + R * Math.sin(a) - 28 + 'px';
+      const t = c.querySelector('.tag');
+      // las etiquetas se ubican hacia el centro del anillo
+      if (t) { t.style.left = 28 - 40 * Math.cos(a) - t.textContent.length * 3.3 + 'px'; t.style.top = 22 - 50 * Math.sin(a) + 'px'; }
+    }
+    el.appendChild(c);
+  });
+  if (ring) el.insertAdjacentHTML('beforeend', `<div class="ringcenter">${center}</div>`);
+}
+
+// ================= LISTA =================
+const L = { a: Array(CAP).fill(null), n: 0 };
+function drawLista(hi = {}) {
+  draw('#lista-arr', L.a, { hi, tags: tagsOf({ size: L.n < CAP ? L.n : -1 }) });
+  $('#lista-st').textContent = `size = ${L.n} · capacidad = ${CAP}`;
+}
+const idxL = () => parseInt($('#lista-i').value, 10);
+
+ops.listaAdd = async () => { $('#lista-i').value = L.n; await ops.listaInsert(); };
+ops.listaInsert = async () => {
+  const i = idxL(), x = val('lista');
+  if (L.n === CAP) return log('lista', `add(${i}, ${x}): arreglo lleno (se tendría que crecer el arreglo)`, 'err');
+  if (!(i >= 0 && i <= L.n)) return log('lista', `add(${i}, ${x}): IndexOutOfBounds, i debe estar en [0, ${L.n}]`, 'err');
+  log('lista', `add(${i}, ${x}): desplazar ${L.n - i} elemento(s) a la derecha`);
+  for (let j = L.n; j > i; j--) {
+    L.a[j] = L.a[j - 1];
+    log('lista', `&nbsp; a[${j}] = a[${j - 1}]`);
+    drawLista({ [j]: 'move', [j - 1]: 'read' }); await step();
+  }
+  L.a[i] = x; L.n++;
+  drawLista({ [i]: 'new' });
+  log('lista', `&nbsp; a[${i}] = ${x}; size++`, 'ok');
+  await step();
+};
+ops.listaRemove = async () => {
+  const i = idxL();
+  if (!(i >= 0 && i < L.n)) return log('lista', `remove(${i}): IndexOutOfBounds, i debe estar en [0, ${L.n - 1}]`, 'err');
+  const x = L.a[i];
+  drawLista({ [i]: 'del' }); log('lista', `remove(${i}): se elimina ${x}; desplazar ${L.n - i - 1} elemento(s) a la izquierda`);
+  await step();
+  for (let j = i; j < L.n - 1; j++) {
+    L.a[j] = L.a[j + 1];
+    log('lista', `&nbsp; a[${j}] = a[${j + 1}]`);
+    drawLista({ [j]: 'move', [j + 1]: 'read' }); await step();
+  }
+  L.a[--L.n] = null;
+  drawLista(); log('lista', `&nbsp; a[${L.n}] = null; size-- → devuelve ${x}`, 'ok');
+};
+ops.listaGet = async () => {
+  const i = idxL();
+  if (!(i >= 0 && i < L.n)) return log('lista', `get(${i}): IndexOutOfBounds`, 'err');
+  drawLista({ [i]: 'read' }); log('lista', `get(${i}) = ${L.a[i]} (acceso directo, O(1))`, 'ok');
+  await step(); drawLista();
+};
+ops.listaSet = async () => {
+  const i = idxL(), x = val('lista');
+  if (!(i >= 0 && i < L.n)) return log('lista', `set(${i}, ${x}): IndexOutOfBounds`, 'err');
+  const old = L.a[i]; L.a[i] = x;
+  drawLista({ [i]: 'new' }); log('lista', `set(${i}, ${x}): reemplaza ${old} (O(1))`, 'ok');
+  await step();
+};
+ops.listaSearch = async () => {
+  const x = val('lista');
+  log('lista', `indexOf(${x}): búsqueda lineal`);
+  for (let j = 0; j < L.n; j++) {
+    drawLista({ [j]: 'read' }); await step();
+    if (L.a[j] === x) { drawLista({ [j]: 'new' }); return log('lista', `&nbsp; encontrado en el índice ${j}`, 'ok'); }
+  }
+  drawLista(); log('lista', `&nbsp; no encontrado → -1`, 'err');
+};
+ops.listaReset = async () => {
+  L.a = [15, 42, 8, 23, null, null, null, null]; L.n = 4;
+  $('#lista-log').innerHTML = ''; drawLista(); log('lista', 'Lista con 4 elementos. Prueba add(2, x) o remove(0).');
+};
+
+// ================= PILA =================
+const P = { a: Array(CAP).fill(null), n: 0 };
+function drawPila(hi = {}) {
+  draw('#pila-arr', P.a, { hi, tags: tagsOf({ '← top': P.n - 1 }) });
+  $('#pila-st').textContent = `t = ${P.n - 1} · size = ${P.n} · capacidad = ${CAP}`;
+}
+ops.pilaPush = async () => {
+  const x = val('pila');
+  if (P.n === CAP) { log('pila', `push(${x}): ¡desbordamiento! (stack overflow / pila llena)`, 'err'); return; }
+  P.a[P.n++] = x; drawPila({ [P.n - 1]: 'new' });
+  log('pila', `push(${x}): t++ → t = ${P.n - 1}; data[t] = ${x}`, 'ok'); await step();
+};
+ops.pilaPop = async () => {
+  if (P.n === 0) return log('pila', 'pop(): pila vacía → null / excepción', 'err');
+  const x = P.a[P.n - 1]; drawPila({ [P.n - 1]: 'del' });
+  log('pila', `pop(): se lee data[${P.n - 1}] = ${x}`); await step();
+  P.a[--P.n] = null; drawPila(); log('pila', `&nbsp; data[t] = null; t-- → devuelve ${x}`, 'ok');
+};
+ops.pilaTop = async () => {
+  if (P.n === 0) return log('pila', 'top(): pila vacía → null', 'err');
+  drawPila({ [P.n - 1]: 'read' }); log('pila', `top() = ${P.a[P.n - 1]} (no se elimina)`, 'ok'); await step(); drawPila();
+};
+ops.pilaEmpty = async () => log('pila', `isEmpty() = ${P.n === 0}  (t == -1)`, 'ok');
+ops.pilaReset = async () => {
+  P.a = Array(CAP).fill(null); P.n = 0; $('#pila-log').innerHTML = '';
+  drawPila(); log('pila', 'Pila vacía (t = -1). Haz varios push y luego pop.');
+};
+
+// ================= COLA SIMPLE =================
+const Q = { a: Array(CAP).fill(null), front: 0, rear: -1 };
+function drawCola(hi = {}) {
+  const empty = Q.front > Q.rear, cls = {};
+  for (let i = 0; i < Q.front; i++) cls[i] = 'waste';
+  draw('#cola-arr', Q.a, { hi, cls, tags: tagsOf({ front: Q.front < CAP ? Q.front : -1, rear: empty ? -1 : Q.rear }) });
+  $('#cola-st').textContent = `front = ${Q.front} · rear = ${Q.rear} · size = ${Q.rear - Q.front + 1} · capacidad = ${CAP}`;
+}
+ops.colaEnq = async () => {
+  const x = val('cola');
+  if (Q.rear === CAP - 1) {
+    const libres = Q.front;
+    return log('cola', `enqueue(${x}): rear = ${CAP - 1}, cola "llena"` + (libres ? ` aunque hay ${libres} celda(s) libre(s) al inicio. Prueba "compactar" o usa una cola circular.` : '.'), 'err');
+  }
+  Q.a[++Q.rear] = x; drawCola({ [Q.rear]: 'new' });
+  log('cola', `enqueue(${x}): rear++ → ${Q.rear}; data[rear] = ${x}`, 'ok'); await step();
+};
+ops.colaDeq = async () => {
+  if (Q.front > Q.rear) return log('cola', 'dequeue(): cola vacía', 'err');
+  const x = Q.a[Q.front]; drawCola({ [Q.front]: 'del' });
+  log('cola', `dequeue(): se lee data[${Q.front}] = ${x}`); await step();
+  Q.a[Q.front++] = null; drawCola();
+  log('cola', `&nbsp; front++ → ${Q.front} (la celda ${Q.front - 1} queda desperdiciada) → devuelve ${x}`, 'ok');
+};
+ops.colaFront = async () => {
+  if (Q.front > Q.rear) return log('cola', 'first(): cola vacía', 'err');
+  drawCola({ [Q.front]: 'read' }); log('cola', `first() = ${Q.a[Q.front]}`, 'ok'); await step(); drawCola();
+};
+ops.colaCompact = async () => {
+  if (Q.front === 0) return log('cola', 'compactar: front ya es 0, nada que mover');
+  const k = Q.front;
+  log('cola', `compactar: mover ${Q.rear - Q.front + 1} elemento(s) ${k} posiciones a la izquierda (O(n))`);
+  for (let j = Q.front; j <= Q.rear; j++) {
+    Q.a[j - k] = Q.a[j]; Q.a[j] = null;
+    drawCola({ [j - k]: 'move', [j]: 'read' }); log('cola', `&nbsp; data[${j - k}] = data[${j}]`); await step();
+  }
+  Q.rear -= k; Q.front = 0; drawCola(); log('cola', `&nbsp; front = 0, rear = ${Q.rear}`, 'ok');
+};
+ops.colaReset = async () => {
+  Q.a = Array(CAP).fill(null); Q.front = 0; Q.rear = -1; $('#cola-log').innerHTML = '';
+  drawCola(); log('cola', 'Cola vacía (front = 0, rear = -1). Encola hasta llenar, desencola y vuelve a encolar.');
+};
+
+// ================= COLA CIRCULAR =================
+const C = { a: Array(CAP).fill(null), front: 0, rear: CAP - 1, size: 0 };
+function drawCirc(hi = {}) {
+  draw('#circ-arr', C.a, {
+    hi, ring: true, tags: tagsOf({ front: C.front, rear: C.size ? C.rear : -1 }),
+    center: `N = ${CAP}<br>size = ${C.size}`,
+  });
+  $('#circ-st').textContent = `front = ${C.front} · rear = ${C.rear} · size = ${C.size} · capacidad = ${CAP}`;
+}
+ops.circEnq = async () => {
+  const x = val('circ');
+  if (C.size === CAP) return log('circ', `enqueue(${x}): cola llena (size == N)`, 'err');
+  const old = C.rear; C.rear = (C.rear + 1) % CAP;
+  log('circ', `enqueue(${x}): rear = (${old} + 1) % ${CAP} = <b>${C.rear}</b>` + (C.rear < old ? '  ← ¡da la vuelta!' : ''));
+  C.a[C.rear] = x; C.size++; drawCirc({ [C.rear]: 'new' });
+  log('circ', `&nbsp; data[${C.rear}] = ${x}; size++`, 'ok'); await step();
+};
+ops.circDeq = async () => {
+  if (C.size === 0) return log('circ', 'dequeue(): cola vacía (size == 0)', 'err');
+  const x = C.a[C.front]; drawCirc({ [C.front]: 'del' });
+  log('circ', `dequeue(): se lee data[${C.front}] = ${x}`); await step();
+  C.a[C.front] = null; const old = C.front; C.front = (C.front + 1) % CAP; C.size--; drawCirc();
+  log('circ', `&nbsp; front = (${old} + 1) % ${CAP} = <b>${C.front}</b>; size-- → devuelve ${x}`, 'ok');
+};
+ops.circFront = async () => {
+  if (C.size === 0) return log('circ', 'first(): cola vacía', 'err');
+  drawCirc({ [C.front]: 'read' }); log('circ', `first() = ${C.a[C.front]}`, 'ok'); await step(); drawCirc();
+};
+ops.circReset = async () => {
+  C.a = Array(CAP).fill(null); C.front = 0; C.rear = CAP - 1; C.size = 0; $('#circ-log').innerHTML = '';
+  drawCirc(); log('circ', `Cola vacía: front = 0, rear = ${CAP - 1} (el primer enqueue lo lleva a 0).`);
+};
+
+// ================= DEQUE =================
+const D = { a: Array(CAP).fill(null), front: 0, size: 0 };
+const dqLastIdx = () => (D.front + D.size - 1) % CAP;
+function drawDeque(hi = {}) {
+  draw('#deque-arr', D.a, {
+    hi, ring: true, tags: tagsOf({ first: D.front, last: D.size ? dqLastIdx() : -1 }),
+    center: `N = ${CAP}<br>size = ${D.size}`,
+  });
+  $('#deque-st').textContent = `front = ${D.front} · last = ${D.size ? dqLastIdx() : '—'} · size = ${D.size} · capacidad = ${CAP}`;
+}
+ops.dqAddFirst = async () => {
+  const x = val('deque');
+  if (D.size === CAP) return log('deque', `addFirst(${x}): deque llena`, 'err');
+  const old = D.front; D.front = (D.front - 1 + CAP) % CAP;
+  log('deque', `addFirst(${x}): front = (${old} − 1 + ${CAP}) % ${CAP} = <b>${D.front}</b>`);
+  D.a[D.front] = x; D.size++; drawDeque({ [D.front]: 'new' });
+  log('deque', `&nbsp; data[${D.front}] = ${x}; size++`, 'ok'); await step();
+};
+ops.dqAddLast = async () => {
+  const x = val('deque');
+  if (D.size === CAP) return log('deque', `addLast(${x}): deque llena`, 'err');
+  const i = (D.front + D.size) % CAP;
+  log('deque', `addLast(${x}): avail = (${D.front} + ${D.size}) % ${CAP} = <b>${i}</b>`);
+  D.a[i] = x; D.size++; drawDeque({ [i]: 'new' });
+  log('deque', `&nbsp; data[${i}] = ${x}; size++`, 'ok'); await step();
+};
+ops.dqRemoveFirst = async () => {
+  if (D.size === 0) return log('deque', 'removeFirst(): deque vacía', 'err');
+  const x = D.a[D.front]; drawDeque({ [D.front]: 'del' });
+  log('deque', `removeFirst(): se lee data[${D.front}] = ${x}`); await step();
+  D.a[D.front] = null; const old = D.front; D.front = (D.front + 1) % CAP; D.size--; drawDeque();
+  log('deque', `&nbsp; front = (${old} + 1) % ${CAP} = <b>${D.front}</b>; size-- → devuelve ${x}`, 'ok');
+};
+ops.dqRemoveLast = async () => {
+  if (D.size === 0) return log('deque', 'removeLast(): deque vacía', 'err');
+  const i = dqLastIdx(), x = D.a[i]; drawDeque({ [i]: 'del' });
+  log('deque', `removeLast(): last = (${D.front} + ${D.size} − 1) % ${CAP} = <b>${i}</b>; data[${i}] = ${x}`); await step();
+  D.a[i] = null; D.size--; drawDeque(); log('deque', `&nbsp; data[${i}] = null; size-- → devuelve ${x}`, 'ok');
+};
+ops.dqFirst = async () => {
+  if (D.size === 0) return log('deque', 'first(): deque vacía', 'err');
+  drawDeque({ [D.front]: 'read' }); log('deque', `first() = ${D.a[D.front]}`, 'ok'); await step(); drawDeque();
+};
+ops.dqLast = async () => {
+  if (D.size === 0) return log('deque', 'last(): deque vacía', 'err');
+  const i = dqLastIdx(); drawDeque({ [i]: 'read' }); log('deque', `last() = ${D.a[i]}`, 'ok'); await step(); drawDeque();
+};
+ops.dqReset = async () => {
+  D.a = Array(CAP).fill(null); D.front = 0; D.size = 0; $('#deque-log').innerHTML = '';
+  drawDeque(); log('deque', 'Deque vacía (front = 0). Prueba addFirst: front retrocede de 0 a 7.');
+};
+
+// ================= RECURSIÓN =================
+// Cada función construye de antemano su árbol de llamadas (nodos con label, valor y tipo);
+// la animación luego recorre ese árbol en el mismo orden en que Java ejecutaría las llamadas.
+const SUMA_ARR = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3];
+const REC = {
+  factorial: {
+    max: 8,
+    code: ['long factorial(int n) {', '    if (n <= 1)', '        return 1;               // caso base', '    return n * factorial(n - 1);', '}'],
+    lines: { base: 2, rec: 3 },
+    build(n) {
+      if (n <= 1) return { label: `factorial(${n})`, short: `fact(${n})`, val: 1, kind: 'base', kids: [] };
+      const c = REC.factorial.build(n - 1);
+      return { label: `factorial(${n})`, short: `fact(${n})`, val: n * c.val, kind: 'rec', kids: [c],
+        expr: v => `${n} * ${v[0] ?? `factorial(${n - 1})`}` };
+    },
+  },
+  fibonacci: {
+    max: 6,
+    code: ['long fibonacci(int n) {', '    if (n <= 1) return n;      // casos base', '    return fibonacci(n - 1) + fibonacci(n - 2);', '}'],
+    lines: { base: 1, rec: 2 },
+    build(n) {
+      if (n <= 1) return { label: `fibonacci(${n})`, short: `f(${n})`, val: n, kind: 'base', kids: [] };
+      const a = REC.fibonacci.build(n - 1), b = REC.fibonacci.build(n - 2);
+      return { label: `fibonacci(${n})`, short: `f(${n})`, val: a.val + b.val, kind: 'rec', kids: [a, b],
+        expr: v => `${v[0] ?? `fibonacci(${n - 1})`} + ${v[1] ?? `fibonacci(${n - 2})`}` };
+    },
+  },
+  memo: {
+    max: 10,
+    code: ['long fibonacciMemo(int n, long[] memo) {', '    if (n <= 1) return n;', '    if (memo[n] != 0) return memo[n];   // ya calculado', '    memo[n] = fibonacciMemo(n - 1, memo)', '            + fibonacciMemo(n - 2, memo);', '    return memo[n];', '}'],
+    lines: { base: 1, memo: 2, rec: 3 },
+    build(n, memo = {}) {
+      const node = { label: `fibonacciMemo(${n})`, short: `f(${n})` };
+      if (n <= 1) return { ...node, val: n, kind: 'base', kids: [] };
+      if (memo[n] != null) return { ...node, val: memo[n], kind: 'memo', kids: [] };
+      const a = REC.memo.build(n - 1, memo), b = REC.memo.build(n - 2, memo);
+      memo[n] = a.val + b.val;
+      return { ...node, val: memo[n], kind: 'rec', kids: [a, b],
+        expr: v => `${v[0] ?? `fibonacciMemo(${n - 1})`} + ${v[1] ?? `fibonacciMemo(${n - 2})`}` };
+    },
+  },
+  suma: {
+    max: SUMA_ARR.length,
+    code: [`// arr = {${SUMA_ARR.join(', ')}}`, 'int suma(int[] arr, int n) {   // suma de los primeros n', '    if (n == 0)', '        return 0;               // caso base', '    return arr[n - 1] + suma(arr, n - 1);', '}'],
+    lines: { base: 3, rec: 4, enter: 1 },
+    build(n) {
+      if (n === 0) return { label: 'suma(arr, 0)', short: 's(0)', val: 0, kind: 'base', kids: [] };
+      const c = REC.suma.build(n - 1);
+      return { label: `suma(arr, ${n})`, short: `s(${n})`, val: SUMA_ARR[n - 1] + c.val, kind: 'rec', kids: [c],
+        expr: v => `${SUMA_ARR[n - 1]} + ${v[0] ?? `suma(arr, ${n - 1})`}` };
+    },
+  },
+};
+
+const NS = 'http://www.w3.org/2000/svg';
+let recDef, calls, maxDepth;
+
+function showCode(hl = -1) {
+  $('#rec-code').innerHTML = recDef.code.map((l, i) => `<div class="${i === hl ? 'hl' : ''}">${l.replace(/</g, '&lt;')}</div>`).join('');
+}
+
+function svgEl(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  parent.appendChild(e); return e;
+}
+
+function layoutTree(root) {
+  // x: hojas consecutivas, nodos internos centrados sobre sus hijos; y: profundidad
+  let leaf = 0, depth = 0;
+  (function walk(nd, d) {
+    nd.depth = d; depth = Math.max(depth, d);
+    nd.kids.forEach(k => walk(k, d + 1));
+    nd.x = nd.kids.length ? nd.kids.reduce((s, k) => s + k.x, 0) / nd.kids.length : leaf++;
+  })(root, 0);
+  const W = 74, H = 62, svg = $('#rec-tree');
+  svg.innerHTML = '';
+  svg.setAttribute('viewBox', `0 0 ${Math.max(leaf, 3) * W} ${(depth + 1) * H + 20}`);
+  svg.style.height = Math.min(520, (depth + 1) * H + 20) + 'px';
+  const off = (Math.max(leaf, 3) - leaf) * W / 2;
+  const px = nd => off + nd.x * W + W / 2, py = nd => nd.depth * H + 26;
+  const edges = svgEl('g', {}, svg), nodes = svgEl('g', {}, svg);
+  (function place(nd, parent) {
+    if (parent) nd.edge = svgEl('line', { x1: px(parent), y1: py(parent) + 12, x2: px(nd), y2: py(nd) - 12 }, edges);
+    nd.g = svgEl('g', { class: 'tn', transform: `translate(${px(nd)},${py(nd)})` }, nodes);
+    svgEl('rect', { x: -32, y: -12, width: 64, height: 24, rx: 6 }, nd.g);
+    svgEl('text', { y: 4 }, nd.g).textContent = nd.short;
+    nd.vt = svgEl('text', { y: 26, class: 'v' }, nd.g);
+    nd.kids.forEach(k => place(k, nd));
+  })(root, null);
+}
+
+function setNode(nd, state) { nd.g.setAttribute('class', 'tn on ' + state); }
+
+function pushFrame(text) {
+  const f = document.createElement('div');
+  f.className = 'frame top'; f.textContent = text;
+  $('#rec-stack').querySelectorAll('.frame.top').forEach(x => x.classList.replace('top', 'wait'));
+  $('#rec-stack').appendChild(f); return f;
+}
+function popFrame(f) {
+  f.remove();
+  const frames = $('#rec-stack').querySelectorAll('.frame:not(.main)');
+  if (frames.length) frames[frames.length - 1].className = 'frame top';
+}
+function recStatus() { $('#rec-st').textContent = `llamadas = ${calls} · profundidad máx. = ${maxDepth}`; }
+
+async function visit(nd, depth) {
+  calls++; maxDepth = Math.max(maxDepth, depth); recStatus();
+  if (nd.edge) nd.edge.classList.add('on');
+  setNode(nd, 'act');
+  const f = pushFrame(`${nd.label}`);
+  showCode(recDef.lines.enter ?? 0);
+  log('rec', `${'&nbsp;'.repeat(depth * 2)}→ ${nd.label}`);
+  await step();
+  if (nd.kind !== 'rec') {
+    showCode(recDef.lines[nd.kind]);
+    f.textContent = `${nd.label} → return ${nd.val}` + (nd.kind === 'memo' ? '  (memo)' : '  (caso base)');
+    f.className = 'frame ret';
+    setNode(nd, nd.kind === 'memo' ? 'memo' : 'done'); nd.vt.textContent = nd.val;
+    log('rec', `${'&nbsp;'.repeat(depth * 2)}← ${nd.label} = ${nd.val} ${nd.kind === 'memo' ? '(de memo)' : '(caso base)'}`, 'ok');
+    await step(); popFrame(f); return;
+  }
+  const vals = [];
+  for (const kid of nd.kids) {
+    showCode(recDef.lines.rec);
+    f.textContent = `${nd.label} = ${nd.expr(vals)}`;
+    await step();
+    setNode(nd, 'wait');
+    await visit(kid, depth + 1);
+    vals.push(kid.val);
+    setNode(nd, 'act'); showCode(recDef.lines.rec);
+    f.textContent = `${nd.label} = ${nd.expr(vals)}`;
+  }
+  f.textContent = `${nd.label} = ${nd.expr(vals)} = ${nd.val}`; f.className = 'frame ret';
+  setNode(nd, 'done'); nd.vt.textContent = nd.val;
+  log('rec', `${'&nbsp;'.repeat(depth * 2)}← ${nd.label} = ${nd.expr(vals)} = ${nd.val}`, 'ok');
+  await step(); popFrame(f);
+}
+
+function recPrepare() {
+  recDef = REC[$('#rec-f').value];
+  $('#rec-n').max = recDef.max;
+  showCode(); calls = 0; maxDepth = 0; recStatus();
+  $('#rec-stack').innerHTML = '<div class="frame main">main()</div>';
+  $('#rec-tree').innerHTML = '';
+}
+$('#rec-f').onchange = recPrepare;
+
+ops.recRun = async () => {
+  recPrepare();
+  const n = parseInt($('#rec-n').value, 10);
+  if (!(n >= 0 && n <= recDef.max)) return log('rec', `n debe estar entre 0 y ${recDef.max} para que la animación sea legible`, 'err');
+  $('#rec-log').innerHTML = '';
+  const root = recDef.build(n);
+  layoutTree(root);
+  await visit(root, 1);
+  showCode();
+  log('rec', `Resultado: ${root.label} = ${root.val} · ${calls} llamadas · profundidad máx. ${maxDepth}`, 'ok');
+};
+
+// ---------- pestañas y botones ----------
+$('#tabs').onclick = e => {
+  const t = e.target.dataset.t; if (!t) return;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  document.querySelectorAll('main section').forEach(s => s.classList.toggle('on', s.id === t));
+};
+document.querySelectorAll('[data-run]').forEach(b => b.onclick = async () => {
+  if (busy) return;
+  busy = true;
+  document.querySelectorAll('[data-run], #rec-f').forEach(x => x.disabled = true);
+  try { await ops[b.dataset.run](); }
+  finally { busy = false; document.querySelectorAll('[data-run], #rec-f').forEach(x => x.disabled = false); }
+});
+
+ops.listaReset(); ops.pilaReset(); ops.colaReset(); ops.circReset(); ops.dqReset(); recPrepare();
+</script>
+</body>
+</html>
