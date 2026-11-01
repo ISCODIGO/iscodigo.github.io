@@ -40,5 +40,3 @@ exclude:
   - isc-333/unidad-3/cap8/*.md
   - isc-333/unidad-3/cap8/*.sh
   - isc-333/unidad-3/cap8/*.js
-  # Animaciones de ISC-211: aún no se publican.
-  - isc-211/unidad-2/animaciones.html

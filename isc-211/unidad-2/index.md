@@ -26,5 +26,8 @@ Resumen de las secciones 8.3–8.4 del libro de texto: el ADT Cola (FIFO), imple
 **[6. Recursión](./recursion.md)**
 Resumen del capítulo 2 del libro de texto: algoritmos recursivos, sus componentes, recursión infinita e iteración vs. recursión.
 
+**[🎬 Animaciones interactivas](./animaciones.html)**
+Demostraciones visuales de listas, pilas, colas, deques y recursión.
+
 
 [⬅️ Volver al índice general de la clase](../index.md)
