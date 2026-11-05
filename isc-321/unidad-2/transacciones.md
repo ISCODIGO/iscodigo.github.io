@@ -17,7 +17,7 @@ nav_order: 5
 
 **Ejemplo clásico:** transferir 50 de la cuenta *A* a la cuenta *B* (Silberschatz). Son dos actualizaciones, pero una sola unidad lógica:
 
-![Transacción Ti. Cargo a la cuenta A: read(A), A := A - 50, write(A). Abono a la cuenta B: read(B), B := B + 50, write(B). Entre write(A) y read(B) hay una inconsistencia temporal: A + B no se conserva](./transferencia.png)
+![Transacción Ti. Cargo a la cuenta A: read(A), A := A - 50, write(A). Abono a la cuenta B: read(B), B := B + 50, write(B). Entre write(A) y read(B) hay una inconsistencia temporal: A + B no se conserva](../../assets/transferencia.png)
 
 - El cargo y el abono por separado **no** son transacciones: ninguno lleva por sí solo a la base de datos de un estado consistente a otro
 - Durante la ejecución se permite una **inconsistencia temporal**: entre `write(A)` y `write(B)` falta dinero, y es inevitable porque una de las dos escrituras va primero
@@ -26,7 +26,7 @@ nav_order: 5
 
 Para explicar los conceptos, la base de datos se ve como una colección de **elementos de datos** con nombre (X, Y). El tamaño de un elemento (campo, registro o bloque de disco) es su **granularidad**. Solo hay dos operaciones:
 
-![Pasos de read_item(X): 1) buscar en disco el bloque que contiene X, 2) copiarlo a un búfer en memoria si no está ya, 3) copiar X a la variable de programa. Pasos de write_item(X): 1) y 2) iguales, 3) copiar X de la variable de programa al búfer, 4) grabar el bloque en disco, ahora o más tarde](./read-write-item.png)
+![Pasos de read_item(X): 1) buscar en disco el bloque que contiene X, 2) copiarlo a un búfer en memoria si no está ya, 3) copiar X a la variable de programa. Pasos de write_item(X): 1) y 2) iguales, 3) copiar X de la variable de programa al búfer, 4) grabar el bloque en disco, ahora o más tarde](../../assets/read-write-item.png)
 
 - El paso 4 es el que explica casi todo lo demás: una transacción puede haber "escrito" y sus datos seguir **solo en memoria**
 - **Conjunto de lectura** (*read-set*): elementos que la transacción lee. **Conjunto de escritura** (*write-set*): los que escribe
@@ -131,7 +131,7 @@ Para poder recuperarse, el sistema hace seguimiento de estas operaciones:
 | `COMMIT_TRANSACTION` | Finalización **satisfactoria**: los cambios no se desharán |
 | `ROLLBACK` (o `ABORT`) | Finalización **no satisfactoria**: hay que deshacer los cambios |
 
-![Diagrama de estados. BEGIN_TRANSACTION lleva a Activa; END_TRANSACTION, a Parcialmente confirmada; COMMIT, a Confirmada. ABORT lleva a Fallo desde Activa o desde Parcialmente confirmada. Tanto Confirmada como Fallo terminan en Terminada](./estados-transaccion.png)
+![Diagrama de estados. BEGIN_TRANSACTION lleva a Activa; END_TRANSACTION, a Parcialmente confirmada; COMMIT, a Confirmada. ABORT lleva a Fallo desde Activa o desde Parcialmente confirmada. Tanto Confirmada como Fallo terminan en Terminada](../../assets/estados-transaccion.png)
 
 - **Activa**: estado inicial, mientras emite lecturas y escrituras
 - **Parcialmente confirmada**: ejecutó su última operación, pero los cambios pueden seguir en memoria; un fallo todavía puede impedir que se confirme
