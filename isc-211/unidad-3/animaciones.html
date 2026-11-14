@@ -159,13 +159,17 @@
 
 <!-- ================= HEAP ================= -->
 <section id="heap">
-  <h2>Max-heap en arreglo</h2>
-  <p class="desc">Árbol <b>completo</b> donde cada padre es mayor que sus hijos. Como en Goodrich (sección 9.3), se guarda en un arreglo desde la posición 0: los hijos de <code>k</code> están en <code>2k + 1</code> y <code>2k + 2</code>, y su padre en <code>(k − 1) / 2</code>. (Otros libros, como Cormen, ponen la raíz en 1: hijos en <code>2k</code> y <code>2k + 1</code>, padre en <code>k / 2</code>; aquí usamos 0.) Insertar sube el nodo (<i>up-heap</i>); eliminar la raíz baja el último elemento (<i>down-heap</i>). Ambas son O(log n).</p>
+  <h2 id="heap-h">Max-heap en arreglo</h2>
+  <p class="desc">Árbol <b>completo</b> que cumple la regla de orden: en un <b>max-heap</b> cada padre es mayor o igual que sus hijos (la raíz es el máximo); en un <b>min-heap</b> cada padre es menor o igual (la raíz es el mínimo). Se guarda en un arreglo por niveles. Con la raíz en la <b>posición 0</b> (Goodrich, sección 9.3) los hijos de <code>k</code> están en <code>2k + 1</code> y <code>2k + 2</code>, y su padre en <code>(k − 1) / 2</code>. Con la raíz en la <b>posición 1</b> (Cormen) la celda 0 no se usa: hijos en <code>2k</code> y <code>2k + 1</code>, padre en <code>k / 2</code>. Insertar sube el nodo (<i>up-heap</i>); eliminar la raíz baja el último elemento (<i>down-heap</i>). Ambas son O(log n).</p>
+  <div class="ctrl">
+    tipo <select id="heap-tipo"><option value="max">max-heap</option><option value="min">min-heap</option></select>
+    raíz en <select id="heap-base"><option value="0">posición 0</option><option value="1">posición 1</option></select>
+  </div>
   <div class="ctrl">
     valor <input id="heap-v" type="number" placeholder="aleat.">
     <button class="op" data-run="heapInsert">insert(valor)</button>
-    <button class="op" data-run="heapRemove">removeMax()</button>
-    <button class="op" data-run="heapMax">max()</button>
+    <button class="op" data-run="heapRemove" id="heap-rm">removeMax()</button>
+    <button class="op" data-run="heapMax" id="heap-top">max()</button>
     <button class="op" data-run="heapBuild">construir de lista aleatoria</button>
     <button class="op sec" data-run="heapReset">Vaciar</button>
   </div>
@@ -228,12 +232,13 @@ $('#speed').oninput = () => $('#speedv').textContent = speed() + '×';
 $('#pause').onchange = () => { if (!$('#pause').checked && nextRes) { nextRes(); nextRes = null; } };
 $('#next').onclick = () => { if (nextRes) { nextRes(); nextRes = null; } };
 
+const SLOW = 2;   // factor global: a 1× cada paso dura el doble que antes
 function step(ms = 700) {
   if ($('#pause').checked) {
     $('#next').disabled = false;
     return new Promise(r => nextRes = () => { $('#next').disabled = true; r(); });
   }
-  return new Promise(r => setTimeout(r, ms / speed()));
+  return new Promise(r => setTimeout(r, SLOW * ms / speed()));
 }
 
 function log(p, msg, kind = '') {
@@ -510,77 +515,112 @@ ops.recRandom = async () => {
 };
 
 // ================= HEAP =================
-const Hp = { a: [] };
+// Hp.a guarda siempre los elementos desde 0; Hp.base solo cambia cómo se numeran (0 o 1).
+const Hp = { a: [], min: false, base: 0 };
 const hsize = () => Hp.a.length;
-const parentIdx = k => (k - 1) >> 1;
+const D = i => i + Hp.base;                                   // índice que se muestra
+const better = (x, y) => Hp.min ? x < y : x > y;              // x debe ir más arriba que y
+const okOrder = (p, c) => !better(c, p);                      // el padre p cumple la regla con el hijo c
+const REL = () => Hp.min ? '≤' : '≥';
+const TOP = () => Hp.min ? 'min' : 'max';
+const parentTxt = k => Hp.base ? `${D(k)} / 2` : `(${D(k)} − 1) / 2`;
+const childTxt = k => Hp.base ? `2·${D(k)}` : `2·${D(k)} + 1`;
 function heapTree(i = 0) { return i < Hp.a.length ? { id: i, v: Hp.a[i], l: heapTree(2 * i + 1), r: heapTree(2 * i + 2) } : null; }
 function drawHeap(hi = {}) {
-  renderTree('heap', heapTree(), { hi, sub: n => `[${n.id}]` });
+  renderTree('heap', heapTree(), { hi, sub: n => `[${D(n.id)}]` });
   const el = $('#heap-arr'); el.innerHTML = '';
+  if (Hp.base) el.insertAdjacentHTML('beforeend', `<div class="cell waste" title="sin usar"><span class="idx">0</span></div>`);
   for (let i = 0; i < HEAP_CAP; i++) {
     const v = Hp.a[i];
-    el.insertAdjacentHTML('beforeend', `<div class="cell ${v == null ? 'empty' : ''} ${hi[i] || ''}"><span class="idx">${i}</span>${v ?? ''}</div>`);
+    el.insertAdjacentHTML('beforeend', `<div class="cell ${v == null ? 'empty' : ''} ${hi[i] || ''}"><span class="idx">${D(i)}</span>${v ?? ''}</div>`);
   }
   const n = hsize();
-  $('#heap-st').textContent = `n = ${n} · capacidad = ${HEAP_CAP} · hojas: posiciones ${n ? `${n >> 1}..${n - 1}` : '—'}`;
+  $('#heap-st').textContent = `${TOP()}-heap · raíz en a[${Hp.base}] · n = ${n} · capacidad = ${HEAP_CAP} · ` +
+    `último en a[${n ? D(n - 1) : '—'}] · hojas: posiciones ${n ? `${D(n >> 1)}..${D(n - 1)}` : '—'}`;
+}
+function heapLabels() {
+  $('#heap-h').textContent = `${Hp.min ? 'Min' : 'Max'}-heap en arreglo`;
+  $('#heap-rm').textContent = `remove${Hp.min ? 'Min' : 'Max'}()`;
+  $('#heap-top').textContent = `${TOP()}()`;
 }
 const swap = (i, j) => [Hp.a[i], Hp.a[j]] = [Hp.a[j], Hp.a[i]];
 async function siftDown(k) {
   const a = Hp.a, n = hsize();
   while (2 * k + 1 < n) {
     let c = 2 * k + 1;
-    if (c + 1 < n && a[c + 1] > a[c]) c++;
+    const two = c + 1 < n;
+    if (two && better(a[c + 1], a[c])) c++;
     drawHeap({ [k]: 'act', [c]: 'path' });
-    log('heap', `${sp(2)}a[${k}] = ${a[k]} vs. hijo mayor a[${c}] = ${a[c]}`); await step();
-    if (a[k] >= a[c]) { log('heap', `${sp(2)}${a[k]} ≥ ${a[c]} → cumple la regla de orden, termina`); break; }
+    log('heap', `${sp(2)}a[${D(k)}] = ${a[k]} vs. hijo ${Hp.min ? 'menor' : 'mayor'} a[${D(c)}] = ${a[c]}` +
+      `  (hijos en ${childTxt(k)}${two ? ` y ${childTxt(k)} + 1` : ''})`); await step();
+    if (okOrder(a[k], a[c])) { log('heap', `${sp(2)}${a[k]} ${REL()} ${a[c]} → cumple la regla de orden, termina`); break; }
     swap(k, c); drawHeap({ [c]: 'act', [k]: 'new' });
-    log('heap', `${sp(2)}intercambiar → baja a la posición ${c}`); await step();
+    log('heap', `${sp(2)}intercambiar → baja a la posición ${D(c)}`); await step();
     k = c;
   }
   drawHeap();
+}
+async function heapify(msg) {
+  const n = hsize();
+  $('#heap-log').innerHTML = ''; drawHeap();
+  log('heap', `${msg} Las hojas ${n ? `${D(n >> 1)}..${D(n - 1)}` : '—'} ya cumplen la regla.`); await step();
+  for (let i = (n >> 1) - 1; i >= 0; i--) { log('heap', `downheap(${D(i)})`); await siftDown(i); }
+  log('heap', `${TOP()}-heap construido de abajo hacia arriba: O(n)`, 'ok');
 }
 ops.heapInsert = async () => {
   const x = val('heap'), a = Hp.a;
   if (hsize() === HEAP_CAP) return log('heap', `insert(${x}): heap lleno`, 'err');
   a.push(x); let k = hsize() - 1;
-  drawHeap({ [k]: 'new' }); log('heap', `insert(${x}): se coloca al final, a[${k}] (el árbol sigue completo)`); await step();
+  drawHeap({ [k]: 'new' }); log('heap', `insert(${x}): se coloca al final, a[${D(k)}] (el árbol sigue completo)`); await step();
   while (k > 0) {
-    const p = parentIdx(k);
+    const p = (k - 1) >> 1;
     drawHeap({ [k]: 'act', [p]: 'path' });
-    log('heap', `${sp(2)}a[${k}] = ${a[k]} vs. padre a[(${k} − 1) / 2 = ${p}] = ${a[p]}`); await step();
-    if (a[p] >= a[k]) { log('heap', `${sp(2)}${a[p]} ≥ ${a[k]} → termina`); break; }
-    swap(k, p); drawHeap({ [p]: 'act', [k]: 'new' }); log('heap', `${sp(2)}intercambiar → sube a la posición ${p}`); await step();
+    log('heap', `${sp(2)}a[${D(k)}] = ${a[k]} vs. padre a[${parentTxt(k)} = ${D(p)}] = ${a[p]}`); await step();
+    if (okOrder(a[p], a[k])) { log('heap', `${sp(2)}${a[p]} ${REL()} ${a[k]} → termina`); break; }
+    swap(k, p); drawHeap({ [p]: 'act', [k]: 'new' }); log('heap', `${sp(2)}intercambiar → sube a la posición ${D(p)}`); await step();
     k = p;
   }
   drawHeap(); log('heap', `insert(${x}) listo`, 'ok');
 };
 ops.heapRemove = async () => {
-  if (!hsize()) return log('heap', 'removeMax(): heap vacío', 'err');
-  const max = Hp.a[0];
-  drawHeap({ 0: 'del' }); log('heap', `removeMax(): el máximo está en la raíz, a[0] = ${max}`); await step();
+  const op = `remove${Hp.min ? 'Min' : 'Max'}()`;
+  if (!hsize()) return log('heap', `${op}: heap vacío`, 'err');
+  const top = Hp.a[0];
+  drawHeap({ 0: 'del' }); log('heap', `${op}: el ${Hp.min ? 'mínimo' : 'máximo'} está en la raíz, a[${D(0)}] = ${top}`); await step();
   const last = Hp.a.pop();
   if (hsize()) {
     Hp.a[0] = last; drawHeap({ 0: 'act' });
     log('heap', `${sp(2)}se mueve el último elemento (${last}) a la raíz y se reacomoda hacia abajo`); await step();
     await siftDown(0);
   } else drawHeap();
-  log('heap', `removeMax() → devuelve ${max}`, 'ok');
+  log('heap', `${op} → devuelve ${top}`, 'ok');
 };
 ops.heapMax = async () => {
-  if (!hsize()) return log('heap', 'max(): heap vacío', 'err');
-  drawHeap({ 0: 'act' }); log('heap', `max() = a[0] = ${Hp.a[0]} (O(1), no se elimina)`, 'ok'); await step(); drawHeap();
+  if (!hsize()) return log('heap', `${TOP()}(): heap vacío`, 'err');
+  drawHeap({ 0: 'act' }); log('heap', `${TOP()}() = a[${D(0)}] = ${Hp.a[0]} (O(1), no se elimina)`, 'ok'); await step(); drawHeap();
 };
 ops.heapBuild = async () => {
   const n = 10;
   Hp.a = Array.from({ length: n }, () => Math.floor(Math.random() * 90) + 10);
-  $('#heap-log').innerHTML = ''; drawHeap();
-  log('heap', `Lista aleatoria de ${n} elementos (aún no es heap). Las hojas ${n >> 1}..${n - 1} ya cumplen la regla.`); await step();
-  for (let i = (n >> 1) - 1; i >= 0; i--) { log('heap', `downheap(${i})`); await siftDown(i); }
-  log('heap', 'Heap construido de abajo hacia arriba: O(n)', 'ok');
+  await heapify(`Lista aleatoria de ${n} elementos (aún no es heap).`);
 };
 ops.heapReset = async () => {
-  Hp.a = []; $('#heap-log').innerHTML = ''; drawHeap();
+  Hp.a = []; Hp.min = $('#heap-tipo').value === 'min'; Hp.base = +$('#heap-base').value;
+  $('#heap-log').innerHTML = ''; heapLabels(); drawHeap();
   log('heap', 'Heap vacío. Inserta varios valores o construye uno a partir de una lista.');
+};
+// cambiar de max a min (o viceversa) invierte la regla: se reconstruye el heap con los mismos elementos
+ops.heapTipo = async () => {
+  Hp.min = $('#heap-tipo').value === 'min'; heapLabels();
+  if (!hsize()) { drawHeap(); return log('heap', `Ahora es un ${TOP()}-heap.`); }
+  await heapify(`Cambio a ${TOP()}-heap: los mismos elementos ya no cumplen la nueva regla, se reconstruye.`);
+};
+// cambiar la base no mueve ningún elemento: solo cambia la numeración de las posiciones
+ops.heapBase = async () => {
+  Hp.base = +$('#heap-base').value; drawHeap();
+  log('heap', Hp.base
+    ? 'Raíz en a[1] (a[0] sin usar): hijos de k en 2k y 2k + 1, padre en k / 2.'
+    : 'Raíz en a[0]: hijos de k en 2k + 1 y 2k + 2, padre en (k − 1) / 2.');
 };
 
 // ================= BST y AVL (comparten búsqueda, inserción y eliminación) =================
@@ -741,13 +781,17 @@ $('#tabs').onclick = e => {
   document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
   document.querySelectorAll('main section').forEach(s => s.classList.toggle('on', s.id === t));
 };
-document.querySelectorAll('[data-run]').forEach(b => b.onclick = async () => {
+const LOCK = '[data-run], #rec-k, #heap-tipo, #heap-base';
+async function run(name) {
   if (busy) return;
   busy = true;
-  document.querySelectorAll('[data-run], #rec-k').forEach(x => x.disabled = true);
-  try { await ops[b.dataset.run](); }
-  finally { busy = false; document.querySelectorAll('[data-run], #rec-k').forEach(x => x.disabled = false); }
-});
+  document.querySelectorAll(LOCK).forEach(x => x.disabled = true);
+  try { await ops[name](); }
+  finally { busy = false; document.querySelectorAll(LOCK).forEach(x => x.disabled = false); }
+}
+document.querySelectorAll('[data-run]').forEach(b => b.onclick = () => run(b.dataset.run));
+$('#heap-tipo').onchange = () => run('heapTipo');
+$('#heap-base').onchange = () => run('heapBase');
 
 ops.binReset(); ops.recExample(); ops.heapReset(); ops.bstReset(); ops.avlReset();
 </script>
