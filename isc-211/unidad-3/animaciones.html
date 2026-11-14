@@ -160,7 +160,7 @@
 <!-- ================= HEAP ================= -->
 <section id="heap">
   <h2>Max-heap en arreglo</h2>
-  <p class="desc">Árbol <b>completo</b> donde cada padre es mayor que sus hijos. Como en Goodrich (sección 9.3), se guarda en un arreglo desde la posición 0: los hijos de <code>k</code> están en <code>2k + 1</code> y <code>2k + 2</code>, y su padre en <code>(k − 1) / 2</code>. Insertar sube el nodo (<i>up-heap</i>); eliminar la raíz baja el último elemento (<i>down-heap</i>). Ambas son O(log n).</p>
+  <p class="desc">Árbol <b>completo</b> donde cada padre es mayor que sus hijos. Como en Goodrich (sección 9.3), se guarda en un arreglo desde la posición 0: los hijos de <code>k</code> están en <code>2k + 1</code> y <code>2k + 2</code>, y su padre en <code>(k − 1) / 2</code>. (Otros libros, como Cormen, ponen la raíz en 1: hijos en <code>2k</code> y <code>2k + 1</code>, padre en <code>k / 2</code>; aquí usamos 0.) Insertar sube el nodo (<i>up-heap</i>); eliminar la raíz baja el último elemento (<i>down-heap</i>). Ambas son O(log n).</p>
   <div class="ctrl">
     valor <input id="heap-v" type="number" placeholder="aleat.">
     <button class="op" data-run="heapInsert">insert(valor)</button>

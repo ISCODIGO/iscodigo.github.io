@@ -465,12 +465,14 @@ Espacio: **O(n)**.
 
 ### Representación con arreglo
 
-Se numeran las posiciones **por niveles**, de izquierda a derecha (*level numbering*). Goodrich empieza en 0:
+Se numeran las posiciones **por niveles**, de izquierda a derecha (*level numbering*). Hay dos convenciones según dónde va la raíz:
 
-- La raíz está en el índice **0**.
-- El hijo izquierdo de i está en **2i + 1**.
-- El hijo derecho de i está en **2i + 2**.
-- El padre de i está en **⌊(i − 1) / 2⌋**.
+| Raíz en | Hijo izquierdo | Hijo derecho | Padre | Quién la usa |
+|---|---|---|---|---|
+| **0** | 2i + 1 | 2i + 2 | ⌊(i − 1) / 2⌋ | Goodrich, `PriorityQueue` de Java, `heapq` de Python, `std::priority_queue` de C++ |
+| **1** | 2i | 2i + 1 | ⌊i / 2⌋ | Cormen (CLRS), Sedgewick, Weiss; la casilla 0 queda vacía o como centinela |
+
+Las dos son correctas: la de 1 tiene fórmulas más limpias y la de 0 aprovecha que los arreglos de Java empiezan en 0. **En este curso usamos raíz en 0**, igual que Goodrich y que las [animaciones](./animaciones.html). Si consultas otro libro, revisa cuál usa: mezclar las fórmulas produce errores de uno (*off-by-one*).
 
 ```mermaid
 flowchart TD
@@ -501,15 +503,13 @@ flowchart TD
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | dato | / | * | + | + | 4 | - | 2 | 3 | 1 | | | 9 | 5 |
 
-El libro de texto (para el heap) empieza en **1**, sin usar la casilla 0. Entonces las fórmulas quedan más simples: hijos en **2k** y **2k + 1**, padre en **k / 2**.
-
 Ventajas y desventajas:
 
 - **+** Una posición es solo un entero, y `parent`, `left` y `right` son operaciones aritméticas.
 - **−** Las posiciones que no existen dejan **huecos** en el arreglo. En el peor caso el arreglo necesita **2^n − 1** casillas para n nodos.
 - **−** Algunas actualizaciones son caras: eliminar un nodo y subir a su hijo es **O(n)**, porque hay que mover todos sus descendientes.
 
-Funciona muy bien para árboles **completos**, como el [heap](./arboles-busqueda.md#árboles-heap), donde no hay huecos.
+Funciona muy bien para árboles **completos**, como el heap (pestaña **Heap** de las [animaciones](./animaciones.html)), donde no hay huecos.
 
 ### Estructura enlazada para árboles generales
 
@@ -766,7 +766,7 @@ public static double evaluar(LinkedBinaryTree<String> T, Position<String> p) {
 }
 ```
 
-**Ordenar (inorden).** El inorden de un árbol binario de búsqueda da los datos **ordenados de menor a mayor**. Insertar los datos en un [BST](./arboles-busqueda.md) y luego recorrerlo en inorden es un método de ordenamiento.
+**Ordenar (inorden).** El inorden de un árbol binario de búsqueda da los datos **ordenados de menor a mayor**. Insertar los datos en un [BST](./bst-avl.md) y luego recorrerlo en inorden es un método de ordenamiento.
 
 **Borrar todo el árbol (posorden).** En un lenguaje sin recolector de basura (como C++) hay que liberar nodo por nodo **de las hojas hacia la raíz**: si se borra primero un padre, se pierden las referencias a sus hijos. Ese es justo el orden del posorden: borrar el subárbol izquierdo, borrar el derecho y al final borrar la raíz. En Java basta con `raiz = null` y el recolector de basura hace el resto.
 
@@ -900,6 +900,6 @@ De Goodrich:
 3. Demuestre que en un árbol binario propio n<sub>E</sub> = n<sub>I</sub> + 1.
 4. ¿Cuántas casillas necesita la representación con arreglo de un árbol binario cuyos nodos forman una sola rama hacia la derecha, de n nodos?
 
-Continúa en [BST, AVL y otros árboles](./arboles-busqueda.md).
+Continúa en [BST y AVL según Goodrich](./bst-avl.md).
 
 [⬅️ Volver a la Unidad II](./index.md)

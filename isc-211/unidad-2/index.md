@@ -26,12 +26,6 @@ Resumen de las secciones 8.3–8.4 del libro de texto: el ADT Cola (FIFO), imple
 **[6. Recursión](./recursion.md)**
 Resumen del capítulo 2 del libro de texto: algoritmos recursivos, sus componentes, recursión infinita e iteración vs. recursión.
 
-**[7. Árboles](./arboles.md)**
-Resumen del capítulo 9 (secciones 9.1–9.2) del libro de texto y del capítulo 8 de Goodrich: terminología, profundidad y altura, el ADT Árbol y Árbol binario, propiedades, implementación enlazada y con arreglo, y recorridos (preorden, inorden, posorden, por niveles y de Euler) con sus aplicaciones.
-
-**[8. BST, AVL y otros árboles](./arboles-busqueda.md)**
-Resumen de las secciones 9.2.2–9.6 del libro de texto y de la sección 11.1 de Goodrich: árboles binarios de búsqueda (y su uso como mapa ordenado), AVL y rotaciones, heap y cola de prioridad, trie y splay tree.
-
 **[🎬 Animaciones interactivas](./animaciones.html)**
 Demostraciones visuales de listas, pilas, colas, deques y recursión.
 
