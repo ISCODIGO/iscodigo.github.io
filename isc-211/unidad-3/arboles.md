@@ -1,17 +1,17 @@
 ---
 layout: post
 title: "Árboles"
-parent: "Unidad II: Recursión, Listas, Genéricos, Pilas y Colas"
+parent: "Unidad III: Árboles"
 grand_parent: "ISC-211 Estructuras de Datos"
-nav_order: 7
+nav_order: 1
 mermaid: true
 ---
 
-Resumen basado en el libro de texto (de la Cueva et al., *Estructura de datos y algoritmos fundamentales*), capítulo 9 (Estructuras de datos jerárquicas), y en Goodrich, *Data Structures and Algorithms in Java*, capítulo 8 (Trees). El libro de texto presenta el código en C++; aquí se muestra en Java. Todo el código usa la [recursión](./recursion.md) y los [genéricos](./genericos.md) vistos en esta unidad.
+Resumen basado en el libro de texto (de la Cueva et al., *Estructura de datos y algoritmos fundamentales*), capítulo 9 (Estructuras de datos jerárquicas), y en Goodrich, *Data Structures and Algorithms in Java*, capítulo 8 (Trees). El libro de texto presenta el código en C++; aquí se muestra en Java. Todo el código usa la [recursión](../unidad-2/recursion.md) y los [genéricos](../unidad-2/genericos.md) vistos en la Unidad II.
 
 ## Estructuras lineales y jerárquicas
 
-Las estructuras que hemos visto hasta ahora ([listas](./listas-enlazadas.md), [pilas](./pilas.md), [colas](./colas.md)) son **lineales**: cada dato tiene un predecesor (excepto el primero) y un sucesor (excepto el último).
+Las estructuras que hemos visto hasta ahora ([listas](../unidad-2/listas-enlazadas.md), [pilas](../unidad-2/pilas.md), [colas](../unidad-2/colas.md)) son **lineales**: cada dato tiene un predecesor (excepto el primero) y un sucesor (excepto el último).
 
 Una estructura **jerárquica** es no lineal: cada dato tiene **exactamente un predecesor**, excepto el primero, que no tiene ninguno, y puede tener **de 0 a n sucesores**. Dibujada con el primero arriba y sus sucesores hacia abajo, parece un organigrama o un árbol genealógico. Por eso se le llama **árbol**: es un árbol "al revés", con la raíz arriba y las ramas hacia abajo.
 
@@ -609,7 +609,7 @@ El libro de texto rastrea el preorden numerando cada llamada (llamada.paso). Los
       ...
 ```
 
-Cuando una llamada termina, la ejecución **regresa al punto donde se hizo esa llamada**: es la [pila de llamadas](./recursion.md) en acción.
+Cuando una llamada termina, la ejecución **regresa al punto donde se hizo esa llamada**: es la [pila de llamadas](../unidad-2/recursion.md) en acción.
 
 ### Implementación en Java
 
@@ -670,7 +670,7 @@ for (String s : arbol)        // inorden
 
 ### Recorrido por niveles (en anchura)
 
-El recorrido **en anchura** (*breadth-first*) visita todos los nodos de profundidad d antes que los de profundidad d + 1. **No es recursivo**: usa una [cola](./colas.md).
+El recorrido **en anchura** (*breadth-first*) visita todos los nodos de profundidad d antes que los de profundidad d + 1. **No es recursivo**: usa una [cola](../unidad-2/colas.md).
 
 ```
 porNiveles():
@@ -902,4 +902,4 @@ De Goodrich:
 
 Continúa en [BST y AVL según Goodrich](./bst-avl.md).
 
-[⬅️ Volver a la Unidad II](./index.md)
+[⬅️ Volver a la Unidad III](./index.md)
