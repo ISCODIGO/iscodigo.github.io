@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISC-211 · Animaciones: árboles binarios, recorridos, heap, BST y AVL</title>
+<style>
+  :root { --azul:#1e6fd9; --verde:#2e9e44; --rojo:#c0392b; --amar:#d4a017; --morado:#7d3cbd; --gris:#5b6670; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background:#f5f7fa; color:#1f2a33; }
+  header { background:#1f2a33; color:#fff; padding:12px 20px; display:flex; flex-wrap:wrap; gap:12px 24px; align-items:center; }
+  header h1 { font-size:18px; margin:0; flex:1 1 auto; }
+  header label { font-size:13px; display:flex; align-items:center; gap:6px; }
+  nav { display:flex; flex-wrap:wrap; gap:4px; padding:10px 20px 0; background:#e4e9ef; }
+  nav button { border:0; background:transparent; padding:10px 14px; border-radius:8px 8px 0 0; cursor:pointer; font-size:14px; color:var(--gris); }
+  nav button.on { background:#fff; color:#1f2a33; font-weight:600; }
+  main { max-width:1100px; margin:0 auto; padding:20px; }
+  section { display:none; background:#fff; border-radius:10px; padding:18px 22px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  section.on { display:block; }
+  h2 { margin:0 0 4px; font-size:20px; }
+  h3 { font-size:14px; margin:12px 0 6px; color:var(--gris); text-transform:uppercase; letter-spacing:.04em; }
+  p.desc { margin:0 0 14px; color:var(--gris); font-size:14px; }
+  .ctrl { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:10px; }
+  .ctrl input, .ctrl select { width:70px; padding:6px 8px; border:1px solid #c5ced8; border-radius:6px; font-size:14px; }
+  .ctrl select { width:auto; }
+  button.op { padding:7px 12px; border:1px solid var(--azul); background:#fff; color:var(--azul); border-radius:6px; cursor:pointer; font-size:13px; font-family:ui-monospace, monospace; }
+  button.op:hover:not(:disabled) { background:var(--azul); color:#fff; }
+  button.op.sec { border-color:var(--gris); color:var(--gris); }
+  button.op.sec:hover:not(:disabled) { background:var(--gris); color:#fff; }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  .status { font-family:ui-monospace, monospace; font-size:14px; background:#f0f3f7; padding:6px 10px; border-radius:6px; display:inline-block; margin:6px 0; }
+  .log { list-style:none; margin:10px 0 0; padding:8px 12px; background:#1f2a33; color:#d8e1ea; border-radius:8px; font-family:ui-monospace, monospace; font-size:12.5px; height:160px; overflow-y:auto; }
+  .log li { padding:2px 0; }
+  .log li.err { color:#ff8a80; }
+  .log li.ok { color:#8be28b; }
+  .legend { font-size:12px; color:var(--gris); margin-top:6px; }
+  .legend span { display:inline-block; width:12px; height:12px; border-radius:50%; vertical-align:middle; margin:0 4px 0 10px; border:1px solid #999; }
+
+  /* ---- Árbol (SVG) ---- */
+  .tree { display:block; width:100%; border:1px solid #e1e6ec; border-radius:8px; background:#fff; }
+  .tree line { stroke:#8a96a3; stroke-width:1.6; }
+  .tree circle { fill:#fff; stroke:#34495e; stroke-width:2; transition:fill .2s, stroke .2s; }
+  .tree text { font-family:ui-monospace, monospace; font-size:13px; font-weight:700; text-anchor:middle; dominant-baseline:central; }
+  .tree text.sub { font-size:10.5px; font-weight:600; fill:var(--morado); text-anchor:start; }
+  .tree text.empty { fill:#8a96a3; font-weight:400; }
+  .tree .act circle  { fill:#d6eaff; stroke:var(--azul); stroke-width:3.5; }
+  .tree .path circle { fill:#fff3c4; stroke:var(--amar); }
+  .tree .new circle  { fill:#d4f8d4; stroke:var(--verde); stroke-width:3; }
+  .tree .del circle  { fill:#fdd; stroke:var(--rojo); stroke-width:3; }
+  .tree .done circle { fill:#e3f4e6; stroke:var(--verde); }
+  .tree .rot circle  { fill:#ead9fb; stroke:var(--morado); stroke-width:3; }
+  .tree .sel circle  { stroke:var(--morado); stroke-width:4; stroke-dasharray:5 3; }
+  #bin-tree .tn { cursor:pointer; }
+
+  /* ---- Arreglo (heap) ---- */
+  .arr { display:flex; gap:6px; padding:22px 4px 10px; flex-wrap:wrap; }
+  .cell { position:relative; width:48px; height:48px; border:2px solid #34495e; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px; background:#fff; transition:background .25s, border-color .25s; }
+  .cell .idx { position:absolute; top:-18px; font-size:11px; color:#8a96a3; font-weight:400; }
+  .cell.empty { background:#f4f6f8; border-style:dashed; border-color:#a9b4bf; }
+  .cell.waste { background:repeating-linear-gradient(45deg,#eceff2,#eceff2 5px,#dde2e7 5px,#dde2e7 10px); border-style:dashed; }
+  .cell.new  { background:#d4f8d4; border-color:var(--verde); }
+  .cell.del  { background:#fdd; border-color:var(--rojo); }
+  .cell.path { background:#fff3c4; border-color:var(--amar); }
+  .cell.act  { background:#d6eaff; border-color:var(--azul); }
+
+  /* ---- Recorridos ---- */
+  .grid2 { display:grid; grid-template-columns:minmax(260px,1fr) minmax(220px,1fr); gap:18px; }
+  .code { background:#1f2a33; color:#d8e1ea; border-radius:8px; padding:10px 0; font-family:ui-monospace, monospace; font-size:13px; margin:0; }
+  .code div { padding:1px 14px; white-space:pre; }
+  .code div.hl { background:#3d5a80; color:#fff; }
+  .stack { display:flex; flex-direction:column-reverse; gap:4px; min-height:60px; }
+  .stack.queue { flex-direction:row; flex-wrap:wrap; }
+  .frame { border:2px solid #34495e; border-radius:6px; padding:5px 10px; font-family:ui-monospace, monospace; font-size:13px; background:#fff; }
+  .frame.wait { background:#fff3c4; border-color:var(--amar); }
+  .frame.top  { background:#d6eaff; border-color:var(--azul); }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; min-height:36px; }
+  .chips span { font-family:ui-monospace, monospace; font-weight:700; padding:6px 10px; border-radius:6px; background:#e3f4e6; border:2px solid var(--verde); }
+  @media (max-width:760px) { .grid2 { grid-template-columns:1fr; } main { padding:12px; } section { padding:14px; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ISC-211 · Animaciones de árboles</h1>
+  <label>Velocidad <input id="speed" type="range" min="0.25" max="3" step="0.25" value="1"> <span id="speedv">1×</span></label>
+  <label><input id="pause" type="checkbox"> Paso a paso</label>
+  <button id="next" class="op" style="color:#fff;border-color:#fff;background:transparent" disabled>Siguiente ▶</button>
+</header>
+
+<nav id="tabs">
+  <button data-t="bin" class="on">Árbol binario</button>
+  <button data-t="rec">Recorridos</button>
+  <button data-t="heap">Heap</button>
+  <button data-t="bst">BST</button>
+  <button data-t="avl">AVL</button>
+</nav>
+
+<main>
+
+<!-- ================= ÁRBOL BINARIO ================= -->
+<section id="bin" class="on">
+  <h2>Operaciones del ADT Árbol binario</h2>
+  <p class="desc"><b>Haz clic en un nodo</b> para elegir la posición <code>p</code>. Los métodos siguen la clase <code>LinkedBinaryTree</code> de Goodrich: <code>remove(p)</code> solo funciona si p tiene a lo más un hijo, que toma su lugar.</p>
+  <div class="ctrl">
+    valor <input id="bin-v" type="number" placeholder="aleat.">
+    <button class="op" data-run="binAddRoot">addRoot(e)</button>
+    <button class="op" data-run="binAddLeft">addLeft(p, e)</button>
+    <button class="op" data-run="binAddRight">addRight(p, e)</button>
+    <button class="op" data-run="binSet">set(p, e)</button>
+    <button class="op" data-run="binRemove">remove(p)</button>
+  </div>
+  <div class="ctrl">
+    <button class="op" data-run="binParent">parent(p)</button>
+    <button class="op" data-run="binSibling">sibling(p)</button>
+    <button class="op" data-run="binChildren">children(p)</button>
+    <button class="op" data-run="binDepth">depth(p)</button>
+    <button class="op" data-run="binHeight">height(p)</button>
+    <button class="op" data-run="binSize">size()</button>
+    <button class="op sec" data-run="binReset">Ejemplo</button>
+    <button class="op sec" data-run="binClear">Vaciar</button>
+  </div>
+  <div class="status" id="bin-st"></div>
+  <svg class="tree" id="bin-tree"></svg>
+  <div class="legend"><span style="border:3px dashed var(--morado)"></span>p seleccionado <span style="background:#d6eaff"></span>resultado <span style="background:#fff3c4"></span>camino <span style="background:#d4f8d4"></span>nuevo <span style="background:#fdd"></span>eliminado</div>
+  <ul class="log" id="bin-log"></ul>
+</section>
+
+<!-- ================= RECORRIDOS ================= -->
+<section id="rec">
+  <h2>Recorridos en profundidad y en anchura</h2>
+  <p class="desc"><b>En profundidad</b> (preorden, inorden, posorden): la recursión usa la <b>pila de llamadas</b>; solo cambia en qué momento se visita el nodo. <b>En anchura</b> (por niveles): se usa una <b>cola</b> y se visita nivel por nivel, de izquierda a derecha.</p>
+  <div class="ctrl">
+    recorrido <select id="rec-k">
+      <option value="pre">preorden (raíz, izq, der)</option>
+      <option value="in">inorden (izq, raíz, der)</option>
+      <option value="post">posorden (izq, der, raíz)</option>
+      <option value="bfs">por niveles (anchura)</option>
+    </select>
+    <button class="op" data-run="recRun">Ejecutar</button>
+    <button class="op sec" data-run="recExample">Ejemplo</button>
+    <button class="op sec" data-run="recRandom">Árbol aleatorio</button>
+  </div>
+  <svg class="tree" id="rec-tree"></svg>
+  <div class="legend"><span style="background:#d6eaff"></span>nodo actual <span style="background:#fff3c4"></span>en la pila / cola <span style="background:#e3f4e6"></span>visitado</div>
+  <h3>Secuencia de visita</h3>
+  <div class="chips" id="rec-out"></div>
+  <div class="grid2">
+    <div>
+      <h3>Código</h3>
+      <pre class="code" id="rec-code"></pre>
+      <ul class="log" id="rec-log"></ul>
+    </div>
+    <div>
+      <h3 id="rec-dsname">Pila de llamadas</h3>
+      <div class="stack" id="rec-ds"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HEAP ================= -->
+<section id="heap">
+  <h2>Max-heap en arreglo</h2>
+  <p class="desc">Árbol <b>completo</b> donde cada padre es mayor que sus hijos. Como en Goodrich (sección 9.3), se guarda en un arreglo desde la posición 0: los hijos de <code>k</code> están en <code>2k + 1</code> y <code>2k + 2</code>, y su padre en <code>(k − 1) / 2</code>. Insertar sube el nodo (<i>up-heap</i>); eliminar la raíz baja el último elemento (<i>down-heap</i>). Ambas son O(log n).</p>
+  <div class="ctrl">
+    valor <input id="heap-v" type="number" placeholder="aleat.">
+    <button class="op" data-run="heapInsert">insert(valor)</button>
+    <button class="op" data-run="heapRemove">removeMax()</button>
+    <button class="op" data-run="heapMax">max()</button>
+    <button class="op" data-run="heapBuild">construir de lista aleatoria</button>
+    <button class="op sec" data-run="heapReset">Vaciar</button>
+  </div>
+  <div class="status" id="heap-st"></div>
+  <svg class="tree" id="heap-tree"></svg>
+  <div class="arr" id="heap-arr"></div>
+  <ul class="log" id="heap-log"></ul>
+</section>
+
+<!-- ================= BST ================= -->
+<section id="bst">
+  <h2>Árbol binario de búsqueda (BST)</h2>
+  <p class="desc">Para cada nodo, las claves del subárbol izquierdo son <b>menores</b> y las del derecho <b>mayores</b>. Buscar, insertar y eliminar siguen un solo camino desde la raíz: O(h). Al eliminar un nodo con dos hijos se usa su <b>predecesor</b> (el más a la derecha del subárbol izquierdo).</p>
+  <div class="ctrl">
+    clave <input id="bst-v" type="number" placeholder="aleat.">
+    <button class="op" data-run="bstInsert">insert(clave)</button>
+    <button class="op" data-run="bstSearch">search(clave)</button>
+    <button class="op" data-run="bstRemove">remove(clave)</button>
+    <button class="op" data-run="bstMin">min()</button>
+    <button class="op" data-run="bstMax">max()</button>
+    <button class="op sec" data-run="bstReset">Ejemplo</button>
+    <button class="op sec" data-run="bstClear">Vaciar</button>
+  </div>
+  <div class="status" id="bst-st"></div>
+  <svg class="tree" id="bst-tree"></svg>
+  <div class="legend"><span style="background:#d6eaff"></span>comparando <span style="background:#fff3c4"></span>camino recorrido <span style="background:#d4f8d4"></span>encontrado / nuevo <span style="background:#fdd"></span>eliminado</div>
+  <ul class="log" id="bst-log"></ul>
+</section>
+
+<!-- ================= AVL ================= -->
+<section id="avl">
+  <h2>Árbol AVL</h2>
+  <p class="desc">Un BST donde todo nodo cumple <b>|FE| ≤ 1</b>, con <code>FE = altura(der) − altura(izq)</code> (en morado junto a cada nodo). Tras insertar o eliminar se revisa el camino de regreso hacia la raíz; si un nodo queda con FE = ±2 se aplica la rotación del caso <b>I-I</b>, <b>D-D</b>, <b>I-D</b> o <b>D-I</b>. Prueba insertar 10, 20, 30 o 10, 30, 20 en un árbol vacío.</p>
+  <div class="ctrl">
+    clave <input id="avl-v" type="number" placeholder="aleat.">
+    <button class="op" data-run="avlInsert">insert(clave)</button>
+    <button class="op" data-run="avlRemove">remove(clave)</button>
+    <button class="op" data-run="avlSearch">search(clave)</button>
+    <button class="op sec" data-run="avlReset">Ejemplo</button>
+    <button class="op sec" data-run="avlClear">Vaciar</button>
+  </div>
+  <div class="status" id="avl-st"></div>
+  <svg class="tree" id="avl-tree"></svg>
+  <div class="legend"><span style="background:#d6eaff"></span>revisando FE <span style="background:#fff3c4"></span>camino <span style="background:#ead9fb"></span>desbalanceado / rotación <span style="background:#d4f8d4"></span>nuevo</div>
+  <ul class="log" id="avl-log"></ul>
+</section>
+
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const ops = {};
+const NS = 'http://www.w3.org/2000/svg';
+const HEAP_CAP = 15;
+
+// ---------- utilidades comunes ----------
+let busy = false, nextRes = null, uid = 0;
+const speed = () => +$('#speed').value;
+$('#speed').oninput = () => $('#speedv').textContent = speed() + '×';
+$('#pause').onchange = () => { if (!$('#pause').checked && nextRes) { nextRes(); nextRes = null; } };
+$('#next').onclick = () => { if (nextRes) { nextRes(); nextRes = null; } };
+
+function step(ms = 700) {
+  if ($('#pause').checked) {
+    $('#next').disabled = false;
+    return new Promise(r => nextRes = () => { $('#next').disabled = true; r(); });
+  }
+  return new Promise(r => setTimeout(r, ms / speed()));
+}
+
+function log(p, msg, kind = '') {
+  const li = document.createElement('li');
+  li.className = kind; li.innerHTML = msg;
+  const ul = $('#' + p + '-log');
+  ul.appendChild(li); ul.scrollTop = ul.scrollHeight;
+}
+const sp = n => '&nbsp;'.repeat(n);
+
+function val(p) {
+  const v = $('#' + p + '-v').value.trim();
+  return v === '' ? Math.floor(Math.random() * 90) + 10 : +v;
+}
+
+const node = (v, l = null, r = null) => ({ id: ++uid, v, l, r });
+const ht = n => n ? 1 + Math.max(ht(n.l), ht(n.r)) : -1;
+const size = n => n ? 1 + size(n.l) + size(n.r) : 0;
+const FE = n => ht(n.r) - ht(n.l);
+function parentOf(root, x) {
+  if (!root || root === x) return null;
+  if (root.l === x || root.r === x) return root;
+  return parentOf(root.l, x) || parentOf(root.r, x);
+}
+function findId(n, id) { return !n ? null : n.id === id ? n : findId(n.l, id) || findId(n.r, id); }
+// reemplaza en el padre (o en la raíz) el enlace a `old` por `nw`
+function relink(T, par, old, nw) {
+  if (!par) T.root = nw; else if (par.l === old) par.l = nw; else par.r = nw;
+}
+
+function svgEl(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  parent.appendChild(e); return e;
+}
+
+// Dibuja un árbol binario: x = posición en inorden, y = profundidad.
+// hi: {id: clase}, sub: n => texto pequeño junto al nodo, sel: id seleccionado
+function renderTree(p, root, { hi = {}, sub = null, sel = null } = {}) {
+  const svg = $('#' + p + '-tree');
+  svg.innerHTML = '';
+  if (!root) {
+    svg.setAttribute('viewBox', '0 0 400 60'); svg.style.height = '60px';
+    svgEl('text', { x: 200, y: 30, class: 'empty' }, svg).textContent = 'árbol vacío';
+    return;
+  }
+  const pos = new Map(); let i = 0, depth = 0;
+  (function walk(n, d) {
+    if (!n) return;
+    walk(n.l, d + 1); pos.set(n, [i++, d]); depth = Math.max(depth, d); walk(n.r, d + 1);
+  })(root, 0);
+  const W = 52, H = 64, w = Math.max(i, 8) * W, off = (w - i * W) / 2;
+  const X = n => off + pos.get(n)[0] * W + W / 2, Y = n => pos.get(n)[1] * H + 30;
+  const h = (depth + 1) * H + 6;
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  svg.style.height = Math.min(h, 460) + 'px';
+  const eg = svgEl('g', {}, svg), ng = svgEl('g', {}, svg);
+  for (const n of pos.keys()) {
+    for (const c of [n.l, n.r]) if (c) svgEl('line', { x1: X(n), y1: Y(n), x2: X(c), y2: Y(c) }, eg);
+    const g = svgEl('g', { class: 'tn ' + (hi[n.id] || '') + (sel === n.id ? ' sel' : ''), transform: `translate(${X(n)},${Y(n)})`, 'data-id': n.id }, ng);
+    svgEl('circle', { r: 19 }, g);
+    svgEl('text', {}, g).textContent = n.v;
+    const s = sub && sub(n);
+    if (s !== '' && s != null) svgEl('text', { x: 15, y: -22, class: 'sub' }, g).textContent = s;
+  }
+}
+
+// ================= ÁRBOL BINARIO =================
+const B = { root: null, sel: null };
+let binSub = null;
+function drawBin(hi = {}) {
+  renderTree('bin', B.root, { hi, sel: B.sel, sub: binSub });
+  const p = findId(B.root, B.sel);
+  $('#bin-st').textContent = `size = ${size(B.root)} · altura = ${ht(B.root)} · p = ${p ? p.v : '(ninguno)'}`;
+}
+$('#bin-tree').onclick = e => {
+  const g = e.target.closest('[data-id]');
+  if (!g || busy) return;
+  B.sel = +g.dataset.id; binSub = null;
+  const p = findId(B.root, B.sel);
+  const tipo = p === B.root ? 'raíz' : (p.l || p.r) ? 'interno' : 'hoja (externo)';
+  drawBin(); log('bin', `p = ${p.v}: ${tipo}, ${(p.l ? 1 : 0) + (p.r ? 1 : 0)} hijo(s)`);
+};
+function selP() {
+  const p = findId(B.root, B.sel);
+  if (!p) log('bin', 'Primero selecciona un nodo p haciendo clic sobre él.', 'err');
+  return p;
+}
+async function binAdd(side) {
+  const p = selP(); if (!p) return;
+  const name = side === 'l' ? 'addLeft' : 'addRight', x = val('bin');
+  if (p[side]) return log('bin', `${name}(${p.v}, ${x}): p ya tiene hijo ${side === 'l' ? 'izquierdo' : 'derecho'} → IllegalArgumentException`, 'err');
+  p[side] = node(x); binSub = null;
+  drawBin({ [p[side].id]: 'new' }); log('bin', `${name}(${p.v}, ${x}): nuevo nodo; size++`, 'ok'); await step();
+}
+ops.binAddRoot = async () => {
+  const x = val('bin');
+  if (B.root) return log('bin', `addRoot(${x}): el árbol no está vacío → IllegalStateException`, 'err');
+  B.root = node(x); B.sel = B.root.id; drawBin({ [B.root.id]: 'new' });
+  log('bin', `addRoot(${x}): se crea la raíz (y queda seleccionada)`, 'ok'); await step();
+};
+ops.binAddLeft = () => binAdd('l');
+ops.binAddRight = () => binAdd('r');
+ops.binSet = async () => {
+  const p = selP(); if (!p) return;
+  const x = val('bin'), old = p.v; p.v = x;
+  drawBin({ [p.id]: 'new' }); log('bin', `set(p, ${x}): reemplaza ${old} → devuelve ${old}`, 'ok'); await step();
+};
+ops.binRemove = async () => {
+  const p = selP(); if (!p) return;
+  if (p.l && p.r) { drawBin({ [p.id]: 'del' }); return log('bin', `remove(${p.v}): p tiene dos hijos → IllegalArgumentException`, 'err'); }
+  const c = p.l || p.r, par = parentOf(B.root, p);
+  drawBin({ [p.id]: 'del', ...(c ? { [c.id]: 'path' } : {}) });
+  log('bin', `remove(${p.v}): ` + (c ? `su único hijo ${c.v} ocupa su lugar` : 'es hoja, el padre apunta a null'));
+  await step();
+  relink(B, par, p, c); B.sel = null; binSub = null;
+  drawBin(c ? { [c.id]: 'new' } : {}); log('bin', `&nbsp; size-- → devuelve ${p.v}`, 'ok');
+};
+ops.binParent = async () => {
+  const p = selP(); if (!p) return;
+  const q = parentOf(B.root, p);
+  drawBin(q ? { [q.id]: 'act' } : {}); log('bin', `parent(${p.v}) = ${q ? q.v : 'null (p es la raíz)'}`, 'ok'); await step();
+};
+ops.binSibling = async () => {
+  const p = selP(); if (!p) return;
+  const q = parentOf(B.root, p), s = q && (q.l === p ? q.r : q.l);
+  drawBin(s ? { [s.id]: 'act' } : {});
+  log('bin', `sibling(${p.v}) = ${s ? s.v : q ? 'null (es hijo único)' : 'null (es la raíz)'}`, 'ok'); await step();
+};
+ops.binChildren = async () => {
+  const p = selP(); if (!p) return;
+  const k = [p.l, p.r].filter(Boolean), hi = {};
+  k.forEach(c => hi[c.id] = 'act');
+  drawBin(hi); log('bin', `children(${p.v}) = [${k.map(c => c.v).join(', ')}] · numChildren = ${k.length}`, 'ok'); await step();
+};
+ops.binDepth = async () => {
+  const p = selP(); if (!p) return;
+  log('bin', `depth(${p.v}): contar ancestros subiendo hasta la raíz`);
+  let q = p, d = 0; const hi = {};
+  while (q !== B.root) {
+    hi[q.id] = 'path'; drawBin(hi);
+    log('bin', `${sp(2)}${q.v} no es la raíz → 1 + depth(parent)`); await step();
+    q = parentOf(B.root, q); d++;
+  }
+  hi[q.id] = 'act'; drawBin(hi); log('bin', `${sp(2)}llegamos a la raíz → depth(${p.v}) = ${d}`, 'ok'); await step();
+};
+ops.binHeight = async () => {
+  const p = selP(); if (!p) return;
+  const hs = new Map(), hi = {};
+  binSub = n => hs.has(n.id) ? 'h=' + hs.get(n.id) : '';
+  log('bin', `height(${p.v}): una hoja mide 0; un nodo interno mide 1 + máx(altura de sus hijos)`);
+  async function h(n, d) {
+    hi[n.id] = 'act'; drawBin(hi); await step(450);
+    let r = 0;
+    for (const c of [n.l, n.r]) if (c) { hi[n.id] = 'path'; r = Math.max(r, 1 + await h(c, d + 1)); hi[n.id] = 'act'; }
+    hs.set(n.id, r); hi[n.id] = 'done'; drawBin(hi);
+    log('bin', `${sp(d * 2)}height(${n.v}) = ${r}` + (n.l || n.r ? '' : ' (hoja)'));
+    await step(450); return r;
+  }
+  const r = await h(p, 0);
+  log('bin', `height(${p.v}) = ${r}`, 'ok');
+};
+ops.binSize = async () => {
+  const hi = {}; let k = 0;
+  async function walk(n) { if (!n) return; hi[n.id] = 'act'; k++; drawBin(hi); await step(300); hi[n.id] = 'done'; await walk(n.l); await walk(n.r); }
+  await walk(B.root); drawBin(hi); log('bin', `size() = ${k}`, 'ok');
+};
+ops.binReset = async () => {
+  const n = node;
+  B.root = n(8, n(3, n(1), n(6, n(4), null)), n(10, null, n(14, n(13), null)));
+  B.sel = B.root.id; binSub = null; $('#bin-log').innerHTML = '';
+  drawBin(); log('bin', 'Árbol de ejemplo. La raíz está seleccionada: haz clic en otro nodo y prueba las operaciones.');
+};
+ops.binClear = async () => {
+  B.root = null; B.sel = null; binSub = null; $('#bin-log').innerHTML = '';
+  drawBin(); log('bin', 'Árbol vacío. Usa addRoot(e) para empezar.');
+};
+
+// ================= RECORRIDOS =================
+const R = { root: null };
+const REC_NAME = { pre: 'preorden', in: 'inorden', post: 'posorden' };
+const REC_ORDER = { pre: 'vlr', in: 'lvr', post: 'lrv' };
+const BFS_CODE = ['void porNiveles(Nodo raiz) {', '    Queue<Nodo> q = new LinkedList<>();', '    q.add(raiz);', '    while (!q.isEmpty()) {', '        Nodo n = q.remove();', '        visitar(n);', '        if (n.izq != null) q.add(n.izq);', '        if (n.der != null) q.add(n.der);', '    }', '}'];
+const recCode = k => k === 'bfs' ? BFS_CODE : [`void ${REC_NAME[k]}(Nodo n) {`, '    if (n == null) return;   // caso base',
+  ...[...REC_ORDER[k]].map(op => op === 'v' ? '    visitar(n);' : `    ${REC_NAME[k]}(n.${op === 'l' ? 'izq' : 'der'});`), '}'];
+let recHi = {};
+function showCode(hl = -1) {
+  $('#rec-code').innerHTML = recCode($('#rec-k').value).map((l, i) => `<div class="${i === hl ? 'hl' : ''}">${l.replace(/</g, '&lt;')}</div>`).join('');
+}
+const drawRec = () => renderTree('rec', R.root, { hi: recHi });
+function outChip(v) { $('#rec-out').insertAdjacentHTML('beforeend', `<span>${v}</span>`); }
+function recPrepare() {
+  const k = $('#rec-k').value;
+  recHi = {}; drawRec(); showCode();
+  $('#rec-out').innerHTML = ''; $('#rec-ds').innerHTML = '';
+  $('#rec-dsname').textContent = k === 'bfs' ? 'Cola (frente → final)' : 'Pila de llamadas';
+  $('#rec-ds').className = 'stack' + (k === 'bfs' ? ' queue' : '');
+}
+$('#rec-k').onchange = recPrepare;
+
+async function dfs(n, k, d) {
+  const name = REC_NAME[k], f = document.createElement('div');
+  f.className = 'frame top'; f.textContent = `${name}(${n ? n.v : 'null'})`;
+  $('#rec-ds').querySelectorAll('.top').forEach(x => x.className = 'frame wait');
+  $('#rec-ds').appendChild(f);
+  showCode(0);
+  if (!n) {
+    showCode(1); log('rec', `${sp(d * 2)}${name}(null) → return`); await step(350);
+  } else {
+    recHi[n.id] = 'act'; drawRec(); log('rec', `${sp(d * 2)}→ ${name}(${n.v})`); await step();
+    let visited = false;
+    for (const [j, op] of [...REC_ORDER[k]].entries()) {
+      showCode(2 + j);
+      if (op === 'v') {
+        visited = true; recHi[n.id] = 'act'; drawRec(); outChip(n.v);
+        log('rec', `${sp(d * 2)}&nbsp; visitar(${n.v})`, 'ok'); await step();
+      } else {
+        await step(350);
+        recHi[n.id] = visited ? 'done' : 'path'; drawRec();
+        await dfs(op === 'l' ? n.l : n.r, k, d + 1);
+        recHi[n.id] = 'act'; drawRec();
+      }
+    }
+    recHi[n.id] = 'done'; drawRec(); showCode(2 + 3); await step(350);
+  }
+  f.remove();
+  const fr = $('#rec-ds').querySelectorAll('.frame');
+  if (fr.length) fr[fr.length - 1].className = 'frame top';
+}
+
+async function bfs() {
+  const q = [];
+  const showQ = () => $('#rec-ds').innerHTML = q.map((n, i) => `<div class="frame ${i ? 'wait' : 'top'}">${n.v}</div>`).join('') || '<i style="color:#8a96a3">vacía</i>';
+  showCode(1); showQ(); await step(400);
+  const add = async (n, line) => { showCode(line); q.push(n); recHi[n.id] = 'path'; drawRec(); showQ(); log('rec', `${sp(2)}q.add(${n.v})`); await step(450); };
+  await add(R.root, 2);
+  while (q.length) {
+    showCode(3); await step(300);
+    const n = q.shift(); showCode(4); recHi[n.id] = 'act'; drawRec(); showQ();
+    log('rec', `n = q.remove() → ${n.v}`); await step();
+    showCode(5); outChip(n.v); log('rec', `${sp(2)}visitar(${n.v})`, 'ok'); await step(450);
+    if (n.l) await add(n.l, 6);
+    if (n.r) await add(n.r, 7);
+    recHi[n.id] = 'done'; drawRec();
+  }
+  showCode(3); showQ(); await step(300);
+}
+
+ops.recRun = async () => {
+  recPrepare(); $('#rec-log').innerHTML = '';
+  const k = $('#rec-k').value;
+  if (k === 'bfs') await bfs(); else await dfs(R.root, k, 0);
+  showCode();
+  log('rec', `${k === 'bfs' ? 'Por niveles' : REC_NAME[k]}: ${[...$('#rec-out').children].map(s => s.textContent).join(' ')}`, 'ok');
+};
+ops.recExample = async () => {
+  const n = node;
+  R.root = n('A', n('B', n('D'), n('E', n('H'), null)), n('C', n('F', null, n('I')), n('G')));
+  recPrepare(); $('#rec-log').innerHTML = ''; log('rec', 'Árbol de ejemplo. Elige un recorrido y presiona Ejecutar.');
+};
+ops.recRandom = async () => {
+  // forma aleatoria: cada nodo nuevo se cuelga en un hueco libre al azar
+  const k = 6 + Math.floor(Math.random() * 6), letters = 'ABCDEFGHIJKLMNO';
+  R.root = node('A'); const all = [R.root];
+  for (let i = 1; i < k; i++) {
+    const free = all.flatMap(p => [!p.l && [p, 'l'], !p.r && [p, 'r']].filter(Boolean));
+    const [p, s] = free[Math.floor(Math.random() * free.length)];
+    p[s] = node(letters[i]); all.push(p[s]);
+  }
+  // reetiquetar por niveles para que las letras se lean de arriba hacia abajo
+  const q = [R.root]; let i = 0;
+  while (q.length) { const n = q.shift(); n.v = letters[i++]; if (n.l) q.push(n.l); if (n.r) q.push(n.r); }
+  recPrepare(); $('#rec-log').innerHTML = ''; log('rec', `Árbol aleatorio con ${k} nodos.`);
+};
+
+// ================= HEAP =================
+const Hp = { a: [] };
+const hsize = () => Hp.a.length;
+const parentIdx = k => (k - 1) >> 1;
+function heapTree(i = 0) { return i < Hp.a.length ? { id: i, v: Hp.a[i], l: heapTree(2 * i + 1), r: heapTree(2 * i + 2) } : null; }
+function drawHeap(hi = {}) {
+  renderTree('heap', heapTree(), { hi, sub: n => `[${n.id}]` });
+  const el = $('#heap-arr'); el.innerHTML = '';
+  for (let i = 0; i < HEAP_CAP; i++) {
+    const v = Hp.a[i];
+    el.insertAdjacentHTML('beforeend', `<div class="cell ${v == null ? 'empty' : ''} ${hi[i] || ''}"><span class="idx">${i}</span>${v ?? ''}</div>`);
+  }
+  const n = hsize();
+  $('#heap-st').textContent = `n = ${n} · capacidad = ${HEAP_CAP} · hojas: posiciones ${n ? `${n >> 1}..${n - 1}` : '—'}`;
+}
+const swap = (i, j) => [Hp.a[i], Hp.a[j]] = [Hp.a[j], Hp.a[i]];
+async function siftDown(k) {
+  const a = Hp.a, n = hsize();
+  while (2 * k + 1 < n) {
+    let c = 2 * k + 1;
+    if (c + 1 < n && a[c + 1] > a[c]) c++;
+    drawHeap({ [k]: 'act', [c]: 'path' });
+    log('heap', `${sp(2)}a[${k}] = ${a[k]} vs. hijo mayor a[${c}] = ${a[c]}`); await step();
+    if (a[k] >= a[c]) { log('heap', `${sp(2)}${a[k]} ≥ ${a[c]} → cumple la regla de orden, termina`); break; }
+    swap(k, c); drawHeap({ [c]: 'act', [k]: 'new' });
+    log('heap', `${sp(2)}intercambiar → baja a la posición ${c}`); await step();
+    k = c;
+  }
+  drawHeap();
+}
+ops.heapInsert = async () => {
+  const x = val('heap'), a = Hp.a;
+  if (hsize() === HEAP_CAP) return log('heap', `insert(${x}): heap lleno`, 'err');
+  a.push(x); let k = hsize() - 1;
+  drawHeap({ [k]: 'new' }); log('heap', `insert(${x}): se coloca al final, a[${k}] (el árbol sigue completo)`); await step();
+  while (k > 0) {
+    const p = parentIdx(k);
+    drawHeap({ [k]: 'act', [p]: 'path' });
+    log('heap', `${sp(2)}a[${k}] = ${a[k]} vs. padre a[(${k} − 1) / 2 = ${p}] = ${a[p]}`); await step();
+    if (a[p] >= a[k]) { log('heap', `${sp(2)}${a[p]} ≥ ${a[k]} → termina`); break; }
+    swap(k, p); drawHeap({ [p]: 'act', [k]: 'new' }); log('heap', `${sp(2)}intercambiar → sube a la posición ${p}`); await step();
+    k = p;
+  }
+  drawHeap(); log('heap', `insert(${x}) listo`, 'ok');
+};
+ops.heapRemove = async () => {
+  if (!hsize()) return log('heap', 'removeMax(): heap vacío', 'err');
+  const max = Hp.a[0];
+  drawHeap({ 0: 'del' }); log('heap', `removeMax(): el máximo está en la raíz, a[0] = ${max}`); await step();
+  const last = Hp.a.pop();
+  if (hsize()) {
+    Hp.a[0] = last; drawHeap({ 0: 'act' });
+    log('heap', `${sp(2)}se mueve el último elemento (${last}) a la raíz y se reacomoda hacia abajo`); await step();
+    await siftDown(0);
+  } else drawHeap();
+  log('heap', `removeMax() → devuelve ${max}`, 'ok');
+};
+ops.heapMax = async () => {
+  if (!hsize()) return log('heap', 'max(): heap vacío', 'err');
+  drawHeap({ 0: 'act' }); log('heap', `max() = a[0] = ${Hp.a[0]} (O(1), no se elimina)`, 'ok'); await step(); drawHeap();
+};
+ops.heapBuild = async () => {
+  const n = 10;
+  Hp.a = Array.from({ length: n }, () => Math.floor(Math.random() * 90) + 10);
+  $('#heap-log').innerHTML = ''; drawHeap();
+  log('heap', `Lista aleatoria de ${n} elementos (aún no es heap). Las hojas ${n >> 1}..${n - 1} ya cumplen la regla.`); await step();
+  for (let i = (n >> 1) - 1; i >= 0; i--) { log('heap', `downheap(${i})`); await siftDown(i); }
+  log('heap', 'Heap construido de abajo hacia arriba: O(n)', 'ok');
+};
+ops.heapReset = async () => {
+  Hp.a = []; $('#heap-log').innerHTML = ''; drawHeap();
+  log('heap', 'Heap vacío. Inserta varios valores o construye uno a partir de una lista.');
+};
+
+// ================= BST y AVL (comparten búsqueda, inserción y eliminación) =================
+const T = { bst: { root: null }, avl: { root: null } };
+function drawT(p, hi = {}) {
+  const t = T[p];
+  renderTree(p, t.root, { hi, sub: p === 'avl' ? n => { const f = FE(n); return f > 0 ? '+' + f : '' + f; } : null });
+  $('#' + p + '-st').textContent = `n = ${size(t.root)} · altura = ${ht(t.root)}`;
+}
+const pathHi = (path, cur, cls = 'act') => Object.fromEntries([...path.map(n => [n.id, 'path']), ...(cur ? [[cur.id, cls]] : [])]);
+
+// baja desde la raíz comparando; devuelve { n: nodo con x o null, path: ancestros }
+async function descend(p, x) {
+  const path = []; let n = T[p].root;
+  while (n) {
+    drawT(p, pathHi(path, n));
+    if (x === n.v) { log(p,`${sp(2)}${x} = ${n.v} → encontrado`); break; }
+    log(p, `${sp(2)}${x} ${x < n.v ? '<' : '>'} ${n.v} → ir a la ${x < n.v ? 'izquierda' : 'derecha'}`);
+    await step();
+    path.push(n); n = x < n.v ? n.l : n.r;
+  }
+  return { n, path };
+}
+async function bstInsert(p, x) {
+  log(p, `insert(${x})`);
+  const { n, path } = await descend(p, x);
+  if (n) { drawT(p, pathHi(path, n, 'del')); log(p, `${sp(2)}la clave ya existe; no se inserta`, 'err'); return null; }
+  const nn = node(x), par = path[path.length - 1];
+  if (!par) T[p].root = nn; else if (x < par.v) par.l = nn; else par.r = nn;
+  drawT(p, pathHi(path, nn, 'new'));
+  log(p, `${sp(2)}` + (par ? `subárbol vacío → ${x} es hijo ${x < par.v ? 'izquierdo' : 'derecho'} de ${par.v}` : 'árbol vacío → nueva raíz'), 'ok');
+  await step(); return path;
+}
+async function bstRemove(p, x) {
+  log(p, `remove(${x})`);
+  const t = T[p], { n, path } = await descend(p, x);
+  if (!n) { drawT(p, pathHi(path)); log(p, `${sp(2)}llegamos a null → ${x} no está en el árbol`, 'err'); return null; }
+  const par = path[path.length - 1];
+  if (n.l && n.r) {
+    log(p, `${sp(2)}${n.v} tiene dos hijos → buscar el predecesor (el más a la derecha del subárbol izquierdo)`);
+    path.push(n);
+    let pp = n, q = n.l;
+    while (true) {
+      drawT(p, { ...pathHi(path, q), [n.id]: 'del' }); await step();
+      if (!q.r) break;
+      path.push(q); pp = q; q = q.r;
+    }
+    log(p, `${sp(2)}predecesor = ${q.v}: se copia en lugar de ${n.v}` + (q.l ? ` y su hijo ${q.l.v} sube a su lugar` : ''));
+    n.v = q.v;
+    if (pp === n) pp.l = q.l; else pp.r = q.l;
+    drawT(p, { [n.id]: 'new' });
+  } else {
+    const c = n.l || n.r;
+    drawT(p, { ...pathHi(path, n, 'del'), ...(c ? { [c.id]: 'act' } : {}) });
+    log(p, `${sp(2)}${n.v} tiene ${c ? `un hijo (${c.v}), que ocupa su lugar` : 'cero hijos (hoja): el padre apunta a null'}`);
+    await step();
+    relink(t, par, n, c);
+    drawT(p, c ? { [c.id]: 'new' } : {});
+  }
+  log(p, `remove(${x}) listo`, 'ok'); await step();
+  return path;
+}
+async function bstSearch(p, x) {
+  log(p, `search(${x})`);
+  const { n, path } = await descend(p, x);
+  if (n) { drawT(p, pathHi(path, n, 'new')); log(p, `${sp(2)}encontrado tras ${path.length + 1} comparación(es)`, 'ok'); }
+  else { drawT(p, pathHi(path)); log(p, `${sp(2)}llegamos a null → no está`, 'err'); }
+  await step();
+}
+
+ops.bstInsert = () => bstInsert('bst', val('bst'));
+ops.bstRemove = () => bstRemove('bst', val('bst'));
+ops.bstSearch = () => bstSearch('bst', val('bst'));
+async function bstEdge(side) {
+  const name = side === 'l' ? 'min' : 'max';
+  let n = T.bst.root; const path = [];
+  if (!n) return log('bst', `${name}(): árbol vacío`, 'err');
+  log('bst', `${name}(): bajar siempre a la ${side === 'l' ? 'izquierda' : 'derecha'}`);
+  while (n[side]) { drawT('bst', pathHi(path, n)); await step(450); path.push(n); n = n[side]; }
+  drawT('bst', pathHi(path, n, 'new')); log('bst', `${name}() = ${n.v}`, 'ok'); await step();
+}
+ops.bstMin = () => bstEdge('l');
+ops.bstMax = () => bstEdge('r');
+function fill(p, keys) {
+  T[p].root = null;
+  for (const x of keys) {
+    let n = T[p].root, par = null;
+    while (n) { par = n; n = x < n.v ? n.l : n.r; }
+    const nn = node(x);
+    if (!par) T[p].root = nn; else if (x < par.v) par.l = nn; else par.r = nn;
+  }
+}
+ops.bstReset = async () => {
+  fill('bst', [44, 17, 88, 8, 32, 65, 97, 28, 54, 82, 93, 76, 80]);
+  $('#bst-log').innerHTML = ''; drawT('bst');
+  log('bst', 'BST de ejemplo (Goodrich). Prueba remove(88): tiene dos hijos y su predecesor es 82.');
+};
+ops.bstClear = async () => { T.bst.root = null; $('#bst-log').innerHTML = ''; drawT('bst'); log('bst', 'Árbol vacío.'); };
+
+// ---------- AVL ----------
+function rotR(y) { const x = y.l; y.l = x.r; x.r = y; return x; }
+function rotL(x) { const y = x.r; x.r = y.l; y.l = x; return y; }
+
+// revisa el camino de regreso (de abajo hacia la raíz) y rota donde |FE| = 2
+async function avlFix(path) {
+  const t = T.avl;
+  for (let i = path.length - 1; i >= 0; i--) {
+    const n = path[i], par = path[i - 1] || null, fe = FE(n);
+    drawT('avl', { ...pathHi(path.slice(0, i)), [n.id]: Math.abs(fe) > 1 ? 'rot' : 'act' });
+    log('avl', `${sp(2)}FE(${n.v}) = ${fe}` + (Math.abs(fe) > 1 ? ' → ¡desbalanceado!' : ''), Math.abs(fe) > 1 ? 'err' : '');
+    await step(Math.abs(fe) > 1 ? 900 : 450);
+    if (Math.abs(fe) <= 1) continue;
+    let r;
+    if (fe < 0) {
+      const c = n.l, fc = FE(c);
+      if (fc <= 0) { log('avl', `${sp(4)}caso I-I (FE hijo izq. ${c.v} = ${fc}) → rotación derecha sobre ${n.v}`); r = rotR(n); }
+      else {
+        log('avl', `${sp(4)}caso I-D (FE hijo izq. ${c.v} = +${fc}) → rotación izquierda sobre ${c.v} y luego derecha sobre ${n.v}`);
+        n.l = rotL(c); drawT('avl', { [n.l.id]: 'rot', [n.id]: 'rot' }); await step(900);
+        r = rotR(n);
+      }
+    } else {
+      const c = n.r, fc = FE(c);
+      if (fc >= 0) { log('avl', `${sp(4)}caso D-D (FE hijo der. ${c.v} = ${fc > 0 ? '+' : ''}${fc}) → rotación izquierda sobre ${n.v}`); r = rotL(n); }
+      else {
+        log('avl', `${sp(4)}caso D-I (FE hijo der. ${c.v} = ${fc}) → rotación derecha sobre ${c.v} y luego izquierda sobre ${n.v}`);
+        n.r = rotR(c); drawT('avl', { [n.r.id]: 'rot', [n.id]: 'rot' }); await step(900);
+        r = rotL(n);
+      }
+    }
+    relink(t, par, n, r);
+    drawT('avl', { [r.id]: 'rot', [n.id]: 'path' });
+    log('avl', `${sp(4)}${r.v} queda como raíz del subárbol`, 'ok'); await step(900);
+  }
+  drawT('avl');
+}
+ops.avlInsert = async () => {
+  const path = await bstInsert('avl', val('avl'));
+  if (!path) return;
+  log('avl', 'revisar FE en el camino de regreso a la raíz:'); await avlFix(path);
+};
+ops.avlRemove = async () => {
+  const path = await bstRemove('avl', val('avl'));
+  if (!path) return;
+  log('avl', 'revisar FE en el camino de regreso (puede requerir varias rotaciones):'); await avlFix(path);
+};
+ops.avlSearch = () => bstSearch('avl', val('avl'));
+ops.avlReset = async () => {
+  fill('avl', [50, 30, 70, 20, 40, 60, 80, 10, 35, 65]);
+  $('#avl-log').innerHTML = ''; drawT('avl');
+  log('avl', 'AVL de ejemplo. Prueba insert(5) (caso I-I), insert(37) (caso I-D) o remove(80).');
+};
+ops.avlClear = async () => { T.avl.root = null; $('#avl-log').innerHTML = ''; drawT('avl'); log('avl', 'Árbol vacío. Inserta 10, 20, 30 para ver una rotación D-D.'); };
+
+// ---------- pestañas y botones ----------
+$('#tabs').onclick = e => {
+  const t = e.target.dataset.t; if (!t) return;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  document.querySelectorAll('main section').forEach(s => s.classList.toggle('on', s.id === t));
+};
+document.querySelectorAll('[data-run]').forEach(b => b.onclick = async () => {
+  if (busy) return;
+  busy = true;
+  document.querySelectorAll('[data-run], #rec-k').forEach(x => x.disabled = true);
+  try { await ops[b.dataset.run](); }
+  finally { busy = false; document.querySelectorAll('[data-run], #rec-k').forEach(x => x.disabled = false); }
+});
+
+ops.binReset(); ops.recExample(); ops.heapReset(); ops.bstReset(); ops.avlReset();
+</script>
+</body>
+</html>
