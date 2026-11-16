@@ -61,7 +61,7 @@ EMP_PROY(Dni, NumProyecto, Horas, NombreE, NombreProyecto, UbicaciónProyecto)
 - `EMP_DEPT` mezcla empleado **y** departamento; `EMP_PROY` mezcla empleado, proyecto **y** `TRABAJA_EN`
 - Están bien como **vistas**, no como relaciones base
 
-✅ Diseño válido: una relación por entidad, unidas por una clave externa
+**Diseño válido**: una relación por entidad, unidas por una clave externa
 
 ```text
 EMPLEADO(NombreE, Dni, FechaNac, Dirección, NúmeroDpto)
@@ -89,7 +89,7 @@ En `EMP_DEPT` los datos del departamento se **repiten** por cada empleado:
 | **Borrado** | Al borrar al último empleado de un departamento **se pierde** el departamento |
 | **Modificación** | Cambiar el director del dpto. 5 obliga a actualizar **todas** sus tuplas; si falta una, hay inconsistencia |
 
-✅ Diseño válido: los mismos datos en `EMPLEADO` y `DEPARTAMENTO`
+**Diseño válido**: los mismos datos en `EMPLEADO` y `DEPARTAMENTO`
 
 | NombreE | Dni | NúmeroDpto |
 | --- | --- | --- |
@@ -122,7 +122,7 @@ En `EMP_DEPT` los datos del departamento se **repiten** por cada empleado:
 - La decisión sale de los **requisitos**, no de contar datos: si un atributo, por regla del negocio, **no aplica** a la mayoría de las tuplas, va en una relación aparte
   - Ej.: solo el personal administrativo tiene oficina asignada; los técnicos de campo nunca la tienen. En vez de agregar `NúmeroOficina` a `EMPLEADO`, crear `OFICINAS_EMPS(DniEmpleado, NúmeroOficina)`
 
-✅ Diseño válido: solo tienen tupla en `OFICINAS_EMPS` los empleados con oficina
+**Diseño válido**: solo tienen tupla en `OFICINAS_EMPS` los empleados con oficina
 
 | DniEmpleado | NúmeroOficina |
 | --- | --- |
@@ -142,7 +142,7 @@ En `EMP_DEPT` los datos del departamento se **repiten** por cada empleado:
 - Causa: `UbicaciónProyecto` **no** es clave principal ni clave externa en ninguna de las dos
 - Una buena descomposición permite reconstruir la relación original sin tuplas falsas: es la **reunión no aditiva** (capítulo 11)
 
-✅ Diseño válido: descomponer `EMP_PROY` de modo que cada JOIN use una clave
+**Diseño válido**: descomponer `EMP_PROY` de modo que cada JOIN use una clave
 
 ```text
 EMPLEADO(Dni, NombreE)
@@ -234,9 +234,9 @@ Ejemplo: deducir una DF nueva. Con `F = {A → B, BC → D}`, ¿se cumple `AC �
 1. `A → B` (dada)
 2. `AC → BC` (aumento con `C`)
 3. `BC → D` (dada)
-4. `AC → D` (transitiva con 2 y 3) ✅
+4. `AC → D` (transitiva con 2 y 3)
 
-- ⚠️ Errores comunes:
+- Errores comunes:
   - `XY → A` **no** implica `X → A` ni `Y → A`
     - Ej.: `{Dni, NumProyecto} → Horas`, pero ni `Dni → Horas` ni `NumProyecto → Horas`
   - En cambio, `X → A` y `Y → B` **sí** implican `XY → AB` (aumento y transitiva)
@@ -272,9 +272,9 @@ Traza: `R(A, B, C, D, E)` con `F = {A → B, B → C, CD → E}`. Calcular `{A, 
 | Paso | DF usada | ¿Lado izquierdo ⊆ X⁺? | X⁺ |
 | --- | --- | --- | --- |
 | inicio | — | — | `{A, D}` |
-| 1 | `A → B` | `A` ✅ | `{A, B, D}` |
-| 2 | `B → C` | `B` ✅ | `{A, B, C, D}` |
-| 3 | `CD → E` | `C, D` ✅ | `{A, B, C, D, E}` |
+| 1 | `A → B` | `A`: sí | `{A, B, D}` |
+| 2 | `B → C` | `B`: sí | `{A, B, C, D}` |
+| 3 | `CD → E` | `C, D`: sí | `{A, B, C, D, E}` |
 | 4 | otra pasada | nada nuevo | fin |
 
 ```mermaid
@@ -312,15 +312,15 @@ Ejemplo: `F = {A → C, AC → D, E → AD, E → H}` y `G = {A → CD, E → AH
 
 | ¿G cubre a F? | X⁺ con G | ¿Contiene el lado derecho? |
 | --- | --- | --- |
-| `A → C` | `A⁺ = {A, C, D}` | ✅ |
-| `AC → D` | `AC⁺ = {A, C, D}` | ✅ |
-| `E → AD` | `E⁺ = {E, A, H, C, D}` | ✅ |
-| `E → H` | `E⁺ = {E, A, H, C, D}` | ✅ |
+| `A → C` | `A⁺ = {A, C, D}` | Sí |
+| `AC → D` | `AC⁺ = {A, C, D}` | Sí |
+| `E → AD` | `E⁺ = {E, A, H, C, D}` | Sí |
+| `E → H` | `E⁺ = {E, A, H, C, D}` | Sí |
 
 | ¿F cubre a G? | X⁺ con F | ¿Contiene el lado derecho? |
 | --- | --- | --- |
-| `A → CD` | `A⁺ = {A, C, D}` | ✅ |
-| `E → AH` | `E⁺ = {E, A, D, H, C}` | ✅ |
+| `A → CD` | `A⁺ = {A, C, D}` | Sí |
+| `E → AH` | `E⁺ = {E, A, D, H, C}` | Sí |
 
 - Se cubren mutuamente → son **equivalentes**; G dice lo mismo con menos DF
 
@@ -430,7 +430,7 @@ Tres formas de llevarla a 1FN:
 
 | Opción | Resultado | Desventaja |
 | --- | --- | --- |
-| ✅ **1. Nueva relación** `LOCALIZACIONES_DPTO(NúmeroDpto, UbicaciónDpto)` | Sin redundancia, general | — |
+| **1. Nueva relación** (recomendada) `LOCALIZACIONES_DPTO(NúmeroDpto, UbicaciónDpto)` | Sin redundancia, general | — |
 | 2. Expandir la clave a `{NúmeroDpto, UbicaciónDpto}` | Una tupla por ubicación | **Redundancia** |
 | 3. Columnas `UbicaciónDpto1`, `UbicaciónDpto2`, `UbicaciónDpto3` | Máximo fijo | **NULL**, orden confuso, consultas difíciles |
 
@@ -562,7 +562,7 @@ flowchart TD
 - Descomposición en BCNF:
   - `PARCELAS1AX(IdPropiedad, Área, NúmeroParcela)`
   - `PARCELAS1AY(Área, NombreMunicipio)`
-- ⚠️ Se **pierde FD2**: sus atributos quedan en relaciones distintas
+- Se **pierde FD2**: sus atributos quedan en relaciones distintas
 
 ### ENSEÑAR
 
@@ -586,7 +586,7 @@ flowchart TD
 | --- | --- |
 | `{Estudiante, Profesor}` y `{Estudiante, Curso}` | Sí |
 | `{Curso, Profesor}` y `{Curso, Estudiante}` | Sí |
-| ✅ `{Profesor, Curso}` y `{Profesor, Estudiante}` | **No** |
+| `{Profesor, Curso}` y `{Profesor, Estudiante}` | **No** |
 
 - Las tres pierden **FD1**, así que se elige la que garantiza la **reunión no aditiva**
 
