@@ -28,6 +28,18 @@ PROYECTO(NombreProyecto, NumProyecto, UbicaciónProyecto, NumDptoProyecto)
 TRABAJA_EN(Dni, NumProyecto, Horas)
 ```
 
+Relaciones mal diseñadas que se usan como ejemplo, con la forma normal que violan:
+
+```text
+DEPARTAMENTO(NombreDpto, NúmeroDpto, DniDirector, {UbicacionesDpto})             -- no 1FN
+EMP_PROY(Dni, NombreE, {PROYS(NumProyecto, Horas)})                              -- no 1FN
+EMP_PROY(Dni, NumProyecto, Horas, NombreE, NombreProyecto, UbicaciónProyecto)    -- no 2FN
+EMP_DEPT(NombreE, Dni, FechaNac, Dirección, NúmeroDpto, NombreDpto, DniDirector) -- no 3FN
+PARCELAS(IdPropiedad, NombreMunicipio, NúmeroParcela, Área, Precio, Impuestos)   -- no 2FN
+PARCELAS1A(IdPropiedad, NombreMunicipio, NúmeroParcela, Área)                    -- no BCNF
+ENSEÑAR(Estudiante, Curso, Profesor)                                             -- no BCNF
+```
+
 ## Directrices informales de diseño
 
 | # | Directriz | Problema que evita |
@@ -49,6 +61,16 @@ EMP_PROY(Dni, NumProyecto, Horas, NombreE, NombreProyecto, UbicaciónProyecto)
 - `EMP_DEPT` mezcla empleado **y** departamento; `EMP_PROY` mezcla empleado, proyecto **y** `TRABAJA_EN`
 - Están bien como **vistas**, no como relaciones base
 
+✅ Diseño válido: una relación por entidad, unidas por una clave externa
+
+```text
+EMPLEADO(NombreE, Dni, FechaNac, Dirección, NúmeroDpto)
+DEPARTAMENTO(NombreDpto, NúmeroDpto, DniDirector)
+```
+
+- `EMPLEADO` describe solo empleados y `DEPARTAMENTO` solo departamentos
+- `EMPLEADO.NúmeroDpto` es la clave externa que las relaciona
+
 ### Directriz 2: redundancia y anomalías
 
 En `EMP_DEPT` los datos del departamento se **repiten** por cada empleado:
@@ -67,6 +89,26 @@ En `EMP_DEPT` los datos del departamento se **repiten** por cada empleado:
 | **Borrado** | Al borrar al último empleado de un departamento **se pierde** el departamento |
 | **Modificación** | Cambiar el director del dpto. 5 obliga a actualizar **todas** sus tuplas; si falta una, hay inconsistencia |
 
+✅ Diseño válido: los mismos datos en `EMPLEADO` y `DEPARTAMENTO`
+
+| NombreE | Dni | NúmeroDpto |
+| --- | --- | --- |
+| Pérez Pérez, José | 123456789 | 5 |
+| Campos Sastre, Alberto | 333445555 | 5 |
+| Jiménez Celaya, Alicia | 999887777 | 4 |
+| Sainz Oreja, Juana | 987654321 | 4 |
+
+| NombreDpto | NúmeroDpto | DniDirector |
+| --- | --- | --- |
+| Investigación | 5 | 333445555 |
+| Administración | 4 | 987654321 |
+| Sede central | 1 | 888665555 |
+
+- Cada departamento aparece **una sola vez**, así que desaparecen las anomalías:
+  - **Inserción**: `Sede central` existe aunque todavía no tenga empleados en la tabla
+  - **Borrado**: si se borra a Jiménez y a Sainz, el departamento 4 sigue en `DEPARTAMENTO`
+  - **Modificación**: cambiar el director del dpto. 5 es actualizar **una** tupla
+
 - A veces se acepta redundancia a propósito por **rendimiento**; en ese caso se documenta y se controla con triggers o procedimientos almacenados
 - Lo habitual: relaciones base sin anomalías y **vistas** para los JOIN frecuentes
 
@@ -80,6 +122,17 @@ En `EMP_DEPT` los datos del departamento se **repiten** por cada empleado:
 - La decisión sale de los **requisitos**, no de contar datos: si un atributo, por regla del negocio, **no aplica** a la mayoría de las tuplas, va en una relación aparte
   - Ej.: solo el personal administrativo tiene oficina asignada; los técnicos de campo nunca la tienen. En vez de agregar `NúmeroOficina` a `EMPLEADO`, crear `OFICINAS_EMPS(DniEmpleado, NúmeroOficina)`
 
+✅ Diseño válido: solo tienen tupla en `OFICINAS_EMPS` los empleados con oficina
+
+| DniEmpleado | NúmeroOficina |
+| --- | --- |
+| 333445555 | B-204 |
+| 987654321 | A-101 |
+
+- `EMPLEADO` no tiene ningún `NULL` por oficina
+- Los empleados sin oficina simplemente **no aparecen** en `OFICINAS_EMPS`
+- Para listar empleados con su oficina (si la tienen): `EMPLEADO LEFT JOIN OFICINAS_EMPS`
+
 ### Directriz 4: tuplas falsas
 
 - Descomponer `EMP_PROY` en:
@@ -88,6 +141,17 @@ En `EMP_DEPT` los datos del departamento se **repiten** por cada empleado:
 - Al volver a unirlas (`NATURAL JOIN`) por `UbicaciónProyecto` aparecen **tuplas falsas**: tuplas que no estaban en la relación original
 - Causa: `UbicaciónProyecto` **no** es clave principal ni clave externa en ninguna de las dos
 - Una buena descomposición permite reconstruir la relación original sin tuplas falsas: es la **reunión no aditiva** (capítulo 11)
+
+✅ Diseño válido: descomponer `EMP_PROY` de modo que cada JOIN use una clave
+
+```text
+EMPLEADO(Dni, NombreE)
+PROYECTO(NumProyecto, NombreProyecto, UbicaciónProyecto)
+TRABAJA_EN(Dni, NumProyecto, Horas)
+```
+
+- `TRABAJA_EN.Dni` → `EMPLEADO.Dni` y `TRABAJA_EN.NumProyecto` → `PROYECTO.NumProyecto` son pares clave externa – clave principal
+- `TRABAJA_EN ⋈ EMPLEADO ⋈ PROYECTO` reconstruye exactamente `EMP_PROY`: cada tupla de `TRABAJA_EN` encuentra **un solo** empleado y **un solo** proyecto
 
 ## Dependencias funcionales
 
