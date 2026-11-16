@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "BST y AVL según Goodrich"
-parent: "Unidad II: Recursión, Listas, Genéricos, Pilas y Colas"
+parent: "Unidad III: Árboles"
 grand_parent: "ISC-211 Estructuras de Datos"
-nav_order: 9
+nav_order: 2
 mermaid: true
 ---
 
