@@ -379,4 +379,4 @@ Bajar de `SERIALIZABLE` permite estas violaciones:
 | `ROLLBACK` | Anular: deshace los cambios de la transacción |
 | `SET TRANSACTION ...` | Fijar el modo de acceso y el nivel de aislamiento |
 
-[⬅️ Volver a Unidad II](./index.md)
+[⬅️ Volver a Unidad III](./index.md)

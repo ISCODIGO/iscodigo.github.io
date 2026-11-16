@@ -9,14 +9,14 @@ mermaid: true
 
 ## ¿Por qué normalizar?
 
-- Hasta ahora la calidad del diseño dependía de la **intuición** del diseñador
-- La normalización da una forma **formal** de medir si un esquema de relación es bueno
-- Dos niveles de calidad:
-  - **Lógico**: los usuarios entienden el significado de los atributos
-  - **Implementación**: cómo se almacenan y actualizan las tuplas
-- Dos metodologías:
-  - **Ascendente** (*bottom-up*, síntesis): parte de relaciones entre atributos individuales
-  - **Descendente** (*top-down*, análisis): parte de agrupaciones naturales (facturas, formularios, informes) y las descompone
+- Hasta ahora juzgábamos un diseño por **intuición**
+- La normalización da criterios **formales** para decidir si un esquema de relación es bueno
+- Se evalúa en dos niveles:
+  - **Lógico**: ¿los usuarios entienden qué significa cada atributo?
+  - **Implementación**: ¿cómo se almacenan y actualizan las tuplas?
+- Hay dos formas de diseñar:
+  - **Ascendente** (*bottom-up*, síntesis): se parte de los atributos sueltos y se agrupan
+  - **Descendente** (*top-down*, análisis): se parte de agrupaciones naturales (facturas, formularios, informes) y se descomponen
 
 ## Esquema de trabajo: EMPRESA simplificada
 
@@ -32,14 +32,14 @@ TRABAJA_EN(Dni, NumProyecto, Horas)
 
 | # | Directriz | Problema que evita |
 | --- | --- | --- |
-| 1 | **Semántica clara**: no mezclar atributos de varias entidades/relaciones en una sola relación | Ambigüedad |
+| 1 | **Semántica clara**: cada relación describe una sola entidad o relación del modelo | Ambigüedad |
 | 2 | **Sin anomalías** de inserción, borrado o modificación | Redundancia e inconsistencia |
-| 3 | **Evitar NULL** frecuentes en relaciones base | Espacio desperdiciado, JOIN y agregados confusos |
-| 4 | Concatenar solo por pares **clave principal – foreign key** | Tuplas falsas |
+| 3 | **Pocos NULL** en las relaciones base | Espacio desperdiciado; JOIN y agregados difíciles de interpretar |
+| 4 | Concatenar solo por pares **clave principal – clave externa** | Tuplas falsas |
 
 ### Directriz 1: semántica clara
 
-- Mal diseño: mezclar entidades en una sola relación
+- Ejemplo de mal diseño:
 
 ```text
 EMP_DEPT(NombreE, Dni, FechaNac, Dirección, NúmeroDpto, NombreDpto, DniDirector)
@@ -47,7 +47,7 @@ EMP_PROY(Dni, NumProyecto, Horas, NombreE, NombreProyecto, UbicaciónProyecto)
 ```
 
 - `EMP_DEPT` mezcla empleado **y** departamento; `EMP_PROY` mezcla empleado, proyecto **y** `TRABAJA_EN`
-- Sirven como **vistas**, no como relaciones base
+- Están bien como **vistas**, no como relaciones base
 
 ### Directriz 2: redundancia y anomalías
 
@@ -62,41 +62,41 @@ En `EMP_DEPT` los datos del departamento se **repiten** por cada empleado:
 
 | Anomalía | Ejemplo en `EMP_DEPT` |
 | --- | --- |
-| **Inserción** | Nuevo empleado → repetir datos del departamento *sin errores* |
-| **Inserción** | Nuevo departamento sin empleados → `NULL` en `Dni`, que es la **clave principal** |
-| **Borrado** | Borrar al último empleado de un departamento → **se pierde** el departamento |
-| **Modificación** | Cambiar el director del dpto. 5 → actualizar **todas** sus tuplas o queda inconsistente |
+| **Inserción** | Cada empleado nuevo obliga a copiar los datos de su departamento, y una errata deja datos contradictorios |
+| **Inserción** | Un departamento sin empleados no se puede insertar: quedaría `NULL` en `Dni`, la **clave principal** |
+| **Borrado** | Al borrar al último empleado de un departamento **se pierde** el departamento |
+| **Modificación** | Cambiar el director del dpto. 5 obliga a actualizar **todas** sus tuplas; si falta una, hay inconsistencia |
 
-- A veces se viola a propósito por **rendimiento** → documentarlo y controlarlo (triggers, procedimientos almacenados)
-- Mejor: relaciones base sin anomalías + **vistas** con los JOIN frecuentes
+- A veces se acepta redundancia a propósito por **rendimiento**; en ese caso se documenta y se controla con triggers o procedimientos almacenados
+- Lo habitual: relaciones base sin anomalías y **vistas** para los JOIN frecuentes
 
 ### Directriz 3: valores NULL
 
 - `NULL` puede significar:
   - El atributo **no aplica**
   - El valor es **desconocido**
-  - Se conoce pero **aún no se ha grabado**
-- Ej.: si solo el 10 % de empleados tiene oficina → crear `OFICINAS_EMPS(DniEmpleado, NúmeroOficina)` en vez de agregar `NúmeroOficina` a `EMPLEADO`
+  - Existe pero **aún no se ha registrado**
+- Como no se sabe cuál de los tres es, conviene evitarlo. Ej.: si solo el 10 % de los empleados tiene oficina, crear `OFICINAS_EMPS(DniEmpleado, NúmeroOficina)` en vez de agregar `NúmeroOficina` a `EMPLEADO`
 
 ### Directriz 4: tuplas falsas
 
 - Descomponer `EMP_PROY` en:
   - `EMP_LOCS(NombreE, UbicaciónProyecto)`
   - `EMP_PROY1(Dni, NumProyecto, Horas, NombreProyecto, UbicaciónProyecto)`
-- Al volver a unirlas (`NATURAL JOIN`) por `UbicaciónProyecto` aparecen **tuplas falsas**: filas inventadas que nunca existieron
-- Causa: `UbicaciónProyecto` **no** es clave principal ni foreign key en ninguna de las dos
-- Separar bien = poder unir de nuevo sin inventar filas → **reunión no aditiva** (capítulo 11)
+- Al volver a unirlas (`NATURAL JOIN`) por `UbicaciónProyecto` aparecen **tuplas falsas**: tuplas que no estaban en la relación original
+- Causa: `UbicaciónProyecto` **no** es clave principal ni clave externa en ninguna de las dos
+- Una buena descomposición permite reconstruir la relación original sin tuplas falsas: es la **reunión no aditiva** (capítulo 11)
 
 ## Dependencias funcionales
 
-- **Dependencia funcional (DF)** `X → Y`: *si conozco X, conozco Y*
-  - Dos filas con el mismo `X` **siempre** tienen el mismo `Y`
-  - Ej.: con el `Dni` sé el `NombreE`
-  - `X` = lado izquierdo, `Y` = lado derecho
-- Si `X` es **clave candidata** ⇒ `X → Y` para cualquier `Y`
+- **Dependencia funcional (DF)** `X → Y`: el valor de `X` determina el valor de `Y`
+  - Dos tuplas con el mismo `X` **siempre** tienen el mismo `Y`
+  - Ej.: `Dni → NombreE`; a cada `Dni` le corresponde un solo nombre
+  - `X` es el lado izquierdo (determinante); `Y`, el lado derecho
+- Si `X` es **clave candidata**, entonces `X → Y` para cualquier conjunto de atributos `Y`
 - `X → Y` **no** implica `Y → X`
-- Sale del **significado** de los datos, no de lo que hay guardado hoy
-  - No se confirma mirando la tabla, pero **un solo contraejemplo** la descarta
+- Una DF sale del **significado** de los datos, no del contenido actual de la tabla
+  - Mirar la tabla no la confirma, pero **un solo contraejemplo** la descarta
 
 DF de `EMP_PROY`:
 
@@ -115,15 +115,15 @@ DF3: NumProyecto → {NombreProyecto, UbicaciónProyecto}
 | Hall | Compiladores | Hoffman |
 | Brown | Estructuras de datos | Horowitz |
 
-- `Texto → Curso` **parece** cumplirse, pero no se puede confirmar solo con este estado
+- `Texto → Curso` **parece** cumplirse, pero este estado de la tabla no basta para confirmarlo
 - `Profesor → Curso` **no** se cumple: Smith imparte dos cursos
 
 ### Reglas de inferencia
 
-- **F**: las DF que escribe el diseñador
-- **Clausura F⁺**: F más todas las DF que se **deducen** de ella
+- **F**: las DF que especifica el diseñador
+- **Clausura F⁺**: F más todas las DF que se **deducen** de F
   - `NúmeroDpto → DniDirector` y `DniDirector → TeléfonoDirector` ⇒ `NúmeroDpto → TeléfonoDirector`
-- Notación abreviada: `{X, Y} → Z` se escribe `XY → Z`
+- Notación: `{X, Y} → Z` se abrevia `XY → Z`
 
 | Regla | Nombre | Enunciado | Ejemplo |
 | --- | --- | --- | --- |
@@ -134,16 +134,16 @@ DF3: NumProyecto → {NombreProyecto, UbicaciónProyecto}
 | RI5 | Unión | `X → Y`, `X → Z` ⇒ `X → YZ` | `Dni → NombreE`, `Dni → Dirección` ⇒ `Dni → {NombreE, Dirección}` |
 | RI6 | Seudotransitiva | `X → Y`, `WY → Z` ⇒ `WX → Z` | `NombreE → Dni`, `{Dni, NumProyecto} → Horas` ⇒ `{NombreE, NumProyecto} → Horas` (si `NombreE` fuera único) |
 
-- **Axiomas de Armstrong** (RI1–RI3): **sólidos** y **completos** → bastan para obtener F⁺
-  - **Sólidos**: todo lo que se deduce con ellos es verdad (nunca producen una DF falsa)
-  - **Completos**: aplicándolos una y otra vez se obtienen **todas** las DF de F⁺
-  - RI4–RI6 no agregan poder: se demuestran a partir de RI1–RI3, solo son atajos
+- **Axiomas de Armstrong** (RI1–RI3): son **sólidos** y **completos**, así que bastan para obtener F⁺
+  - **Sólidos**: nunca producen una DF falsa
+  - **Completos**: aplicándolos repetidamente se obtienen **todas** las DF de F⁺
+  - RI4–RI6 se demuestran a partir de RI1–RI3; son atajos
 - ⚠️ `X → A` y `Y → B` **no** implican `XY → AB`; `XY → A` **no** implica `X → A` ni `Y → A`
 
 ### Clausura de un conjunto de atributos (X⁺)
 
-- **X⁺**: todo lo que puedo conocer si conozco `X`
-- Se calcula sumando atributos hasta que ya no aparece nada nuevo; si X⁺ trae **todos**, `X` es clave
+- **X⁺**: todos los atributos que `X` determina, directa o indirectamente
+- Se calcula agregando atributos hasta que no aparece ninguno nuevo; si X⁺ contiene **todos** los atributos, `X` es superclave
 
 ```text
 Algoritmo 10.1
@@ -161,44 +161,44 @@ Con las DF de `EMP_PROY`:
 | --- | --- |
 | `{Dni}` | `{Dni, NombreE}` |
 | `{NumProyecto}` | `{NumProyecto, NombreProyecto, UbicaciónProyecto}` |
-| `{Dni, NumProyecto}` | **todos** los atributos → es clave |
+| `{Dni, NumProyecto}` | **todos** los atributos, así que es clave |
 
 ### Equivalencia y cobertura mínima
 
 - **F cubre a E**: toda DF de E se puede deducir de F
-- **E y F equivalentes**: dicen lo mismo aunque estén escritos distinto (`E⁺ = F⁺`)
+- **E y F equivalentes**: cada uno cubre al otro (`E⁺ = F⁺`), aunque se escriban distinto
 - **Conjunto mínimo** de DF:
   1. Un **solo atributo** en el lado derecho
   2. Sin atributos **sobrantes** en el lado izquierdo
   3. Sin DF **redundantes**
-- **Cobertura mínima** de E: la versión más corta que dice lo mismo que E
+- **Cobertura mínima** de E: un conjunto mínimo equivalente a E
 
 Ejemplo: `E = {B → A, D → A, AB → D}`
 
-1. Ya están en forma canónica
-2. `B → A` ⇒ (aumento) `B → AB`; con `AB → D` ⇒ (transitiva) `B → D` → se reemplaza `AB → D` por `B → D`
+1. Todas tienen un solo atributo a la derecha
+2. `A` sobra en `AB → D`: de `B → A` sale `B → AB` (aumento) y, con `AB → D`, `B → D` (transitiva). Se reemplaza `AB → D` por `B → D`
 3. `B → D` y `D → A` ⇒ `B → A` es **redundante**
 4. **Cobertura mínima**: `{B → D, D → A}`
 
 ## Claves y atributos
 
-- **Superclave**: columnas que identifican una fila (puede sobrar alguna)
-- **Clave**: superclave sin nada de sobra (si quitas una columna, ya no identifica)
+- **Superclave**: conjunto de atributos que identifica cada tupla (puede sobrar alguno)
+- **Clave**: superclave mínima; si se quita cualquier atributo, deja de identificar
   - `{Dni}` es clave de `EMPLEADO`; `{Dni, NombreE}` es solo superclave
-- **Clave candidata**: cualquiera de las claves; una se elige como **clave principal**, el resto son **secundarias**
+- **Clave candidata**: cualquiera de las claves de la relación; una se elige como **clave principal** y las demás son **secundarias**
 - **Atributo primo**: forma parte de **alguna** clave candidata
-- **Atributo no primo**: un dato común, no está en ninguna clave
+- **Atributo no primo**: no forma parte de ninguna clave candidata
   - En `TRABAJA_EN`: `Dni` y `NumProyecto` son primos; `Horas` no
 
 ## Formas normales
 
-- **Normalización** (Codd, 1972): revisar cada tabla y **partirla en tablas más pequeñas** si no pasa las pruebas
-- Objetivos: **minimizar redundancia** y **anomalías**
-- La **forma normal** de una relación = la más alta que cumple
-- Propiedades que debe cumplir la descomposición:
-  - **Reunión no aditiva**: al unir las partes no salen filas inventadas → **obligatoria**
-  - **Conservación de dependencias**: ninguna DF se pierde al partir → deseable, a veces se sacrifica
-- **Desnormalización**: volver a juntar tablas ya normalizadas para que las consultas sean más rápidas
+- **Normalización** (Codd, 1972): someter cada relación a una serie de pruebas y **descomponer** las que no las pasan
+- Objetivo: **minimizar la redundancia** y las **anomalías**
+- La **forma normal** de una relación es la más alta que cumple
+- Propiedades de una buena descomposición:
+  - **Reunión no aditiva**: al unir las partes no aparecen tuplas falsas. **Obligatoria**
+  - **Conservación de dependencias**: cada DF sigue pudiéndose comprobar en alguna de las partes. Deseable; a veces se sacrifica
+- **Desnormalización**: volver a unir relaciones normalizadas para acelerar consultas frecuentes
 
 ```mermaid
 flowchart LR
@@ -215,8 +215,8 @@ flowchart LR
 
 ### Primera forma normal (1FN)
 
-- Cada celda guarda **un solo valor** (atómico)
-- Prohíbe listas (**multivalor**), valores con partes (**compuestos**) y tablas dentro de tablas (**relaciones anidadas**)
+- Cada atributo de cada tupla tiene **un solo valor atómico**
+- Prohíbe atributos **multivalor** (listas), **compuestos** (valores con partes) y **relaciones anidadas** (tablas dentro de tablas)
 
 No está en 1FN:
 
@@ -240,25 +240,25 @@ Tres formas de llevarla a 1FN:
 EMP_PROY(Dni, NombreE, {PROYS(NumProyecto, Horas)})
 ```
 
-- Se saca la relación anidada a otra relación y se **propaga la clave principal**:
+- La relación anidada pasa a una relación propia que **incluye la clave principal** de la externa:
 
 ```text
 EMP_PROY1(Dni, NombreE)
 EMP_PROY2(Dni, NumProyecto, Horas)
 ```
 
-- Varios atributos multivalor → **una relación por cada uno**
+- Si hay varios atributos multivalor, se crea **una relación para cada uno**
   - `PERSONA(Dn#, {NumPermisoConducir#}, {Teléfono#})` → `P1(Dn#, NumPermisoConducir#)` y `P2(Dn#, Teléfono#)`
-  - Juntarlos en una sola relación genera redundancia (problema de la **4FN**, capítulo 11)
+  - Ponerlos juntos en una sola relación genera redundancia (es el problema que resuelve la **4FN**, capítulo 11)
 
 ### Segunda forma normal (2FN)
 
-- **Dependencia total**: `Y` necesita **todo** `X`
-- **Dependencia parcial**: a `Y` le basta **un pedazo** de `X`
+- **Dependencia total** `X → Y`: si se quita cualquier atributo de `X`, la DF deja de cumplirse
+- **Dependencia parcial**: una **parte** de `X` ya basta para determinar `Y`
   - `{Dni, NumProyecto} → Horas` es **total**
   - `{Dni, NumProyecto} → NombreE` es **parcial** (basta `Dni`)
-- **2FN**: cada dato depende de **toda** la clave, no de un pedazo
-- Si la clave tiene **un solo atributo**, ya está en 2FN
+- **2FN**: todo atributo no primo depende **totalmente** de la clave principal
+- Si la clave principal tiene **un solo atributo**, la relación ya está en 2FN
 
 `EMP_PROY` → 2FN:
 
@@ -277,9 +277,9 @@ flowchart TD
 
 ### Tercera forma normal (3FN)
 
-- **Dependencia transitiva**: `Y` depende de `X` **a través de** otro dato `Z` que no es clave (`X → Z → Y`)
+- **Dependencia transitiva**: `X → Y` se cumple **a través de** un atributo `Z` que no es clave ni parte de una (`X → Z` y `Z → Y`)
   - `Dni → NúmeroDpto → DniDirector`
-- **3FN** (Codd): está en 2FN **y** ningún dato depende de **otro dato** que no es clave
+- **3FN** (Codd): está en 2FN **y** ningún atributo no primo depende transitivamente de la clave principal
 
 `EMP_DEPT` → 3FN:
 
@@ -302,12 +302,12 @@ flowchart TD
 | Forma normal | Prueba | Remedio |
 | --- | --- | --- |
 | **1FN** | Sin atributos multivalor ni relaciones anidadas | Nueva relación por cada atributo multivalor o relación anidada |
-| **2FN** | (Clave compuesta) ningún atributo no clave depende de **parte** de la clave | Nueva relación por cada parte de la clave con sus dependientes; mantener la original con lo que depende de la clave completa |
-| **3FN** | Ningún atributo no clave depende de **otro atributo no clave** | Nueva relación con el atributo no clave y lo que determina |
+| **2FN** | (Clave compuesta) ningún atributo no primo depende de **parte** de la clave | Una relación nueva por cada parte de la clave, con sus dependientes; la original conserva lo que depende de la clave completa |
+| **3FN** | Ningún atributo no primo depende de **otro atributo no primo** | Una relación nueva con ese atributo y los que determina |
 
 ## Definiciones generales de 2FN y 3FN
 
-- Las anteriores solo miran la **clave principal**; las generales consideran **todas las claves candidatas**
+- Las definiciones anteriores solo miran la **clave principal**; las generales consideran **todas las claves candidatas**
 - **2FN general**: ningún atributo no primo depende **parcialmente** de **ninguna** clave
 - **3FN general**: para toda DF no trivial `X → A`:
   - **(a)** `X` es **superclave**, o
@@ -315,7 +315,7 @@ flowchart TD
 - **Definición alternativa de 3FN**: todo atributo no primo
   - depende **totalmente** de **cada** clave, y
   - **no** depende **transitivamente** de ninguna clave
-- La definición general se aplica **directamente**, sin pasar antes por 2FN
+- La definición general de 3FN se puede comprobar **directamente**, sin verificar antes la 2FN
 
 ### Ejemplo: PARCELAS
 
@@ -349,20 +349,20 @@ flowchart TD
 
 ## Forma normal de Boyce-Codd (BCNF)
 
-- **BCNF**: solo una **clave** (superclave) puede decidir el valor de otra columna
-  - Formal: para toda DF no trivial `X → A`, `X` es **superclave**
-- Es 3FN **sin** la condición (b): ya no basta que `A` sea primo
+- **BCNF**: para toda DF no trivial `X → A`, `X` es **superclave**
+  - Dicho de otro modo: todo determinante es superclave
+- Es la 3FN general **sin** la condición (b): ya no basta con que `A` sea primo
 - Toda relación en BCNF está en 3FN; **no** al revés
-- En la práctica, casi todas las relaciones en 3FN también están en BCNF
+- En la práctica, la mayoría de las relaciones en 3FN también están en BCNF
 
 ### PARCELAS1A con FD5
 
-- Parcelas solo en Getafe y Alcorcón, con áreas distintas en cada municipio → **FD5**: `Área → NombreMunicipio`
-- Sigue en **3FN** (`NombreMunicipio` es primo), pero **no en BCNF** (`Área` no es superclave)
-- Descomposición BCNF:
+- Supongamos que solo hay parcelas en Getafe y Alcorcón, y que los tamaños posibles de parcela no coinciden entre los dos municipios. Entonces el área indica el municipio: **FD5**: `Área → NombreMunicipio`
+- La relación sigue en **3FN** (`NombreMunicipio` es primo), pero **no en BCNF** (`Área` no es superclave)
+- Descomposición en BCNF:
   - `PARCELAS1AX(IdPropiedad, Área, NúmeroParcela)`
   - `PARCELAS1AY(Área, NombreMunicipio)`
-- ⚠️ Se **pierde FD2**: sus atributos ya no están juntos
+- ⚠️ Se **pierde FD2**: sus atributos quedan en relaciones distintas
 
 ### ENSEÑAR
 
@@ -380,7 +380,7 @@ flowchart TD
 
 - FD1: `{Estudiante, Curso} → Profesor`
 - FD2: `Profesor → Curso`
-- 3FN pero **no** BCNF (`Profesor` no es superclave)
+- Está en 3FN (`Curso` es primo), pero **no** en BCNF (`Profesor` no es superclave)
 
 | Descomposición | ¿Tuplas falsas? |
 | --- | --- |
@@ -388,14 +388,14 @@ flowchart TD
 | `{Curso, Profesor}` y `{Curso, Estudiante}` | Sí |
 | ✅ `{Profesor, Curso}` y `{Profesor, Estudiante}` | **No** |
 
-- Las tres pierden **FD1**; se prefiere la que garantiza la **reunión no aditiva**
+- Las tres pierden **FD1**, así que se elige la que garantiza la **reunión no aditiva**
 
 ## Resumen
 
 - Directrices informales: semántica clara, sin anomalías, pocos NULL, sin tuplas falsas
-- **DF**: restricción semántica entre atributos; se infieren con los **axiomas de Armstrong**
-- **1FN** atómico → **2FN** sin parciales → **3FN** sin transitivas → **BCNF** todo determinante es superclave
-- Meta práctica: **3FN o BCNF**; 1FN y 2FN son solo pasos intermedios
+- **DF**: restricción semántica entre atributos; las DF implícitas se deducen con los **axiomas de Armstrong**
+- **1FN**: valores atómicos → **2FN**: sin dependencias parciales → **3FN**: sin dependencias transitivas → **BCNF**: todo determinante es superclave
+- En la práctica se busca **3FN o BCNF**; 1FN y 2FN son pasos intermedios
 - Siguiente paso: propiedades de la descomposición, **4FN** y **5FN** (capítulo 11)
 
-[⬅️ Volver a Unidad II](./index.md)
+[⬅️ Volver a Unidad III](./index.md)
