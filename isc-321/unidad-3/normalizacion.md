@@ -76,7 +76,9 @@ En `EMP_DEPT` los datos del departamento se **repiten** por cada empleado:
   - El atributo **no aplica**
   - El valor es **desconocido**
   - Existe pero **aún no se ha registrado**
-- Como no se sabe cuál de los tres es, conviene evitarlo. Ej.: si solo el 10 % de los empleados tiene oficina, crear `OFICINAS_EMPS(DniEmpleado, NúmeroOficina)` en vez de agregar `NúmeroOficina` a `EMPLEADO`
+- Como no se sabe cuál de los tres es, conviene evitarlo
+- La decisión sale de los **requisitos**, no de contar datos: si un atributo, por regla del negocio, **no aplica** a la mayoría de las tuplas, va en una relación aparte
+  - Ej.: solo el personal administrativo tiene oficina asignada; los técnicos de campo nunca la tienen. En vez de agregar `NúmeroOficina` a `EMPLEADO`, crear `OFICINAS_EMPS(DniEmpleado, NúmeroOficina)`
 
 ### Directriz 4: tuplas falsas
 
