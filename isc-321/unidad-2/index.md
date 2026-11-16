@@ -16,12 +16,6 @@ Resumen de las secciones 8.1–8.3 del libro de texto (Elmasri & Navathe): esque
 **[3. SQL: consultas y manipulación de datos](./sql-dml.md)**
 Resumen de las secciones 8.4–8.6 del libro de texto (Elmasri & Navathe), complementado con temas de los motores actuales: SELECT-FROM-WHERE, operadores lógicos (AND, OR, NOT), patrones con LIKE, ORDER BY, LIMIT y OFFSET, funciones de cadena, numéricas y de fecha, valores NULL y lógica de tres valores, IN, expresiones CASE, e INSERT, UPDATE y DELETE.
 
-**[4. Dependencias funcionales y normalización](./normalizacion.md)**
-Resumen del capítulo 10 del libro de texto (Elmasri & Navathe): directrices informales de diseño, anomalías de actualización, dependencias funcionales y reglas de inferencia, clausura y cobertura mínima, formas normales 1FN, 2FN, 3FN y BCNF.
-
-**[5. Gestión de transacciones](./transacciones.md)**
-Resumen de las secciones 17.1–17.3 y 17.6 de Elmasri & Navathe y 15.1–15.3 de Silberschatz: concepto de transacción, problemas de concurrencia y tipos de fallos, propiedades ACID, estados de una transacción, registro del sistema y copia en la sombra, COMMIT y ROLLBACK, y niveles de aislamiento en SQL.
-
 --
 
 [⬅️ Volver al índice general de la clase](../index.md)

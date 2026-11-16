@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Dependencias funcionales y normalización"
-parent: "Unidad II: Álgebra relacional, SQL y Normalización"
+parent: "Unidad III: Normalización y Transacciones"
 grand_parent: "ISC-321 Fundamentos de Bases de Datos"
-nav_order: 4
+nav_order: 1
 mermaid: true
 ---
 

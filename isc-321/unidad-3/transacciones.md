@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Gestión de transacciones"
-parent: "Unidad II: Álgebra relacional, SQL y Normalización"
+parent: "Unidad III: Normalización y Transacciones"
 grand_parent: "ISC-321 Fundamentos de Bases de Datos"
-nav_order: 5
+nav_order: 2
 ---
 
 ## ¿Qué es una transacción?
