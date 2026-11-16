@@ -108,6 +108,21 @@ DF2: Dni → NombreE
 DF3: NumProyecto → {NombreProyecto, UbicaciónProyecto}
 ```
 
+**Diagrama de DF**: cada flecha sale del determinante y llega a lo que determina
+
+```mermaid
+flowchart LR
+    K(["Dni + NumProyecto"]) -->|DF1| H[Horas]
+    D([Dni]) -->|DF2| N[NombreE]
+    P([NumProyecto]) -->|DF3| NP[NombreProyecto]
+    P -->|DF3| U[UbicaciónProyecto]
+
+    classDef det fill:#fff4e0,stroke:#c98a1b,stroke-width:2px,color:#1b2b40
+    classDef dep fill:#e8eef7,stroke:#4a6fa5,stroke-width:2px,color:#1b2b40
+    class K,D,P det
+    class H,N,NP,U dep
+```
+
 ### Contraejemplo: IMPARTIR
 
 | Profesor | Curso | Texto |
@@ -122,33 +137,64 @@ DF3: NumProyecto → {NombreProyecto, UbicaciónProyecto}
 
 ### Reglas de inferencia
 
+- El diseñador escribe solo las DF **evidentes**, pero de ellas se deducen otras que nadie escribió
+  - `NúmeroDpto → DniDirector` y `DniDirector → TeléfonoDirector` ⇒ `NúmeroDpto → TeléfonoDirector`
+  - Esa DF implícita también es una restricción: la base de datos no puede violarla
 - **F**: las DF que especifica el diseñador
 - **Clausura F⁺**: F más todas las DF que se **deducen** de F
-  - `NúmeroDpto → DniDirector` y `DniDirector → TeléfonoDirector` ⇒ `NúmeroDpto → TeléfonoDirector`
+- Las **reglas de inferencia** dicen qué deducciones son válidas
 - Notación: `{X, Y} → Z` se abrevia `XY → Z`
 
-| Regla | Nombre | Enunciado | Ejemplo |
-| --- | --- | --- | --- |
-| RI1 | **Reflexiva** | Si `X ⊇ Y` ⇒ `X → Y` (DF **trivial**) | `{Dni, NombreE} → NombreE` |
-| RI2 | **Aumento** | `X → Y` ⇒ `XZ → YZ` | `Dni → NombreE` ⇒ `{Dni, NumProyecto} → {NombreE, NumProyecto}` |
-| RI3 | **Transitiva** | `X → Y`, `Y → Z` ⇒ `X → Z` | `NúmeroDpto → DniDirector`, `DniDirector → TeléfonoDirector` ⇒ `NúmeroDpto → TeléfonoDirector` |
-| RI4 | Descomposición | `X → YZ` ⇒ `X → Y` | `NumProyecto → {NombreProyecto, UbicaciónProyecto}` ⇒ `NumProyecto → NombreProyecto` |
-| RI5 | Unión | `X → Y`, `X → Z` ⇒ `X → YZ` | `Dni → NombreE`, `Dni → Dirección` ⇒ `Dni → {NombreE, Dirección}` |
-| RI6 | Seudotransitiva | `X → Y`, `WY → Z` ⇒ `WX → Z` | `NombreE → Dni`, `{Dni, NumProyecto} → Horas` ⇒ `{NombreE, NumProyecto} → Horas` (si `NombreE` fuera único) |
+| Regla | Nombre | Enunciado | Idea | Ejemplo |
+| --- | --- | --- | --- | --- |
+| RI1 | **Reflexiva** | Si `X ⊇ Y` ⇒ `X → Y` | Un conjunto determina cualquier parte de sí mismo (DF **trivial**) | `{Dni, NombreE} → NombreE` |
+| RI2 | **Aumento** | `X → Y` ⇒ `XZ → YZ` | Agregar el mismo atributo a ambos lados no rompe la DF | `Dni → NombreE` ⇒ `{Dni, NumProyecto} → {NombreE, NumProyecto}` |
+| RI3 | **Transitiva** | `X → Y`, `Y → Z` ⇒ `X → Z` | Las DF se encadenan | `NúmeroDpto → DniDirector`, `DniDirector → TeléfonoDirector` ⇒ `NúmeroDpto → TeléfonoDirector` |
+| RI4 | Descomposición | `X → YZ` ⇒ `X → Y` | Si determino un conjunto, determino cada parte | `NumProyecto → {NombreProyecto, UbicaciónProyecto}` ⇒ `NumProyecto → NombreProyecto` |
+| RI5 | Unión | `X → Y`, `X → Z` ⇒ `X → YZ` | Lo que `X` determina por separado lo determina junto | `Dni → NombreE`, `Dni → Dirección` ⇒ `Dni → {NombreE, Dirección}` |
+| RI6 | Seudotransitiva | `X → Y`, `WY → Z` ⇒ `WX → Z` | Se puede sustituir `Y` por algo que lo determina | `NombreE → Dni`, `{Dni, NumProyecto} → Horas` ⇒ `{NombreE, NumProyecto} → Horas` (si `NombreE` fuera único) |
 
 - **Axiomas de Armstrong** (RI1–RI3): son **sólidos** y **completos**, así que bastan para obtener F⁺
   - **Sólidos**: nunca producen una DF falsa
   - **Completos**: aplicándolos repetidamente se obtienen **todas** las DF de F⁺
   - RI4–RI6 se demuestran a partir de RI1–RI3; son atajos
-- ⚠️ `X → A` y `Y → B` **no** implican `XY → AB`; `XY → A` **no** implica `X → A` ni `Y → A`
+
+Ejemplo: demostrar la descomposición (RI4) con los axiomas
+
+1. `X → YZ` (dada)
+2. `YZ → Y` (reflexiva: `YZ ⊇ Y`)
+3. `X → Y` (transitiva con 1 y 2)
+
+Ejemplo: deducir una DF nueva. Con `F = {A → B, BC → D}`, ¿se cumple `AC → D`?
+
+1. `A → B` (dada)
+2. `AC → BC` (aumento con `C`)
+3. `BC → D` (dada)
+4. `AC → D` (transitiva con 2 y 3) ✅
+
+- ⚠️ Errores comunes:
+  - `XY → A` **no** implica `X → A` ni `Y → A`
+    - Ej.: `{Dni, NumProyecto} → Horas`, pero ni `Dni → Horas` ni `NumProyecto → Horas`
+  - En cambio, `X → A` y `Y → B` **sí** implican `XY → AB` (aumento y transitiva)
+  - `X → Y` **no** implica `Y → X`
+    - Ej.: `Dni → NombreE`, pero dos empleados pueden llamarse igual
 
 ### Clausura de un conjunto de atributos (X⁺)
 
-- **X⁺**: todos los atributos que `X` determina, directa o indirectamente
-- Se calcula agregando atributos hasta que no aparece ninguno nuevo; si X⁺ contiene **todos** los atributos, `X` es superclave
+- Calcular F⁺ completa no es práctico: puede tener una cantidad **exponencial** de DF
+- En su lugar se calcula **X⁺**: todos los atributos que `X` determina, directa o indirectamente
+- Para qué sirve:
+  - **Comprobar una DF**: `X → Y` está en F⁺ si y solo si `Y ⊆ X⁺`
+  - **Encontrar claves**: si X⁺ contiene **todos** los atributos de la relación, `X` es superclave; si además ningún subconjunto propio de `X` lo logra, es clave
+  - **Comparar conjuntos de DF** y **calcular la cobertura mínima** (siguiente sección)
+
+Algoritmo 10.1, en palabras:
+
+1. Empezar con X⁺ = `X` (por la regla reflexiva)
+2. Recorrer F: si el **lado izquierdo** de una DF ya está **dentro** de X⁺, agregar su lado derecho
+3. Repetir el paso 2 mientras se agregue algo nuevo; cuando una pasada completa no agrega nada, X⁺ está terminado
 
 ```text
-Algoritmo 10.1
 X⁺ := X
 repetir
     antiguaX⁺ := X⁺
@@ -157,30 +203,118 @@ repetir
 hasta que X⁺ = antiguaX⁺
 ```
 
+Traza: `R(A, B, C, D, E)` con `F = {A → B, B → C, CD → E}`. Calcular `{A, D}⁺`:
+
+| Paso | DF usada | ¿Lado izquierdo ⊆ X⁺? | X⁺ |
+| --- | --- | --- | --- |
+| inicio | — | — | `{A, D}` |
+| 1 | `A → B` | `A` ✅ | `{A, B, D}` |
+| 2 | `B → C` | `B` ✅ | `{A, B, C, D}` |
+| 3 | `CD → E` | `C, D` ✅ | `{A, B, C, D, E}` |
+| 4 | otra pasada | nada nuevo | fin |
+
+```mermaid
+flowchart LR
+    S0["{A, D}"] -->|"A → B"| S1["{A, B, D}"]
+    S1 -->|"B → C"| S2["{A, B, C, D}"]
+    S2 -->|"CD → E"| S3["<b>{A, B, C, D, E}</b><br/>todos los atributos"]
+
+    classDef paso fill:#f4f6f8,stroke:#8a9bb0,color:#1b2b40
+    classDef fin fill:#e8eef7,stroke:#4a6fa5,stroke-width:2px,color:#1b2b40
+    class S0,S1,S2 paso
+    class S3 fin
+```
+
+- `{A, D}⁺` contiene todos los atributos → `{A, D}` es superclave
+- `A⁺ = {A, B, C}` y `D⁺ = {D}` no alcanzan → `{A, D}` es **clave**
+- El orden de las DF solo cambia cuántas pasadas se necesitan, no el resultado
+
 Con las DF de `EMP_PROY`:
 
-| X | X⁺ |
-| --- | --- |
-| `{Dni}` | `{Dni, NombreE}` |
-| `{NumProyecto}` | `{NumProyecto, NombreProyecto, UbicaciónProyecto}` |
-| `{Dni, NumProyecto}` | **todos** los atributos, así que es clave |
+| X | X⁺ | Conclusión |
+| --- | --- | --- |
+| `{Dni}` | `{Dni, NombreE}` | No es clave |
+| `{NumProyecto}` | `{NumProyecto, NombreProyecto, UbicaciónProyecto}` | No es clave |
+| `{Dni, NumProyecto}` | **todos** los atributos | Es clave |
 
 ### Equivalencia y cobertura mínima
 
+- Dos diseñadores pueden escribir las mismas restricciones de formas distintas; hace falta saber si dicen **lo mismo**
 - **F cubre a E**: toda DF de E se puede deducir de F
-- **E y F equivalentes**: cada uno cubre al otro (`E⁺ = F⁺`), aunque se escriban distinto
+  - Se comprueba con clausuras: para cada `X → Y` de E, calcular `X⁺` **usando F** y verificar que `Y ⊆ X⁺`
+- **E y F equivalentes**: F cubre a E **y** E cubre a F (`E⁺ = F⁺`)
+
+Ejemplo: `F = {A → C, AC → D, E → AD, E → H}` y `G = {A → CD, E → AH}`
+
+| ¿G cubre a F? | X⁺ con G | ¿Contiene el lado derecho? |
+| --- | --- | --- |
+| `A → C` | `A⁺ = {A, C, D}` | ✅ |
+| `AC → D` | `AC⁺ = {A, C, D}` | ✅ |
+| `E → AD` | `E⁺ = {E, A, H, C, D}` | ✅ |
+| `E → H` | `E⁺ = {E, A, H, C, D}` | ✅ |
+
+| ¿F cubre a G? | X⁺ con F | ¿Contiene el lado derecho? |
+| --- | --- | --- |
+| `A → CD` | `A⁺ = {A, C, D}` | ✅ |
+| `E → AH` | `E⁺ = {E, A, D, H, C}` | ✅ |
+
+- Se cubren mutuamente → son **equivalentes**; G dice lo mismo con menos DF
+
+#### Cobertura mínima
+
 - **Conjunto mínimo** de DF:
   1. Un **solo atributo** en el lado derecho
   2. Sin atributos **sobrantes** en el lado izquierdo
   3. Sin DF **redundantes**
 - **Cobertura mínima** de E: un conjunto mínimo equivalente a E
+  - Es la forma más compacta de escribir las restricciones: menos DF que el SGBD debe verificar
+  - Es el punto de partida del algoritmo de síntesis en 3FN (capítulo 11)
+  - No siempre es única: el resultado puede depender del orden en que se revisan las DF
+
+Algoritmo 10.2, en palabras:
+
+1. **Separar** los lados derechos: `X → AB` pasa a `X → A` y `X → B` (descomposición)
+2. **Quitar atributos sobrantes** de los lados izquierdos: en `X → A`, el atributo `B ∈ X` sobra si `A ∈ (X − {B})⁺`, calculada con el conjunto **actual**
+3. **Quitar DF redundantes**: `X → A` sobra si `A ∈ X⁺` calculada **sin** esa DF
+
+- El paso 2 va **antes** que el 3: al acortar un lado izquierdo pueden aparecer DF redundantes nuevas
 
 Ejemplo: `E = {B → A, D → A, AB → D}`
 
-1. Todas tienen un solo atributo a la derecha
-2. `A` sobra en `AB → D`: de `B → A` sale `B → AB` (aumento) y, con `AB → D`, `B → D` (transitiva). Se reemplaza `AB → D` por `B → D`
-3. `B → D` y `D → A` ⇒ `B → A` es **redundante**
+1. **Separar**: todas tienen ya un solo atributo a la derecha
+2. **Sobrantes** (solo `AB → D` tiene más de un atributo a la izquierda):
+   - ¿Sobra `A`? `B⁺ = {B, A, D}` contiene `D` → **sí**, se reemplaza `AB → D` por `B → D`
+   - ¿Sobra `B`? `A⁺ = {A}` no contiene `D` → no
+   - Queda `{B → A, D → A, B → D}`
+3. **Redundantes**:
+   - `B → A`: sin ella, `B⁺ = {B, D, A}` contiene `A` → **redundante**, se elimina
+   - `D → A`: sin ella, `D⁺ = {D}` → se queda
+   - `B → D`: sin ella, `B⁺ = {B}` → se queda
 4. **Cobertura mínima**: `{B → D, D → A}`
+
+```mermaid
+flowchart LR
+    subgraph E["E (original)"]
+        direction LR
+        EB([B]) -->|"B → A"| EA[A]
+        ED([D]) -->|"D → A"| EA
+        EAB(["A + B"]) -->|"AB → D"| ED
+    end
+    subgraph M["Cobertura mínima"]
+        direction LR
+        MB([B]) -->|"B → D"| MD([D]) -->|"D → A"| MA[A]
+    end
+    E ==>|"quitar A sobrante<br/>y B → A redundante"| M
+
+    classDef orig fill:#fff4e0,stroke:#c98a1b,stroke-width:2px,color:#1b2b40
+    classDef ok fill:#e8eef7,stroke:#4a6fa5,stroke-width:2px,color:#1b2b40
+    class EB,ED,EA,EAB orig
+    class MB,MD,MA ok
+    style E fill:#fbfcfd,stroke:#c3ccd7,color:#33414f
+    style M fill:#fbfcfd,stroke:#c3ccd7,color:#33414f
+```
+
+- En la cobertura mínima `B → A` ya no hace falta escribirla: se obtiene siguiendo la cadena `B → D → A`
 
 ## Claves y atributos
 
