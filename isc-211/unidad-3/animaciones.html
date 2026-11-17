@@ -13,6 +13,7 @@
   header { background:#1f2a33; color:#fff; padding:6px 14px; display:flex; flex-wrap:wrap; gap:6px 18px; align-items:center; }
   header h1 { font-size:16px; margin:0; flex:1 1 auto; }
   header label { font-size:13px; display:flex; align-items:center; gap:6px; }
+  header .lbl-s { display:none; }
   nav { display:flex; flex-wrap:wrap; gap:2px; padding:4px 14px 0; background:#e4e9ef; }
   nav button { border:0; background:transparent; padding:7px 11px; border-radius:8px 8px 0 0; cursor:pointer; font-size:14px; color:var(--gris); }
   nav button.on { background:#fff; color:#1f2a33; font-weight:600; }
@@ -62,7 +63,7 @@
   #bin-tree .tn { cursor:pointer; }
 
   /* ---- Arreglo (heap) ---- */
-  .arr { display:flex; gap:5px; padding:18px 4px 4px; flex-wrap:wrap; }
+  .arr { display:flex; gap:20px 5px; padding:18px 4px 4px; flex-wrap:wrap; }
   .cell { position:relative; width:48px; height:48px; border:2px solid #34495e; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px; background:#fff; transition:background .25s, border-color .25s; }
   .cell .idx { position:absolute; top:-18px; font-size:11px; color:#8a96a3; font-weight:400; }
   .cell.empty { background:#f4f6f8; border-style:dashed; border-color:#a9b4bf; }
@@ -97,7 +98,10 @@
     .grid2 { grid-template-columns:1fr; }
     .rec-side { order:-1; }   /* secuencia y pila/cola justo debajo del árbol, antes del código */
     main { padding:4px; } section { padding:8px 10px; border-radius:6px; }
-    header { padding:4px 10px; } header h1 { font-size:14px; }
+    header { padding:4px 10px; gap:4px 10px; } header h1 { font-size:14px; flex-basis:100%; }
+    header input[type=range] { width:70px; }
+    header .lbl { display:none; } header .lbl-s { display:inline; }
+    header #next { padding:4px 8px; }
     nav { padding:2px 6px 0; } nav button { padding:6px 8px; font-size:13px; }
     h2 { font-size:16px; } p.desc { font-size:12.5px; }
     .cell { width:34px; height:34px; font-size:13px; border-radius:6px; }
@@ -112,7 +116,7 @@
 <div class="top">
 <header>
   <h1>ISC-211 · Animaciones de árboles</h1>
-  <label>Velocidad <input id="speed" type="range" min="0.25" max="3" step="0.25" value="1"> <span id="speedv">1×</span></label>
+  <label title="Velocidad"><span class="lbl">Velocidad</span><span class="lbl-s">⏱</span> <input id="speed" type="range" min="0.25" max="3" step="0.25" value="1"> <span id="speedv">1×</span></label>
   <label><input id="pause" type="checkbox"> Paso a paso</label>
   <button id="next" class="op" style="color:#fff;border-color:#fff;background:transparent" disabled>Siguiente ▶</button>
 </header>
@@ -340,7 +344,7 @@ function renderTree(p, root, { hi = {}, sub = null, sel = null } = {}) {
   })(root, 0);
   // Espaciado compacto. El SVG conserva su proporción (sin franjas vacías) y su tamaño
   // queda entre 70 % y 140 % del natural: si no cabe, la caja se desplaza horizontalmente.
-  const W = 42, H = 52, w = Math.max(i, 7) * W, off = (w - i * W) / 2;
+  const W = 42, H = 52, w = Math.max(i, 7) * W + 24, off = (w - i * W) / 2;   // +24: espacio para etiquetas en los bordes
   const X = n => off + pos.get(n)[0] * W + W / 2, Y = n => pos.get(n)[1] * H + 26;
   const h = (depth + 1) * H;
   svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
