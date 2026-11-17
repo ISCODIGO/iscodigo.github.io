@@ -8,28 +8,37 @@
   :root { --azul:#1e6fd9; --verde:#2e9e44; --rojo:#c0392b; --amar:#d4a017; --morado:#7d3cbd; --gris:#5b6670; }
   * { box-sizing: border-box; }
   body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background:#f5f7fa; color:#1f2a33; }
-  header { background:#1f2a33; color:#fff; padding:12px 20px; display:flex; flex-wrap:wrap; gap:12px 24px; align-items:center; }
-  header h1 { font-size:18px; margin:0; flex:1 1 auto; }
+  /* El encabezado y las pestañas quedan fijos arriba: velocidad y "Siguiente" siempre a la vista */
+  .top { position:sticky; top:0; z-index:10; }
+  header { background:#1f2a33; color:#fff; padding:6px 14px; display:flex; flex-wrap:wrap; gap:6px 18px; align-items:center; }
+  header h1 { font-size:16px; margin:0; flex:1 1 auto; }
   header label { font-size:13px; display:flex; align-items:center; gap:6px; }
-  nav { display:flex; flex-wrap:wrap; gap:4px; padding:10px 20px 0; background:#e4e9ef; }
-  nav button { border:0; background:transparent; padding:10px 14px; border-radius:8px 8px 0 0; cursor:pointer; font-size:14px; color:var(--gris); }
+  nav { display:flex; flex-wrap:wrap; gap:2px; padding:4px 14px 0; background:#e4e9ef; }
+  nav button { border:0; background:transparent; padding:7px 11px; border-radius:8px 8px 0 0; cursor:pointer; font-size:14px; color:var(--gris); }
   nav button.on { background:#fff; color:#1f2a33; font-weight:600; }
-  main { max-width:1100px; margin:0 auto; padding:20px; }
-  section { display:none; background:#fff; border-radius:10px; padding:18px 22px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  main { max-width:1280px; margin:0 auto; padding:10px; }
+  section { display:none; background:#fff; border-radius:10px; padding:12px 16px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
   section.on { display:block; }
-  h2 { margin:0 0 4px; font-size:20px; }
-  h3 { font-size:14px; margin:12px 0 6px; color:var(--gris); text-transform:uppercase; letter-spacing:.04em; }
-  p.desc { margin:0 0 14px; color:var(--gris); font-size:14px; }
-  .ctrl { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:10px; }
+  h2 { margin:0 0 2px; font-size:18px; }
+  h3 { font-size:13px; margin:8px 0 4px; color:var(--gris); text-transform:uppercase; letter-spacing:.04em; }
+  p.desc { margin:0 0 8px; color:var(--gris); font-size:13.5px; line-height:1.4; }
+  .ctrl { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:6px; }
   .ctrl input, .ctrl select { width:70px; padding:6px 8px; border:1px solid #c5ced8; border-radius:6px; font-size:14px; }
   .ctrl select { width:auto; }
-  button.op { padding:7px 12px; border:1px solid var(--azul); background:#fff; color:var(--azul); border-radius:6px; cursor:pointer; font-size:13px; font-family:ui-monospace, monospace; }
+  button.op { padding:6px 10px; border:1px solid var(--azul); background:#fff; color:var(--azul); border-radius:6px; cursor:pointer; font-size:13px; font-family:ui-monospace, monospace; }
   button.op:hover:not(:disabled) { background:var(--azul); color:#fff; }
   button.op.sec { border-color:var(--gris); color:var(--gris); }
   button.op.sec:hover:not(:disabled) { background:var(--gris); color:#fff; }
   button:disabled { opacity:.45; cursor:not-allowed; }
-  .status { font-family:ui-monospace, monospace; font-size:14px; background:#f0f3f7; padding:6px 10px; border-radius:6px; display:inline-block; margin:6px 0; }
-  .log { list-style:none; margin:10px 0 0; padding:8px 12px; background:#1f2a33; color:#d8e1ea; border-radius:8px; font-family:ui-monospace, monospace; font-size:12.5px; height:160px; overflow-y:auto; }
+  .status { font-family:ui-monospace, monospace; font-size:13.5px; background:#f0f3f7; padding:4px 10px; border-radius:6px; display:inline-block; margin:2px 0 6px; }
+  .log { list-style:none; margin:8px 0 0; padding:6px 10px; background:#1f2a33; color:#d8e1ea; border-radius:8px; font-family:ui-monospace, monospace; font-size:12.5px; height:110px; overflow-y:auto; }
+
+  /* Vista: dibujo a la izquierda y bitácora a la derecha en pantallas anchas */
+  .view { display:grid; grid-template-columns:minmax(0,1fr) 280px; gap:10px; align-items:start; }
+  .view .log { margin:0; height:auto; min-height:120px; max-height:62vh; }
+  .viz { min-width:0; }
+  /* Si el árbol es más ancho que la pantalla, se desplaza dentro de su caja (no se encoge hasta no leerse) */
+  .tree-wrap { overflow-x:auto; border:1px solid #e1e6ec; border-radius:8px; background:#fff; }
   .log li { padding:2px 0; }
   .log li.err { color:#ff8a80; }
   .log li.ok { color:#8be28b; }
@@ -37,7 +46,7 @@
   .legend span { display:inline-block; width:12px; height:12px; border-radius:50%; vertical-align:middle; margin:0 4px 0 10px; border:1px solid #999; }
 
   /* ---- Árbol (SVG) ---- */
-  .tree { display:block; width:100%; border:1px solid #e1e6ec; border-radius:8px; background:#fff; }
+  .tree { display:block; width:100%; height:auto; max-height:62vh; margin:0 auto; }
   .tree line { stroke:#8a96a3; stroke-width:1.6; }
   .tree circle { fill:#fff; stroke:#34495e; stroke-width:2; transition:fill .2s, stroke .2s; }
   .tree text { font-family:ui-monospace, monospace; font-size:13px; font-weight:700; text-anchor:middle; dominant-baseline:central; }
@@ -53,7 +62,7 @@
   #bin-tree .tn { cursor:pointer; }
 
   /* ---- Arreglo (heap) ---- */
-  .arr { display:flex; gap:6px; padding:22px 4px 10px; flex-wrap:wrap; }
+  .arr { display:flex; gap:5px; padding:18px 4px 4px; flex-wrap:wrap; }
   .cell { position:relative; width:48px; height:48px; border:2px solid #34495e; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px; background:#fff; transition:background .25s, border-color .25s; }
   .cell .idx { position:absolute; top:-18px; font-size:11px; color:#8a96a3; font-weight:400; }
   .cell.empty { background:#f4f6f8; border-style:dashed; border-color:#a9b4bf; }
@@ -64,7 +73,7 @@
   .cell.act  { background:#d6eaff; border-color:var(--azul); }
 
   /* ---- Recorridos ---- */
-  .grid2 { display:grid; grid-template-columns:minmax(260px,1fr) minmax(220px,1fr); gap:18px; }
+  .grid2 { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; }
   .code { background:#1f2a33; color:#d8e1ea; border-radius:8px; padding:10px 0; font-family:ui-monospace, monospace; font-size:13px; margin:0; }
   .code div { padding:1px 14px; white-space:pre; }
   .code div.hl { background:#3d5a80; color:#fff; }
@@ -75,11 +84,32 @@
   .frame.top  { background:#d6eaff; border-color:var(--azul); }
   .chips { display:flex; flex-wrap:wrap; gap:6px; min-height:36px; }
   .chips span { font-family:ui-monospace, monospace; font-weight:700; padding:6px 10px; border-radius:6px; background:#e3f4e6; border:2px solid var(--verde); }
-  @media (max-width:760px) { .grid2 { grid-template-columns:1fr; } main { padding:12px; } section { padding:14px; } }
+  .chips { margin-bottom:6px; }
+  .chips span { padding:4px 8px; }
+
+  /* Pantallas medianas: la bitácora pasa debajo del dibujo */
+  @media (max-width:900px) {
+    .view { grid-template-columns:1fr; }
+    .view .log { height:90px; min-height:0; }
+  }
+  /* Pantallas pequeñas: todo más compacto */
+  @media (max-width:640px) {
+    .grid2 { grid-template-columns:1fr; }
+    .rec-side { order:-1; }   /* secuencia y pila/cola justo debajo del árbol, antes del código */
+    main { padding:4px; } section { padding:8px 10px; border-radius:6px; }
+    header { padding:4px 10px; } header h1 { font-size:14px; }
+    nav { padding:2px 6px 0; } nav button { padding:6px 8px; font-size:13px; }
+    h2 { font-size:16px; } p.desc { font-size:12.5px; }
+    .cell { width:34px; height:34px; font-size:13px; border-radius:6px; }
+    .cell .idx { top:-15px; font-size:10px; }
+    .code { font-size:12px; }
+    .ctrl input { width:60px; }
+  }
 </style>
 </head>
 <body>
 
+<div class="top">
 <header>
   <h1>ISC-211 · Animaciones de árboles</h1>
   <label>Velocidad <input id="speed" type="range" min="0.25" max="3" step="0.25" value="1"> <span id="speedv">1×</span></label>
@@ -94,6 +124,7 @@
   <button data-t="bst">BST</button>
   <button data-t="avl">AVL</button>
 </nav>
+</div>
 
 <main>
 
@@ -120,9 +151,13 @@
     <button class="op sec" data-run="binClear">Vaciar</button>
   </div>
   <div class="status" id="bin-st"></div>
-  <svg class="tree" id="bin-tree"></svg>
-  <div class="legend"><span style="border:3px dashed var(--morado)"></span>p seleccionado <span style="background:#d6eaff"></span>resultado <span style="background:#fff3c4"></span>camino <span style="background:#d4f8d4"></span>nuevo <span style="background:#fdd"></span>eliminado</div>
-  <ul class="log" id="bin-log"></ul>
+  <div class="view">
+    <div class="viz">
+    <div class="tree-wrap"><svg class="tree" id="bin-tree"></svg></div>
+    <div class="legend"><span style="border:3px dashed var(--morado)"></span>p seleccionado <span style="background:#d6eaff"></span>resultado <span style="background:#fff3c4"></span>camino <span style="background:#d4f8d4"></span>nuevo <span style="background:#fdd"></span>eliminado</div>
+    </div>
+    <ul class="log" id="bin-log"></ul>
+  </div>
 </section>
 
 <!-- ================= RECORRIDOS ================= -->
@@ -140,17 +175,17 @@
     <button class="op sec" data-run="recExample">Ejemplo</button>
     <button class="op sec" data-run="recRandom">Árbol aleatorio</button>
   </div>
-  <svg class="tree" id="rec-tree"></svg>
+  <div class="tree-wrap"><svg class="tree" id="rec-tree"></svg></div>
   <div class="legend"><span style="background:#d6eaff"></span>nodo actual <span style="background:#fff3c4"></span>en la pila / cola <span style="background:#e3f4e6"></span>visitado</div>
-  <h3>Secuencia de visita</h3>
-  <div class="chips" id="rec-out"></div>
   <div class="grid2">
     <div>
       <h3>Código</h3>
       <pre class="code" id="rec-code"></pre>
       <ul class="log" id="rec-log"></ul>
     </div>
-    <div>
+    <div class="rec-side">
+      <h3>Secuencia de visita</h3>
+      <div class="chips" id="rec-out"></div>
       <h3 id="rec-dsname">Pila de llamadas</h3>
       <div class="stack" id="rec-ds"></div>
     </div>
@@ -174,9 +209,13 @@
     <button class="op sec" data-run="heapReset">Vaciar</button>
   </div>
   <div class="status" id="heap-st"></div>
-  <svg class="tree" id="heap-tree"></svg>
-  <div class="arr" id="heap-arr"></div>
-  <ul class="log" id="heap-log"></ul>
+  <div class="view">
+    <div class="viz">
+      <div class="tree-wrap"><svg class="tree" id="heap-tree"></svg></div>
+      <div class="arr" id="heap-arr"></div>
+    </div>
+    <ul class="log" id="heap-log"></ul>
+  </div>
 </section>
 
 <!-- ================= BST ================= -->
@@ -194,9 +233,13 @@
     <button class="op sec" data-run="bstClear">Vaciar</button>
   </div>
   <div class="status" id="bst-st"></div>
-  <svg class="tree" id="bst-tree"></svg>
-  <div class="legend"><span style="background:#d6eaff"></span>comparando <span style="background:#fff3c4"></span>camino recorrido <span style="background:#d4f8d4"></span>encontrado / nuevo <span style="background:#fdd"></span>eliminado</div>
-  <ul class="log" id="bst-log"></ul>
+  <div class="view">
+    <div class="viz">
+    <div class="tree-wrap"><svg class="tree" id="bst-tree"></svg></div>
+    <div class="legend"><span style="background:#d6eaff"></span>comparando <span style="background:#fff3c4"></span>camino recorrido <span style="background:#d4f8d4"></span>encontrado / nuevo <span style="background:#fdd"></span>eliminado</div>
+    </div>
+    <ul class="log" id="bst-log"></ul>
+  </div>
 </section>
 
 <!-- ================= AVL ================= -->
@@ -212,9 +255,13 @@
     <button class="op sec" data-run="avlClear">Vaciar</button>
   </div>
   <div class="status" id="avl-st"></div>
-  <svg class="tree" id="avl-tree"></svg>
-  <div class="legend"><span style="background:#d6eaff"></span>revisando FE <span style="background:#fff3c4"></span>camino <span style="background:#ead9fb"></span>desbalanceado / rotación <span style="background:#d4f8d4"></span>nuevo</div>
-  <ul class="log" id="avl-log"></ul>
+  <div class="view">
+    <div class="viz">
+    <div class="tree-wrap"><svg class="tree" id="avl-tree"></svg></div>
+    <div class="legend"><span style="background:#d6eaff"></span>revisando FE <span style="background:#fff3c4"></span>camino <span style="background:#ead9fb"></span>desbalanceado / rotación <span style="background:#d4f8d4"></span>nuevo</div>
+    </div>
+    <ul class="log" id="avl-log"></ul>
+  </div>
 </section>
 
 </main>
@@ -281,7 +328,8 @@ function renderTree(p, root, { hi = {}, sub = null, sel = null } = {}) {
   const svg = $('#' + p + '-tree');
   svg.innerHTML = '';
   if (!root) {
-    svg.setAttribute('viewBox', '0 0 400 60'); svg.style.height = '60px';
+    svg.setAttribute('viewBox', '0 0 400 50');
+    Object.assign(svg.style, { aspectRatio: '', height: '50px', minWidth: '', maxWidth: '' });
     svgEl('text', { x: 200, y: 30, class: 'empty' }, svg).textContent = 'árbol vacío';
     return;
   }
@@ -290,19 +338,21 @@ function renderTree(p, root, { hi = {}, sub = null, sel = null } = {}) {
     if (!n) return;
     walk(n.l, d + 1); pos.set(n, [i++, d]); depth = Math.max(depth, d); walk(n.r, d + 1);
   })(root, 0);
-  const W = 52, H = 64, w = Math.max(i, 8) * W, off = (w - i * W) / 2;
-  const X = n => off + pos.get(n)[0] * W + W / 2, Y = n => pos.get(n)[1] * H + 30;
-  const h = (depth + 1) * H + 6;
+  // Espaciado compacto. El SVG conserva su proporción (sin franjas vacías) y su tamaño
+  // queda entre 70 % y 140 % del natural: si no cabe, la caja se desplaza horizontalmente.
+  const W = 42, H = 52, w = Math.max(i, 7) * W, off = (w - i * W) / 2;
+  const X = n => off + pos.get(n)[0] * W + W / 2, Y = n => pos.get(n)[1] * H + 26;
+  const h = (depth + 1) * H;
   svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-  svg.style.height = Math.min(h, 460) + 'px';
+  Object.assign(svg.style, { height: '', aspectRatio: `${w} / ${h}`, minWidth: Math.round(w * 0.7) + 'px', maxWidth: Math.round(w * 1.4) + 'px' });
   const eg = svgEl('g', {}, svg), ng = svgEl('g', {}, svg);
   for (const n of pos.keys()) {
     for (const c of [n.l, n.r]) if (c) svgEl('line', { x1: X(n), y1: Y(n), x2: X(c), y2: Y(c) }, eg);
     const g = svgEl('g', { class: 'tn ' + (hi[n.id] || '') + (sel === n.id ? ' sel' : ''), transform: `translate(${X(n)},${Y(n)})`, 'data-id': n.id }, ng);
-    svgEl('circle', { r: 19 }, g);
+    svgEl('circle', { r: 17 }, g);
     svgEl('text', {}, g).textContent = n.v;
     const s = sub && sub(n);
-    if (s !== '' && s != null) svgEl('text', { x: 15, y: -22, class: 'sub' }, g).textContent = s;
+    if (s !== '' && s != null) svgEl('text', { x: 13, y: -19, class: 'sub' }, g).textContent = s;
   }
 }
 
