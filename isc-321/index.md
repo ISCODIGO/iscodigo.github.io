@@ -10,6 +10,6 @@ Este es el repositorio de contenido para la clase. Aquí seguiremos el sílabo o
 ### Contenido Académico
 1. **[Unidad I: Introducción a Bases de Datos Relacionales, Modelado y SQL Básico](./unidad-1/index.md)**
 2. **[Unidad II: Álgebra relacional, SQL y Normalización](./unidad-2/index.md)**
-<!-- 3. **[Unidad III: Agrupamientos, Subconsultas y Proyecto Final](./unidad-3/index.md)** -->
+3. **[Unidad III: Normalización y Transacciones](./unidad-3/index.md)**
 
 [⬅️ Volver al inicio](../index.md)
