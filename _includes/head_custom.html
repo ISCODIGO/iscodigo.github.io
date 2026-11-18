@@ -52,6 +52,46 @@
     display: block !important;
     width: 100% !important;
   }
+  /* --- 2. Mermaid en modo noche (color-theme-2) ---
+     El tema renderiza Mermaid siempre con theme "default" (líneas #333),
+     invisibles sobre el fondo oscuro. Se aclaran conectores, flechas y
+     etiquetas; los nodos conservan sus colores (classDef) porque son claros. */
+  .book.color-theme-2 .language-mermaid svg .flowchart-link,
+  .book.color-theme-2 .language-mermaid svg .edgePath .path,
+  .book.color-theme-2 .language-mermaid svg .relationshipLine,
+  .book.color-theme-2 .language-mermaid svg .actor-line,
+  .book.color-theme-2 .language-mermaid svg [class^="messageLine"],
+  .book.color-theme-2 .language-mermaid svg .relation,
+  .book.color-theme-2 .language-mermaid svg .transition {
+    stroke: #c9d1d9 !important;
+  }
+  .book.color-theme-2 .language-mermaid svg marker path,
+  .book.color-theme-2 .language-mermaid svg .arrowheadPath,
+  .book.color-theme-2 .language-mermaid svg .arrowhead {
+    fill: #c9d1d9 !important;
+    stroke: #c9d1d9 !important;
+  }
+  .book.color-theme-2 .language-mermaid svg .edgeLabel,
+  .book.color-theme-2 .language-mermaid svg .edgeLabel rect,
+  .book.color-theme-2 .language-mermaid svg .edgeLabel p,
+  .book.color-theme-2 .language-mermaid svg .labelBkg {
+    background-color: #1c1f2b !important;
+    fill: #1c1f2b !important;
+    color: #e6edf3 !important;
+  }
+  .book.color-theme-2 .language-mermaid svg .edgeLabel text,
+  .book.color-theme-2 .language-mermaid svg .messageText,
+  .book.color-theme-2 .language-mermaid svg .loopText,
+  .book.color-theme-2 .language-mermaid svg .cluster-label,
+  .book.color-theme-2 .language-mermaid svg .titleText {
+    fill: #e6edf3 !important;
+    color: #e6edf3 !important;
+  }
+  .book.color-theme-2 .language-mermaid svg .cluster rect {
+    fill: transparent !important;
+    stroke: #8b949e !important;
+  }
+
 /* --- 3. Botón Zen con Icono --- */
   #toggle-nav {
     position: fixed;

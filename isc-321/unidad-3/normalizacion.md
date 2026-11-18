@@ -202,11 +202,19 @@ flowchart LR
 ### Reglas de inferencia
 
 - El diseñador escribe solo las DF **evidentes**, pero de ellas se deducen otras que nadie escribió
-  - `NúmeroDpto → DniDirector` y `DniDirector → TeléfonoDirector` ⇒ `NúmeroDpto → TeléfonoDirector`
-  - Esa DF implícita también es una restricción: la base de datos no puede violarla
-- **F**: las DF que especifica el diseñador
-- **Clausura F⁺**: F más todas las DF que se **deducen** de F
-- Las **reglas de inferencia** dicen qué deducciones son válidas
+- **F**: el conjunto de DF que el diseñador **escribe** explícitamente
+- **F⁺** (clausura de F): el conjunto de **todas** las DF que se cumplen en la relación: las de F **más** todas las que se pueden **deducir** de F
+  - F es la lista corta que se escribe; F⁺ es la lista completa de reglas que la base de datos debe respetar
+  - Siempre F ⊆ F⁺
+
+Ejemplo: `DEPARTAMENTO(NúmeroDpto, DniDirector, TeléfonoDirector)` con
+
+- `F = {NúmeroDpto → DniDirector, DniDirector → TeléfonoDirector}` (lo que escribió el diseñador)
+- De esas dos se deduce `NúmeroDpto → TeléfonoDirector`: nadie la escribió, pero se cumple (el departamento determina su director, y el director su teléfono)
+- Esa DF **no** está en F, pero **sí** está en F⁺; también es una restricción: la base de datos no puede violarla
+- F⁺ incluye además DF obvias como `NúmeroDpto → NúmeroDpto` o `{NúmeroDpto, DniDirector} → DniDirector`; por eso F⁺ suele ser **muy grande** aunque F sea pequeño
+
+- Las **reglas de inferencia** dicen qué deducciones son válidas, es decir, cómo pasar de F a F⁺
 - Notación: `{X, Y} → Z` se abrevia `XY → Z`
 
 | Regla | Nombre | Enunciado | Idea | Ejemplo |
@@ -229,7 +237,7 @@ Ejemplo: demostrar la descomposición (RI4) con los axiomas
 2. `YZ → Y` (reflexiva: `YZ ⊇ Y`)
 3. `X → Y` (transitiva con 1 y 2)
 
-Ejemplo: deducir una DF nueva. Con `F = {A → B, BC → D}`, ¿se cumple `AC → D`?
+Ejemplo: deducir una DF nueva. En `R(A, B, C, D)` con `F = {A → B, BC → D}`, ¿se cumple `AC → D`?
 
 1. `A → B` (dada)
 2. `AC → BC` (aumento con `C`)
@@ -245,37 +253,50 @@ Ejemplo: deducir una DF nueva. Con `F = {A → B, BC → D}`, ¿se cumple `AC �
 
 ### Clausura de un conjunto de atributos (X⁺)
 
-- Calcular F⁺ completa no es práctico: puede tener una cantidad **exponencial** de DF
-- En su lugar se calcula **X⁺**: todos los atributos que `X` determina, directa o indirectamente
-- Para qué sirve:
-  - **Comprobar una DF**: `X → Y` está en F⁺ si y solo si `Y ⊆ X⁺`
-  - **Encontrar claves**: si X⁺ contiene **todos** los atributos de la relación, `X` es superclave; si además ningún subconjunto propio de `X` lo logra, es clave
-  - **Comparar conjuntos de DF** y **calcular la cobertura mínima** (siguiente sección)
+**Idea central**: la clausura de `X`, escrita **X⁺**, es el conjunto de atributos cuyo valor queda **determinado** cuando se conoce el valor de `X`
 
-Algoritmo 10.1, en palabras:
+- **`X`** es un conjunto de atributos de la relación que se toma como **punto de partida**: los atributos cuyo valor me dan
+  - Puede ser un solo atributo (`X = {Dni}`) o varios (`X = {Dni, NumProyecto}`)
+  - Lo elige quien hace la pregunta: "si conozco **estos** atributos, ¿qué más conozco?"
+  - Suele ser un candidato a clave que se quiere probar
 
-1. Empezar con X⁺ = `X` (por la regla reflexiva)
-2. Recorrer F: si el **lado izquierdo** de una DF ya está **dentro** de X⁺, agregar su lado derecho
-3. Repetir el paso 2 mientras se agregue algo nuevo; cuando una pasada completa no agrega nada, X⁺ está terminado
+- "Determinado" significa: si dos filas tienen el **mismo valor en `X`**, entonces **obligatoriamente** tienen el mismo valor en **todos** los atributos de X⁺
+  - Ej.: en `EMP_DEPT(Dni, NombreE, NúmeroDpto, NombreDpto)` con la DF `NúmeroDpto → NombreDpto`, tomando `X = {NúmeroDpto}`:
 
-```text
-X⁺ := X
-repetir
-    antiguaX⁺ := X⁺
-    por cada Y → Z en F:
-        si Y ⊆ X⁺ entonces X⁺ := X⁺ ∪ Z
-hasta que X⁺ = antiguaX⁺
-```
+    | Dni | NombreE | NúmeroDpto | NombreDpto |
+    | --- | --- | --- | --- |
+    | 123 | Smith | 5 | Investigación |
+    | 456 | Wong | 5 | Investigación |
+    | 789 | Zelaya | 4 | Administración |
 
-Traza: `R(A, B, C, D, E)` con `F = {A → B, B → C, CD → E}`. Calcular `{A, D}⁺`:
+    - Pregunta: "una fila tiene `NúmeroDpto = 5`; ¿qué más puedo decir de ella?"
+    - ¿Su `NombreDpto`? **Sí**: es "Investigación", sin importar cuál de las filas sea → `NombreDpto` **está determinado** por `NúmeroDpto` (está en X⁺)
+    - ¿Su `NombreE`? **No**: puede ser Smith o Wong → `NombreE` **no está determinado** por `NúmeroDpto` (no está en X⁺)
+    - Es decir, un atributo está determinado por `X` cuando conocer `X` basta para dar **una sola respuesta** sobre su valor
+- Un atributo entra en X⁺ de dos formas:
+  - **Directa**: hay una DF que va de `X` a ese atributo
+  - **Indirecta**: se llega a él encadenando DF (`X` determina a `Y`, y `Y` determina al atributo)
+  - Ej.: en `EMP_DEPT(Dni, NombreE, NúmeroDpto, NombreDpto)` con `F = {Dni → NombreE, Dni → NúmeroDpto, NúmeroDpto → NombreDpto}`, tomando `X = {Dni}`:
+    - `NombreE` entra de forma **directa**: la DF `Dni → NombreE` va de `Dni` a `NombreE` en un solo paso
+    - `NúmeroDpto` entra de forma **directa**: la DF `Dni → NúmeroDpto` también sale de `Dni`
+    - `NombreDpto` entra de forma **indirecta**: no hay ninguna DF `Dni → NombreDpto`, pero se llega en dos pasos: `Dni → NúmeroDpto` y luego `NúmeroDpto → NombreDpto`
+    - En palabras: con el `Dni` 123 sé que el empleado está en el departamento 5 (directa), y como sé que es el departamento 5, sé que se llama "Investigación" (indirecta)
+- **¿Por qué "clausura"?** Porque al final el conjunto queda **cerrado**: ninguna DF de F lo puede hacer crecer más
 
-| Paso | DF usada | ¿Lado izquierdo ⊆ X⁺? | X⁺ |
+**Cómo obtener X⁺**: seguir las DF como una cadena
+
+- Se parte de lo que ya conozco: los atributos de `X`
+- Cada DF cuyo lado izquierdo **ya conozco completo** me deja conocer su lado derecho
+- Cuando ninguna DF me deja conocer algo nuevo, ya tengo X⁺
+
+Ejemplo: `R(A, B, C, D, E)` con `F = {A → B, B → C, CD → E}`. ¿Qué conozco si me dan `A` y `D`? Es decir, `{A, D}⁺`
+
+| # | Ya conozco | Uso la DF | Ahora también conozco |
 | --- | --- | --- | --- |
-| inicio | — | — | `{A, D}` |
-| 1 | `A → B` | `A`: sí | `{A, B, D}` |
-| 2 | `B → C` | `B`: sí | `{A, B, C, D}` |
-| 3 | `CD → E` | `C, D`: sí | `{A, B, C, D, E}` |
-| 4 | otra pasada | nada nuevo | fin |
+| 0 | `A, D` (me los dieron) | — | — |
+| 1 | `A` (fila 0) | `A → B` | `B` |
+| 2 | `B` (fila 1) | `B → C` | `C` |
+| 3 | `C` (fila 2) y `D` (fila 0) | `CD → E` | `E` |
 
 ```mermaid
 flowchart LR
@@ -289,9 +310,62 @@ flowchart LR
     class S3 fin
 ```
 
+- Resultado: `{A, D}⁺ = {A, B, C, D, E}`: conociendo `A` y `D` se conoce **toda** la fila
 - `{A, D}⁺` contiene todos los atributos → `{A, D}` es superclave
-- `A⁺ = {A, B, C}` y `D⁺ = {D}` no alcanzan → `{A, D}` es **clave**
-- El orden de las DF solo cambia cuántas pasadas se necesitan, no el resultado
+- `A⁺ = {A, B, C}` y `D⁺ = {D}` no alcanzan solos → `{A, D}` es **clave**
+
+Ahora con atributos reales: la relación `EMP_DEPT(Dni, NombreE, NúmeroDpto, NombreDpto)` guarda cada empleado junto con el departamento donde trabaja
+
+| Dni | NombreE | NúmeroDpto | NombreDpto |
+| --- | --- | --- | --- |
+| 123 | Smith | 5 | Investigación |
+| 456 | Wong | 5 | Investigación |
+| 789 | Zelaya | 4 | Administración |
+
+Sus DF (F) son:
+
+- `Dni → NombreE` (el Dni identifica al empleado)
+- `Dni → NúmeroDpto` (cada empleado está en un solo departamento)
+- `NúmeroDpto → NombreDpto` (cada departamento tiene un solo nombre)
+
+En `EMP_DEPT(Dni, NombreE, NúmeroDpto, NombreDpto)`, si me dan un `Dni`, ¿qué más puedo saber? Es decir, calcular `Dni⁺` (aquí `X = {Dni}`):
+
+| # | Ya conozco | Uso la DF | Ahora también conozco |
+| --- | --- | --- | --- |
+| 0 | `Dni` (me lo dieron) | — | — |
+| 1 | `Dni` (fila 0) | `Dni → NombreE` | `NombreE` |
+| 2 | `Dni` (fila 0) | `Dni → NúmeroDpto` | `NúmeroDpto` |
+| 3 | `NúmeroDpto` (fila 2) | `NúmeroDpto → NombreDpto` | `NombreDpto` |
+
+- Resultado: `Dni⁺ = {Dni, NombreE, NúmeroDpto, NombreDpto}`
+  - `NombreE` y `NúmeroDpto` entran de forma **directa**
+  - `NombreDpto` entra de forma **indirecta**: no hay DF `Dni → NombreDpto`, pero se llega **a través** de `NúmeroDpto`
+  - En términos de filas: dos filas con el mismo `Dni` tienen forzosamente el mismo nombre, departamento y nombre de departamento
+  - `Dni⁺` contiene **todos** los atributos de `EMP_DEPT`, así que `Dni` es clave de la relación
+- Desde otros puntos de partida se conoce menos:
+  - `NúmeroDpto⁺ = {NúmeroDpto, NombreDpto}`: saber el departamento no dice qué empleado es
+  - `NombreE⁺ = {NombreE}`: ninguna DF empieza en `NombreE`, así que no lleva a nada más
+
+**Definición formal**: X⁺ es el conjunto de todos los atributos `A` tales que `X → A` se puede deducir de F
+
+- `X`: los atributos de partida (lo que conozco)
+- `F`: las DF de la relación; con otras DF, la clausura sería otra
+- X⁺ siempre incluye a `X` (regla reflexiva)
+
+**No confundir X⁺ con F⁺**:
+
+| | F⁺ | X⁺ |
+| --- | --- | --- |
+| Contiene | **dependencias** (`A → B`, ...) | **atributos** (`A`, `B`, ...) |
+| Significa | todas las DF que se deducen de F | todo lo que `X` determina |
+| Tamaño | puede ser enorme (exponencial) | a lo sumo todos los atributos de la relación |
+
+- Se relacionan así: `X → A` está en F⁺ si y solo si `A ∈ X⁺`
+- Por eso en la práctica no se calcula F⁺: basta calcular X⁺, que es rápido
+- Para qué sirve:
+  - **Comprobar una DF**: `X → Y` está en F⁺ si y solo si `Y ⊆ X⁺`
+  - **Encontrar claves**: si X⁺ contiene **todos** los atributos de la relación, `X` es superclave; si además ningún subconjunto propio de `X` lo logra, es clave
+  - **Comparar conjuntos de DF** y **calcular la cobertura mínima** (siguiente sección)
 
 Con las DF de `EMP_PROY`:
 
@@ -305,35 +379,134 @@ Con las DF de `EMP_PROY`:
 
 - Dos diseñadores pueden escribir las mismas restricciones de formas distintas; hace falta saber si dicen **lo mismo**
 - **F cubre a E**: toda DF de E se puede deducir de F
+  - En palabras: F **ya dice todo lo que dice E**; si me quedo solo con F, no pierdo ninguna regla de E
+  - Puede que F diga **más** cosas que E; eso no importa para "cubrir"
   - Se comprueba con clausuras: para cada `X → Y` de E, calcular `X⁺` **usando F** y verificar que `Y ⊆ X⁺`
-- **E y F equivalentes**: F cubre a E **y** E cubre a F (`E⁺ = F⁺`)
+  - Ej.: en `EMP_DEPT(Dni, NombreE, NúmeroDpto, NombreDpto)`
+    - `F = {Dni → NúmeroDpto, NúmeroDpto → NombreDpto}`
+    - `E = {Dni → NombreDpto}`
+    - F cubre a E: la única DF de E, `Dni → NombreDpto`, se deduce de F encadenando sus dos DF (con F, `Dni⁺ = {Dni, NúmeroDpto, NombreDpto}` contiene `NombreDpto`)
+    - E **no** cubre a F: usando solo E, `Dni⁺ = {Dni, NombreDpto}` no contiene `NúmeroDpto`, así que `Dni → NúmeroDpto` no se deduce de E
+    - F dice más que E: E sabe que el empleado determina el nombre del departamento, pero no sabe que determina el número
+- **E y F equivalentes**: F cubre a E **y** E cubre a F (`E⁺ = F⁺`): cada uno dice todo lo que dice el otro, así que son la **misma** información escrita de dos formas
 
-Ejemplo: `F = {A → C, AC → D, E → AD, E → H}` y `G = {A → CD, E → AH}`
+Ejemplo: dos diseñadores escriben las DF de `R(A, C, D, E, H)`: uno propone `F = {A → C, AC → D, E → AD, E → H}` y el otro `G = {A → CD, E → AH}`
 
-| ¿G cubre a F? | X⁺ con G | ¿Contiene el lado derecho? |
+Cómo se lee cada fila: se toma una DF `X → Y` del otro conjunto y se pregunta "¿esta DF se puede deducir?"
+
+1. Con el **lado izquierdo** `X`, se calcula `X⁺` usando **solo** las DF del conjunto que se está probando
+2. Se revisa si el **lado derecho** `Y` aparece dentro de ese `X⁺`
+   - Si aparece: conociendo `X` se llega a `Y`, así que la DF **se deduce**
+   - Si falta algún atributo de `Y`: la DF **no** se deduce, y el conjunto no cubre al otro
+
+**¿G cubre a F?** Hay que comprobar que **cada una** de las 4 DF de F se puede deducir usando **solo** `G = {A → CD, E → AH}`. Basta con que una falle para que G no cubra a F
+
+1) `A → C`: se parte de `A`
+
+| # | Ya conozco | Uso la DF de G | Ahora también conozco |
+| --- | --- | --- | --- |
+| 1 | `A` (me lo dieron) | `A → CD` | `C, D` |
+
+- Con G: `A⁺ = {A, C, D}`; el lado derecho `C` está → **se deduce**
+
+2) `AC → D`: se parte de `A, C`
+
+| # | Ya conozco | Uso la DF de G | Ahora también conozco |
+| --- | --- | --- | --- |
+| 1 | `A, C` (me los dieron) | `A → CD` | `D` (`C` ya lo conocía) |
+
+- Con G: `AC⁺ = {A, C, D}`; el lado derecho `D` está → **se deduce**
+
+3) `E → AD`: se parte de `E`
+
+| # | Ya conozco | Uso la DF de G | Ahora también conozco |
+| --- | --- | --- | --- |
+| 1 | `E` (me lo dieron) | `E → AH` | `A, H` |
+| 2 | `A` (fila 1) | `A → CD` | `C, D` |
+
+- Con G: `E⁺ = {E, A, H, C, D}`; el lado derecho `A, D` está completo → **se deduce**
+  - `C` y `D` **no** salen directamente de `E`: no hay DF `E → C` ni `E → D` en G. Se llega en cadena: en la fila 1, `E → AH` da `A`; en la fila 2, como ya conozco `A`, `A → CD` da `C` y `D`
+
+4) `E → H`: se parte de `E`
+
+| # | Ya conozco | Uso la DF de G | Ahora también conozco |
+| --- | --- | --- | --- |
+| 1 | `E` (me lo dieron) | `E → AH` | `A, H` |
+| 2 | `A` (fila 1) | `A → CD` | `C, D` |
+
+- Con G: `E⁺ = {E, A, H, C, D}`; el lado derecho `H` está → **se deduce**
+  - Aquí basta la fila 1: `E → AH` ya da `H`. `C` y `D` también entran a `E⁺` en cadena (fila 1 da `A`, fila 2 da `C, D`), aunque no hacían falta para esta DF
+
+Resumen:
+
+| DF de F | X⁺ usando G | ¿El lado derecho está en X⁺? |
 | --- | --- | --- |
 | `A → C` | `A⁺ = {A, C, D}` | Sí |
 | `AC → D` | `AC⁺ = {A, C, D}` | Sí |
-| `E → AD` | `E⁺ = {E, A, H, C, D}` | Sí |
+| `E → AD` | `E⁺ = {E, A, H, C, D}` | Sí, los dos |
 | `E → H` | `E⁺ = {E, A, H, C, D}` | Sí |
 
-| ¿F cubre a G? | X⁺ con F | ¿Contiene el lado derecho? |
+- Las 4 se deducen → **G cubre a F**
+
+**¿F cubre a G?** Ahora al revés: cada una de las 2 DF de G se prueba usando **solo** `F = {A → C, AC → D, E → AD, E → H}`
+
+1) `A → CD`: se parte de `A`
+
+| # | Ya conozco | Uso la DF de F | Ahora también conozco |
+| --- | --- | --- | --- |
+| 1 | `A` (me lo dieron) | `A → C` | `C` |
+| 2 | `A` (me lo dieron) y `C` (fila 1) | `AC → D` | `D` |
+
+- Con F: `A⁺ = {A, C, D}`; el lado derecho `C, D` está completo → **se deduce**
+
+2) `E → AH`: se parte de `E`
+
+| # | Ya conozco | Uso la DF de F | Ahora también conozco |
+| --- | --- | --- | --- |
+| 1 | `E` (me lo dieron) | `E → AD` | `A, D` |
+| 2 | `E` (me lo dieron) | `E → H` | `H` |
+| 3 | `A` (fila 1) | `A → C` | `C` |
+
+- Con F: `E⁺ = {E, A, D, H, C}`; el lado derecho `A, H` está completo → **se deduce**
+  - `C` **no** sale directamente de `E`: se llega en cadena: en la fila 1, `E → AD` da `A`; en la fila 3, como ya conozco `A`, `A → C` da `C`
+
+Resumen:
+
+| DF de G | X⁺ usando F | ¿El lado derecho está en X⁺? |
 | --- | --- | --- |
-| `A → CD` | `A⁺ = {A, C, D}` | Sí |
-| `E → AH` | `E⁺ = {E, A, D, H, C}` | Sí |
+| `A → CD` | `A⁺ = {A, C, D}` | Sí, los dos |
+| `E → AH` | `E⁺ = {E, A, D, H, C}` | Sí, los dos |
+
+- Las 2 se deducen → **F cubre a G**
 
 - Se cubren mutuamente → son **equivalentes**; G dice lo mismo con menos DF
 
 #### Cobertura mínima
 
-- **Conjunto mínimo** de DF:
+Los ejemplos de esta parte usan `EMP_DEPT(Dni, NombreE, NúmeroDpto, NombreDpto)`
+
+- **Conjunto mínimo** de DF: cumple las tres condiciones siguientes
   1. Un **solo atributo** en el lado derecho
+     - No cumple: `Dni → {NombreE, NúmeroDpto}`
+     - Cumple: se separa en `Dni → NombreE` y `Dni → NúmeroDpto` (dicen lo mismo, regla de descomposición)
   2. Sin atributos **sobrantes** en el lado izquierdo
-  3. Sin DF **redundantes**
-- **Cobertura mínima** de E: un conjunto mínimo equivalente a E
+     - No cumple: `{Dni, NombreE} → NúmeroDpto`; `NombreE` sobra, porque `Dni` solo ya determina el departamento
+     - Cumple: `Dni → NúmeroDpto`
+  3. Sin DF **redundantes** (que se puedan deducir de las demás)
+     - No cumple: `{Dni → NúmeroDpto, NúmeroDpto → NombreDpto, Dni → NombreDpto}`; la tercera sobra, porque se obtiene encadenando las dos primeras
+     - Cumple: `{Dni → NúmeroDpto, NúmeroDpto → NombreDpto}`
+- **Cobertura mínima** de E: un conjunto mínimo **equivalente** a E (dice lo mismo, con lo indispensable)
   - Es la forma más compacta de escribir las restricciones: menos DF que el SGBD debe verificar
   - Es el punto de partida del algoritmo de síntesis en 3FN (capítulo 11)
   - No siempre es única: el resultado puede depender del orden en que se revisan las DF
+  - Ej.: un diseñador escribió para `EMP_DEPT`
+
+    `E = {Dni → {NombreE, NúmeroDpto}, {Dni, NombreE} → NúmeroDpto, NúmeroDpto → NombreDpto, Dni → NombreDpto}`
+
+    - Separar el lado derecho: `Dni → {NombreE, NúmeroDpto}` pasa a `Dni → NombreE` y `Dni → NúmeroDpto`
+    - Quitar sobrantes: `{Dni, NombreE} → NúmeroDpto` pasa a `Dni → NúmeroDpto`, que ya estaba (queda una sola vez)
+    - Quitar redundantes: `Dni → NombreDpto` se deduce de `Dni → NúmeroDpto` y `NúmeroDpto → NombreDpto`, se elimina
+    - Cobertura mínima: `{Dni → NombreE, Dni → NúmeroDpto, NúmeroDpto → NombreDpto}`: de 4 DF (algunas con varios atributos) se pasa a 3 DF simples que dicen exactamente lo mismo
 
 Algoritmo 10.2, en palabras:
 
@@ -343,7 +516,7 @@ Algoritmo 10.2, en palabras:
 
 - El paso 2 va **antes** que el 3: al acortar un lado izquierdo pueden aparecer DF redundantes nuevas
 
-Ejemplo: `E = {B → A, D → A, AB → D}`
+Ejemplo: `R(A, B, D)` con `E = {B → A, D → A, AB → D}`
 
 1. **Separar**: todas tienen ya un solo atributo a la derecha
 2. **Sobrantes** (solo `AB → D` tiene más de un atributo a la izquierda):
