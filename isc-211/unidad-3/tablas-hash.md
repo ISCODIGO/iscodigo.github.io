@@ -78,7 +78,7 @@ Si dos claves chocan en el código hash, ninguna compresión las separa.
 
 ### Funciones de compresión
 
-- **División:** h(k) = k mod N, con **N primo**. Con N = 100, las claves 200, 205, …, 600 chocan de a cuatro; con N = 101, ninguna.
+- **División:** h(k) = k mod N, con **N primo**, sin importar cómo se manejen las colisiones: si N es compuesto, las claves que comparten factores con N se amontonan en pocas casillas. Con N = 10, las claves 10, 20, 30, 40 y 50 caen todas en la 0; con N = 11, en 10, 9, 8, 7 y 6. Con N = 100, las claves 200, 205, …, 600 chocan de a cuatro; con N = 101, ninguna.
 - **MAD:** h(k) = [(a·k + b) mod p] mod N, con p primo mayor que N, y a > 0 y b al azar en [0, p − 1]. El azar rompe patrones.
 - **Sobre los dígitos:**
 
