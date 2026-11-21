@@ -17,7 +17,9 @@
   nav { display:flex; flex-wrap:wrap; gap:2px; padding:4px 14px 0; background:#e4e9ef; }
   nav button { border:0; background:transparent; padding:7px 11px; border-radius:8px 8px 0 0; cursor:pointer; font-size:14px; color:var(--gris); }
   nav button.on { background:#fff; color:#1f2a33; font-weight:600; }
-  main { max-width:1280px; margin:0 auto; padding:10px; }
+  /* En pantallas anchas, barra y pestañas alineadas con el contenido (main: 1100px − 2×10px de padding) */
+  header, nav { padding-left:max(14px, calc((100% - 1080px) / 2)); padding-right:max(14px, calc((100% - 1080px) / 2)); }
+  main { max-width:1100px; margin:0 auto; padding:10px; }
   section { display:none; background:#fff; border-radius:10px; padding:12px 16px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
   section.on { display:block; }
   h2 { margin:0 0 2px; font-size:18px; }
@@ -35,7 +37,7 @@
   .log { list-style:none; margin:8px 0 0; padding:6px 10px; background:#1f2a33; color:#d8e1ea; border-radius:8px; font-family:ui-monospace, monospace; font-size:12.5px; height:110px; overflow-y:auto; }
 
   /* Vista: dibujo a la izquierda y bitácora a la derecha en pantallas anchas */
-  .view { display:grid; grid-template-columns:minmax(0,1fr) 280px; gap:10px; align-items:start; }
+  .view { display:grid; grid-template-columns:minmax(0,1fr) 240px; gap:10px; align-items:start; }
   .view .log { margin:0; height:auto; min-height:120px; max-height:62vh; }
   .viz { min-width:0; }
   /* Si el árbol es más ancho que la pantalla, se desplaza dentro de su caja (no se encoge hasta no leerse) */
@@ -98,7 +100,7 @@
   .chips span { padding:4px 8px; }
 
   /* Pantallas medianas: la bitácora pasa debajo del dibujo */
-  @media (max-width:900px) {
+  @media (max-width:1100px) {
     .view { grid-template-columns:1fr; }
     .view .log { height:90px; min-height:0; }
   }
@@ -299,6 +301,7 @@
     <button class="op sec" data-run="hashExample">Ejemplo</button>
     <button class="op sec" data-run="hashClear">Vaciar</button>
   </div>
+  <p class="desc" style="margin:4px 0 0"><b>N</b>: número de casillas · <b>n</b>: claves guardadas · <b>λ = n/N</b>: factor de carga (qué tan llena está; con sondeo conviene λ &lt; 0.5) · <b>h(k)</b>: casilla inicial de la clave k · <b>i</b>: número de intento (0, 1, 2, …); si la casilla está ocupada, se aumenta i y la fórmula de sondeo da la siguiente casilla a probar.</p>
   <div class="status" id="hash-st"></div>
   <div class="view">
     <div class="viz">
@@ -384,12 +387,12 @@ function renderTree(p, root, { hi = {}, sub = null, sel = null } = {}) {
     walk(n.l, d + 1); pos.set(n, [i++, d]); depth = Math.max(depth, d); walk(n.r, d + 1);
   })(root, 0);
   // Espaciado compacto. El SVG conserva su proporción (sin franjas vacías) y su tamaño
-  // queda entre 70 % y 140 % del natural: si no cabe, la caja se desplaza horizontalmente.
-  const W = 42, H = 52, w = Math.max(i, 7) * W + 24, off = (w - i * W) / 2;   // +24: espacio para etiquetas en los bordes
+  // queda entre 50 % y 130 % del natural: si no cabe, la caja se desplaza horizontalmente.
+  const W = 36, H = 50, w = Math.max(i, 7) * W + 24, off = (w - i * W) / 2;   // +24: espacio para etiquetas en los bordes
   const X = n => off + pos.get(n)[0] * W + W / 2, Y = n => pos.get(n)[1] * H + 26;
   const h = (depth + 1) * H;
   svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-  Object.assign(svg.style, { height: '', aspectRatio: `${w} / ${h}`, minWidth: Math.round(w * 0.7) + 'px', maxWidth: Math.round(w * 1.4) + 'px' });
+  Object.assign(svg.style, { height: '', aspectRatio: `${w} / ${h}`, minWidth: Math.round(w * 0.5) + 'px', maxWidth: Math.round(w * 1.3) + 'px' });
   const eg = svgEl('g', {}, svg), ng = svgEl('g', {}, svg);
   for (const n of pos.keys()) {
     for (const c of [n.l, n.r]) if (c) svgEl('line', { x1: X(n), y1: Y(n), x2: X(c), y2: Y(c) }, eg);
@@ -902,13 +905,15 @@ function drawHash(hi = {}, khi = {}) {
     if (Hh.m === 'chain') for (const k of x) col.insertAdjacentHTML('beforeend', `<span class="arrow">↓</span><span class="hk ${khi[k] || ''}">${k}</span>`);
     box.appendChild(col);
   });
-  const extra = Hh.m === 'doble' ? ` · h′(k) = ${hq()} − (k mod ${hq()})` : '';
+  const extra = { chain: ' · lista en A[h(k)]', lin: ` · sondeo: (h(k) + i) mod ${Hh.N}`, cuad: ` · sondeo: (h(k) + i²) mod ${Hh.N}`,
+    doble: ` · sondeo: (h(k) + i·h′(k)) mod ${Hh.N} · h′(k) = ${hq()} − (k mod ${hq()})` }[Hh.m];
   $('#hash-st').textContent = `N = ${Hh.N} · n = ${Hh.n} · λ = n/N = ${(Hh.n / Hh.N).toFixed(2)} · h(k) = k mod ${Hh.N}${extra}`;
 }
 
 // Recorre la secuencia de sondeo. Devuelve {j: casilla con la clave o -1, free: primera casilla disponible o -1}.
 async function hashFind(k, forInsert) {
   const hi = {}; let free = -1;
+  if (Hh.m === 'doble') log('hash', `${sp(2)}h′(${k}) = ${hq()} − (${k} mod ${hq()}) = ${hq()} − ${mod(k, hq())} = ${h2(k)}`);
   for (let i = 0; i < Hh.N; i++) {
     const j = probe(k, i), x = Hh.A[j];
     hi[j] = 'act'; drawHash(hi);
