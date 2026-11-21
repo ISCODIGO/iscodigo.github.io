@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ISC-211 · Animaciones: árboles binarios, recorridos, heap, BST y AVL</title>
+<title>ISC-211 · Animaciones: árboles binarios, recorridos, heap, BST, AVL y tablas hash</title>
 <style>
   :root { --azul:#1e6fd9; --verde:#2e9e44; --rojo:#c0392b; --amar:#d4a017; --morado:#7d3cbd; --gris:#5b6670; }
   * { box-sizing: border-box; }
@@ -73,6 +73,15 @@
   .cell.path { background:#fff3c4; border-color:var(--amar); }
   .cell.act  { background:#d6eaff; border-color:var(--azul); }
 
+  /* ---- Tabla hash ---- */
+  .hcol { display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .hk { min-width:40px; padding:3px 6px; border:2px solid #34495e; border-radius:6px; text-align:center; font-weight:700; font-size:14px; background:#fff; }
+  .hk.act { background:#d6eaff; border-color:var(--azul); }
+  .hk.new { background:#d4f8d4; border-color:var(--verde); }
+  .hk.del { background:#fdd; border-color:var(--rojo); }
+  .hcol .arrow { color:#8a96a3; font-size:12px; line-height:1; }
+  .cell.defunct { color:var(--rojo); font-size:11px; border-style:dashed; border-color:var(--rojo); background:#fff5f5; }
+
   /* ---- Recorridos ---- */
   .grid2 { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; }
   .code { background:#1f2a33; color:#d8e1ea; border-radius:8px; padding:10px 0; font-family:ui-monospace, monospace; font-size:13px; margin:0; }
@@ -115,7 +124,7 @@
 
 <div class="top">
 <header>
-  <h1>ISC-211 · Animaciones de árboles</h1>
+  <h1>ISC-211 · Animaciones de árboles y tablas hash</h1>
   <label title="Velocidad"><span class="lbl">Velocidad</span><span class="lbl-s">⏱</span> <input id="speed" type="range" min="0.25" max="3" step="0.25" value="1"> <span id="speedv">1×</span></label>
   <label><input id="pause" type="checkbox"> Paso a paso</label>
   <button id="next" class="op" style="color:#fff;border-color:#fff;background:transparent" disabled>Siguiente ▶</button>
@@ -127,6 +136,7 @@
   <button data-t="heap">Heap</button>
   <button data-t="bst">BST</button>
   <button data-t="avl">AVL</button>
+  <button data-t="hash">Hash</button>
 </nav>
 </div>
 
@@ -265,6 +275,37 @@
     <div class="legend"><span style="background:#d6eaff"></span>revisando FE <span style="background:#fff3c4"></span>camino <span style="background:#ead9fb"></span>desbalanceado / rotación <span style="background:#d4f8d4"></span>nuevo</div>
     </div>
     <ul class="log" id="avl-log"></ul>
+  </div>
+</section>
+
+<!-- ================= TABLA HASH ================= -->
+<section id="hash">
+  <h2>Tabla hash</h2>
+  <p class="desc">La clave k va a la cubeta <code>h(k) = k mod N</code>. Si dos claves caen en la misma cubeta hay <b>colisión</b>. Con <b>encadenamiento separado</b> cada cubeta guarda una lista. Con <b>direccionamiento abierto</b> se sondea otra casilla: lineal <code>(h + i) mod N</code>, cuadrático <code>(h + i²) mod N</code> o doble hash <code>(h + i·h′(k)) mod N</code> con <code>h′(k) = q − (k mod q)</code>. Al borrar en direccionamiento abierto la casilla queda marcada <b>DEFUNCT</b> para no cortar las búsquedas. Cambiar N o la estrategia vacía la tabla.</p>
+  <div class="ctrl">
+    N <select id="hash-n"><option>7</option><option selected>11</option><option>13</option></select>
+    estrategia <select id="hash-m">
+      <option value="chain">encadenamiento separado</option>
+      <option value="lin" selected>sondeo lineal</option>
+      <option value="cuad">sondeo cuadrático</option>
+      <option value="doble">doble hash</option>
+    </select>
+  </div>
+  <div class="ctrl">
+    clave <input id="hash-v" type="number" placeholder="aleat.">
+    <button class="op" data-run="hashPut">put(k)</button>
+    <button class="op" data-run="hashGet">get(k)</button>
+    <button class="op" data-run="hashRemove">remove(k)</button>
+    <button class="op sec" data-run="hashExample">Ejemplo</button>
+    <button class="op sec" data-run="hashClear">Vaciar</button>
+  </div>
+  <div class="status" id="hash-st"></div>
+  <div class="view">
+    <div class="viz">
+      <div class="arr" id="hash-arr"></div>
+      <div class="legend"><span style="background:#d6eaff"></span>sondeando <span style="background:#fff3c4"></span>ocupada (se sigue) <span style="background:#d4f8d4"></span>insertada / encontrada <span style="background:#fdd"></span>eliminada</div>
+    </div>
+    <ul class="log" id="hash-log"></ul>
   </div>
 </section>
 
@@ -829,13 +870,139 @@ ops.avlReset = async () => {
 };
 ops.avlClear = async () => { T.avl.root = null; $('#avl-log').innerHTML = ''; drawT('avl'); log('avl', 'Árbol vacío. Inserta 10, 20, 30 para ver una rotación D-D.'); };
 
+// ================= TABLA HASH =================
+// A[j]: null (vacía), DEF (borrada) o la clave; con encadenamiento A[j] es una lista.
+const DEF = 'DEFUNCT';
+const Hh = { N: 11, m: 'lin', A: [], n: 0 };
+const mod = (k, N) => ((k % N) + N) % N;
+const prevPrime = N => { for (let q = N - 1; q > 1; q--) if ([...Array(q).keys()].slice(2).every(d => q % d)) return q; return 1; };
+const hq = () => prevPrime(Hh.N);
+const h2 = k => hq() - mod(k, hq());
+function probe(k, i) {
+  const h = mod(k, Hh.N);
+  return Hh.m === 'lin' ? mod(h + i, Hh.N) : Hh.m === 'cuad' ? mod(h + i * i, Hh.N) : mod(h + i * h2(k), Hh.N);
+}
+const probeTxt = (k, i) => Hh.m === 'lin' ? `(${mod(k, Hh.N)} + ${i}) mod ${Hh.N}` : Hh.m === 'cuad' ? `(${mod(k, Hh.N)} + ${i}²) mod ${Hh.N}` : `(${mod(k, Hh.N)} + ${i}·${h2(k)}) mod ${Hh.N}`;
+
+// hi: {índice: clase} para casillas; khi: {clave: clase} para nodos de las listas
+function drawHash(hi = {}, khi = {}) {
+  const box = $('#hash-arr'); box.innerHTML = '';
+  Hh.A.forEach((x, j) => {
+    const col = document.createElement('div'); col.className = 'hcol';
+    const c = document.createElement('div');
+    if (Hh.m === 'chain') {
+      c.className = 'cell ' + (x.length ? '' : 'empty ') + (hi[j] || '');
+      c.textContent = x.length ? '•' : '';
+    } else {
+      c.className = 'cell ' + (x === null ? 'empty ' : x === DEF ? 'defunct ' : '') + (hi[j] || '');
+      c.textContent = x === null ? '' : x === DEF ? 'DEF' : x;
+    }
+    c.insertAdjacentHTML('afterbegin', `<span class="idx">${j}</span>`);
+    col.appendChild(c);
+    if (Hh.m === 'chain') for (const k of x) col.insertAdjacentHTML('beforeend', `<span class="arrow">↓</span><span class="hk ${khi[k] || ''}">${k}</span>`);
+    box.appendChild(col);
+  });
+  const extra = Hh.m === 'doble' ? ` · h′(k) = ${hq()} − (k mod ${hq()})` : '';
+  $('#hash-st').textContent = `N = ${Hh.N} · n = ${Hh.n} · λ = n/N = ${(Hh.n / Hh.N).toFixed(2)} · h(k) = k mod ${Hh.N}${extra}`;
+}
+
+// Recorre la secuencia de sondeo. Devuelve {j: casilla con la clave o -1, free: primera casilla disponible o -1}.
+async function hashFind(k, forInsert) {
+  const hi = {}; let free = -1;
+  for (let i = 0; i < Hh.N; i++) {
+    const j = probe(k, i), x = Hh.A[j];
+    hi[j] = 'act'; drawHash(hi);
+    const pre = `${sp(2)}sondeo ${i}: ${probeTxt(k, i)} = ${j} → `;
+    if (x === null) {
+      log('hash', pre + 'vacía' + (forInsert ? '' : ` → ${k} no está`)); await step();
+      return { j: -1, free: free < 0 ? j : free, hi };
+    }
+    if (x === DEF) {
+      log('hash', pre + 'DEFUNCT: se sigue buscando' + (forInsert && free < 0 ? ' (se recuerda como disponible)' : ''));
+      if (free < 0) free = j;
+    } else if (x === k) {
+      log('hash', pre + `¡está ${k}!`); await step();
+      return { j, free, hi };
+    } else log('hash', pre + `ocupada por ${x}` + (forInsert ? ' (colisión)' : ''));
+    await step(); hi[j] = 'path';
+  }
+  log('hash', `${sp(2)}se probaron ${Hh.N} sondeos sin encontrar casilla vacía`, 'err');
+  return { j: -1, free, hi };
+}
+
+ops.hashPut = async () => {
+  const k = val('hash'), h = mod(k, Hh.N);
+  log('hash', `put(${k}): h(${k}) = ${k} mod ${Hh.N} = ${h}`);
+  if (Hh.m === 'chain') {
+    const L = Hh.A[h]; drawHash({ [h]: 'act' }); await step();
+    if (L.includes(k)) { drawHash({ [h]: 'act' }, { [k]: 'act' }); return log('hash', `${sp(2)}${k} ya está en la lista de A[${h}]: se reemplaza su valor`, 'ok'); }
+    if (L.length) log('hash', `${sp(2)}colisión con [${L.join(', ')}]: se agrega a la lista`);
+    L.push(k); Hh.n++; drawHash({ [h]: 'new' }, { [k]: 'new' });
+    return log('hash', `${sp(2)}A[${h}] ← ${k}`, 'ok');
+  }
+  const { j, free, hi } = await hashFind(k, true);
+  if (j >= 0) { drawHash({ ...hi, [j]: 'new' }); return log('hash', `${sp(2)}${k} ya estaba: se reemplaza su valor`, 'ok'); }
+  if (free < 0) { drawHash(hi); return log('hash', `put(${k}): no hay casilla disponible en la secuencia de sondeo`, 'err'); }
+  Hh.A[free] = k; Hh.n++; drawHash({ ...hi, [free]: 'new' });
+  log('hash', `${sp(2)}A[${free}] ← ${k}`, 'ok');
+  if (Hh.n / Hh.N > 0.5) log('hash', `λ = ${(Hh.n / Hh.N).toFixed(2)} > 0.5: convendría hacer rehashing`, 'err');
+};
+
+ops.hashGet = async () => {
+  const k = val('hash'), h = mod(k, Hh.N);
+  log('hash', `get(${k}): h(${k}) = ${h}`);
+  if (Hh.m === 'chain') {
+    const L = Hh.A[h], khi = {}; drawHash({ [h]: 'act' }); await step();
+    for (const x of L) {
+      khi[x] = 'act'; drawHash({ [h]: 'act' }, khi);
+      if (x === k) { khi[x] = 'new'; drawHash({ [h]: 'act' }, khi); return log('hash', `${sp(2)}${x} = ${k}: encontrado`, 'ok'); }
+      log('hash', `${sp(2)}${x} ≠ ${k}, siguiente`); await step(); khi[x] = '';
+    }
+    drawHash({ [h]: 'act' }); return log('hash', `${sp(2)}fin de la lista: ${k} no está → null`, 'err');
+  }
+  const { j, hi } = await hashFind(k, false);
+  if (j >= 0) { drawHash({ ...hi, [j]: 'new' }); log('hash', `get(${k}): encontrado en A[${j}]`, 'ok'); }
+  else { drawHash(hi); log('hash', `get(${k}) → null`, 'err'); }
+};
+
+ops.hashRemove = async () => {
+  const k = val('hash'), h = mod(k, Hh.N);
+  log('hash', `remove(${k}): h(${k}) = ${h}`);
+  if (Hh.m === 'chain') {
+    const L = Hh.A[h]; drawHash({ [h]: 'act' }); await step();
+    const i = L.indexOf(k);
+    if (i < 0) return log('hash', `${sp(2)}${k} no está en la lista de A[${h}] → null`, 'err');
+    drawHash({ [h]: 'act' }, { [k]: 'del' }); await step();
+    L.splice(i, 1); Hh.n--; drawHash({ [h]: 'act' });
+    return log('hash', `${sp(2)}se quita ${k} de la lista`, 'ok');
+  }
+  const { j, hi } = await hashFind(k, false);
+  if (j < 0) { drawHash(hi); return log('hash', `remove(${k}) → null`, 'err'); }
+  drawHash({ ...hi, [j]: 'del' }); await step();
+  Hh.A[j] = DEF; Hh.n--; drawHash({ ...hi, [j]: 'del' });
+  log('hash', `${sp(2)}A[${j}] ← DEFUNCT (no se deja vacía: cortaría la búsqueda de claves que pasaron por aquí)`, 'ok');
+};
+
+function hashInit() {
+  Hh.N = +$('#hash-n').value; Hh.m = $('#hash-m').value; Hh.n = 0;
+  Hh.A = Array.from({ length: Hh.N }, () => Hh.m === 'chain' ? [] : null);
+  $('#hash-log').innerHTML = ''; drawHash();
+}
+ops.hashClear = async () => { hashInit(); log('hash', 'Tabla vacía. Escribe una clave y usa put(k).'); };
+ops.hashExample = async () => {
+  hashInit();
+  log('hash', 'Ejemplo de los apuntes: se insertan 7, 17, 6, 33, 28, 52, 21.');
+  for (const k of [7, 17, 6, 33, 28, 52, 21]) { $('#hash-v').value = k; await ops.hashPut(); await step(300); }
+  $('#hash-v').value = '';
+};
+
 // ---------- pestañas y botones ----------
 $('#tabs').onclick = e => {
   const t = e.target.dataset.t; if (!t) return;
   document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
   document.querySelectorAll('main section').forEach(s => s.classList.toggle('on', s.id === t));
 };
-const LOCK = '[data-run], #rec-k, #heap-tipo, #heap-base';
+const LOCK = '[data-run], #rec-k, #heap-tipo, #heap-base, #hash-n, #hash-m';
 async function run(name) {
   if (busy) return;
   busy = true;
@@ -846,8 +1013,9 @@ async function run(name) {
 document.querySelectorAll('[data-run]').forEach(b => b.onclick = () => run(b.dataset.run));
 $('#heap-tipo').onchange = () => run('heapTipo');
 $('#heap-base').onchange = () => run('heapBase');
+$('#hash-n').onchange = $('#hash-m').onchange = () => run('hashClear');
 
-ops.binReset(); ops.recExample(); ops.heapReset(); ops.bstReset(); ops.avlReset();
+ops.binReset(); ops.recExample(); ops.heapReset(); ops.bstReset(); ops.avlReset(); ops.hashClear();
 </script>
 </body>
 </html>

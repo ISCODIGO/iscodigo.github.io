@@ -92,6 +92,13 @@
     stroke: #8b949e !important;
   }
 
+  /* --- 2b. Tablas con clase .arreglo (markdown + {: .arreglo}) ---
+     Se dibujan como un arreglo: índices pequeños arriba, casillas con borde. */
+  table.arreglo { border-collapse: collapse; margin: 1rem auto; width: auto; display: table; }
+  table.arreglo th { font-size: 0.75em; font-weight: normal; opacity: 0.6; border: none; padding: 0 0 2px; text-align: center; background: transparent; }
+  table.arreglo td { border: 1.5px solid #8b949e; min-width: 2.4em; height: 2.4em; padding: 0 4px; text-align: center; font-family: monospace; }
+  table.arreglo td:empty { background: rgba(139,148,158,0.12); }
+
 /* --- 3. Botón Zen con Icono --- */
   #toggle-nav {
     position: fixed;

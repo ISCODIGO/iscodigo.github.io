@@ -14,6 +14,9 @@ Resumen del capítulo 9 del libro de texto y del capítulo 8 de Goodrich: estruc
 **[2. BST y AVL según Goodrich](./bst-avl.md)**
 Resumen de las secciones 11.1–11.3 de Goodrich: árboles binarios de búsqueda (búsqueda, inserción y eliminación), rotaciones, reestructuración trinodo y árboles AVL.
 
+**[3. Tablas hash](./tablas-hash.md)**
+Resumen de la sección 10.2 de Goodrich: el ADT Mapa, funciones hash (códigos hash y compresión), manejo de colisiones (encadenamiento separado y direccionamiento abierto), factor de carga y rehashing.
+
 **[🎬 Animaciones interactivas](./animaciones.html)**
 Demostraciones visuales de árboles binarios, recorridos, heaps, BST y AVL.
 
