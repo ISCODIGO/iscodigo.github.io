@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 774 910" width="774" height="910" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" role="img">
+<title>Tipos de JOIN como diagramas de Venn</title>
+<rect width="774" height="910" fill="#fff"/>
+<text x="137.0" y="36" text-anchor="middle" font-size="16" font-weight="700" fill="#1b2b40">INNER JOIN</text>
+<text x="89.0" y="64" text-anchor="middle" font-size="13" font-weight="600" fill="#1b2b40">EMP</text>
+<text x="185.0" y="64" text-anchor="middle" font-size="13" font-weight="600" fill="#1b2b40">DPTO</text>
+<circle cx="103.0" cy="132" r="58" fill="#ffffff"/><circle cx="171.0" cy="132" r="58" fill="#ffffff"/>
+<path d="M137.0 85.01A58 58 0 0 1 137.0 178.99A58 58 0 0 1 137.0 85.01z" fill="#9cc0ee"/>
+<g fill="none" stroke="#34495e" stroke-width="2"><circle cx="103.0" cy="132" r="58"/><circle cx="171.0" cy="132" r="58"/></g>
+<text x="80.0" y="137" text-anchor="middle" font-size="14" font-weight="400" fill="#7b8794">Eva</text>
+<text x="137.0" y="128" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Ana</text>
+<text x="137.0" y="147" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Luis</text>
+<text x="194.0" y="137" text-anchor="middle" font-size="14" font-weight="400" fill="#7b8794">Ventas</text>
+<rect x="22" y="202" width="230" height="96" rx="6" fill="#f4f6f8"/>
+<text x="32" y="220" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">FROM  EMP E</text>
+<text x="32" y="237" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">JOIN DPTO D</text>
+<text x="32" y="254" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">ON    E.NumDpto = D.NumDpto</text>
+<text x="387.0" y="36" text-anchor="middle" font-size="16" font-weight="700" fill="#1b2b40">LEFT JOIN</text>
+<text x="339.0" y="64" text-anchor="middle" font-size="13" font-weight="600" fill="#1b2b40">EMP</text>
+<text x="435.0" y="64" text-anchor="middle" font-size="13" font-weight="600" fill="#1b2b40">DPTO</text>
+<circle cx="353.0" cy="132" r="58" fill="#9cc0ee"/><circle cx="421.0" cy="132" r="58" fill="#ffffff"/>
+<path d="M387.0 85.01A58 58 0 0 1 387.0 178.99A58 58 0 0 1 387.0 85.01z" fill="#9cc0ee"/>
+<g fill="none" stroke="#34495e" stroke-width="2"><circle cx="353.0" cy="132" r="58"/><circle cx="421.0" cy="132" r="58"/></g>
+<text x="330.0" y="137" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Eva</text>
+<text x="387.0" y="128" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Ana</text>
+<text x="387.0" y="147" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Luis</text>
+<text x="444.0" y="137" text-anchor="middle" font-size="14" font-weight="400" fill="#7b8794">Ventas</text>
+<rect x="272" y="202" width="230" height="96" rx="6" fill="#f4f6f8"/>
+<text x="282" y="220" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">FROM  EMP E</text>
+<text x="282" y="237" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">LEFT JOIN DPTO D</text>
+<text x="282" y="254" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">ON    E.NumDpto = D.NumDpto</text>
+<text x="637.0" y="36" text-anchor="middle" font-size="16" font-weight="700" fill="#1b2b40">RIGHT JOIN</text>
+<text x="589.0" y="64" text-anchor="middle" font-size="13" font-weight="600" fill="#1b2b40">EMP</text>
+<text x="685.0" y="64" text-anchor="middle" font-size="13" font-weight="600" fill="#1b2b40">DPTO</text>
+<circle cx="603.0" cy="132" r="58" fill="#ffffff"/><circle cx="671.0" cy="132" r="58" fill="#9cc0ee"/>
+<path d="M637.0 85.01A58 58 0 0 1 637.0 178.99A58 58 0 0 1 637.0 85.01z" fill="#9cc0ee"/>
+<g fill="none" stroke="#34495e" stroke-width="2"><circle cx="603.0" cy="132" r="58"/><circle cx="671.0" cy="132" r="58"/></g>
+<text x="580.0" y="137" text-anchor="middle" font-size="14" font-weight="400" fill="#7b8794">Eva</text>
+<text x="637.0" y="128" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Ana</text>
+<text x="637.0" y="147" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Luis</text>
+<text x="694.0" y="137" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Ventas</text>
+<rect x="522" y="202" width="230" height="96" rx="6" fill="#f4f6f8"/>
+<text x="532" y="220" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">FROM  EMP E</text>
+<text x="532" y="237" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">RIGHT JOIN DPTO D</text>
+<text x="532" y="254" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">ON    E.NumDpto = D.NumDpto</text>
+<text x="137.0" y="332" text-anchor="middle" font-size="16" font-weight="700" fill="#1b2b40">FULL JOIN</text>
+<text x="89.0" y="360" text-anchor="middle" font-size="13" font-weight="600" fill="#1b2b40">EMP</text>
+<text x="185.0" y="360" text-anchor="middle" font-size="13" font-weight="600" fill="#1b2b40">DPTO</text>
+<circle cx="103.0" cy="428" r="58" fill="#9cc0ee"/><circle cx="171.0" cy="428" r="58" fill="#9cc0ee"/>
+<path d="M137.0 381.01A58 58 0 0 1 137.0 474.99A58 58 0 0 1 137.0 381.01z" fill="#9cc0ee"/>
+<g fill="none" stroke="#34495e" stroke-width="2"><circle cx="103.0" cy="428" r="58"/><circle cx="171.0" cy="428" r="58"/></g>
+<text x="80.0" y="433" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Eva</text>
+<text x="137.0" y="424" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Ana</text>
+<text x="137.0" y="443" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Luis</text>
+<text x="194.0" y="433" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Ventas</text>
+<rect x="22" y="498" width="230" height="96" rx="6" fill="#f4f6f8"/>
+<text x="32" y="516" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">FROM  EMP E</text>
+<text x="32" y="533" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">FULL JOIN DPTO D</text>
+<text x="32" y="550" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">ON    E.NumDpto = D.NumDpto</text>
+<text x="387.0" y="332" text-anchor="middle" font-size="16" font-weight="700" fill="#1b2b40">LEFT JOIN sin pareja</text>
+<text x="339.0" y="360" text-anchor="middle" font-size="13" font-weight="600" fill="#1b2b40">EMP</text>
+<text x="435.0" y="360" text-anchor="middle" font-size="13" font-weight="600" fill="#1b2b40">DPTO</text>
+<circle cx="353.0" cy="428" r="58" fill="#9cc0ee"/><circle cx="421.0" cy="428" r="58" fill="#ffffff"/>
+<path d="M387.0 381.01A58 58 0 0 1 387.0 474.99A58 58 0 0 1 387.0 381.01z" fill="#ffffff"/>
+<g fill="none" stroke="#34495e" stroke-width="2"><circle cx="353.0" cy="428" r="58"/><circle cx="421.0" cy="428" r="58"/></g>
+<text x="330.0" y="433" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Eva</text>
+<text x="387.0" y="424" text-anchor="middle" font-size="14" font-weight="400" fill="#7b8794">Ana</text>
+<text x="387.0" y="443" text-anchor="middle" font-size="14" font-weight="400" fill="#7b8794">Luis</text>
+<text x="444.0" y="433" text-anchor="middle" font-size="14" font-weight="400" fill="#7b8794">Ventas</text>
+<rect x="272" y="498" width="230" height="96" rx="6" fill="#f4f6f8"/>
+<text x="282" y="516" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">FROM  EMP E</text>
+<text x="282" y="533" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">LEFT JOIN DPTO D</text>
+<text x="282" y="550" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">ON    E.NumDpto = D.NumDpto</text>
+<text x="282" y="567" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">WHERE D.NumDpto IS NULL</text>
+<text x="637.0" y="332" text-anchor="middle" font-size="16" font-weight="700" fill="#1b2b40">RIGHT JOIN sin pareja</text>
+<text x="589.0" y="360" text-anchor="middle" font-size="13" font-weight="600" fill="#1b2b40">EMP</text>
+<text x="685.0" y="360" text-anchor="middle" font-size="13" font-weight="600" fill="#1b2b40">DPTO</text>
+<circle cx="603.0" cy="428" r="58" fill="#ffffff"/><circle cx="671.0" cy="428" r="58" fill="#9cc0ee"/>
+<path d="M637.0 381.01A58 58 0 0 1 637.0 474.99A58 58 0 0 1 637.0 381.01z" fill="#ffffff"/>
+<g fill="none" stroke="#34495e" stroke-width="2"><circle cx="603.0" cy="428" r="58"/><circle cx="671.0" cy="428" r="58"/></g>
+<text x="580.0" y="433" text-anchor="middle" font-size="14" font-weight="400" fill="#7b8794">Eva</text>
+<text x="637.0" y="424" text-anchor="middle" font-size="14" font-weight="400" fill="#7b8794">Ana</text>
+<text x="637.0" y="443" text-anchor="middle" font-size="14" font-weight="400" fill="#7b8794">Luis</text>
+<text x="694.0" y="433" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Ventas</text>
+<rect x="522" y="498" width="230" height="96" rx="6" fill="#f4f6f8"/>
+<text x="532" y="516" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">FROM  EMP E</text>
+<text x="532" y="533" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">RIGHT JOIN DPTO D</text>
+<text x="532" y="550" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">ON    E.NumDpto = D.NumDpto</text>
+<text x="532" y="567" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">WHERE E.Nombre IS NULL</text>
+<text x="387.0" y="628" text-anchor="middle" font-size="16" font-weight="700" fill="#1b2b40">FULL JOIN sin pareja</text>
+<text x="339.0" y="656" text-anchor="middle" font-size="13" font-weight="600" fill="#1b2b40">EMP</text>
+<text x="435.0" y="656" text-anchor="middle" font-size="13" font-weight="600" fill="#1b2b40">DPTO</text>
+<circle cx="353.0" cy="724" r="58" fill="#9cc0ee"/><circle cx="421.0" cy="724" r="58" fill="#9cc0ee"/>
+<path d="M387.0 677.01A58 58 0 0 1 387.0 770.99A58 58 0 0 1 387.0 677.01z" fill="#ffffff"/>
+<g fill="none" stroke="#34495e" stroke-width="2"><circle cx="353.0" cy="724" r="58"/><circle cx="421.0" cy="724" r="58"/></g>
+<text x="330.0" y="729" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Eva</text>
+<text x="387.0" y="720" text-anchor="middle" font-size="14" font-weight="400" fill="#7b8794">Ana</text>
+<text x="387.0" y="739" text-anchor="middle" font-size="14" font-weight="400" fill="#7b8794">Luis</text>
+<text x="444.0" y="729" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2b40">Ventas</text>
+<rect x="272" y="794" width="230" height="96" rx="6" fill="#f4f6f8"/>
+<text x="282" y="812" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">FROM  EMP E</text>
+<text x="282" y="829" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">FULL JOIN DPTO D</text>
+<text x="282" y="846" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">ON    E.NumDpto = D.NumDpto</text>
+<text x="282" y="863" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">WHERE E.Nombre IS NULL</text>
+<text x="282" y="880" font-size="12.5" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1b2b40" xml:space="preserve">   OR D.NumDpto IS NULL</text>
+</svg>
