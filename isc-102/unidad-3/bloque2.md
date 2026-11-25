@@ -37,6 +37,21 @@ int main() {
 }
 ```
 
+**Modos de Apertura:**
+
+| Modo | Lee | Escribe | Si no existe | Si ya existe | Dónde escribe |
+|:----:|:---:|:-------:|:-------------|:-------------|:--------------|
+| `"r"` | Sí | No | Falla (`NULL`) | Lo conserva | – |
+| `"r+"` | Sí | Sí | Falla (`NULL`) | Lo conserva | Posición actual (empieza al inicio) |
+| `"w"` | No | Sí | Lo crea | Lo borra | Posición actual (empieza al inicio) |
+| `"w+"` | Sí | Sí | Lo crea | Lo borra | Posición actual (empieza al inicio) |
+| `"a"` | No | Sí | Lo crea | Lo conserva | Siempre al final |
+| `"a+"` | Sí | Sí | Lo crea | Lo conserva | Siempre al final |
+
+`"r+"` abre un archivo existente para leer y escribir, sin borrar su contenido. La posición inicial es el principio del archivo, así que lo que escribas reemplaza lo que ya está ahí; no lo inserta.
+
+Para archivos binarios se agrega la `b`: `"rb+"` o `"r+b"`, que son equivalentes.
+
 #### 2. Lectura de Archivos de Texto
 Para leer un archivo, se abre en modo lectura (`"r"`). Se puede leer línea por línea con `fgets()` o carácter por carácter con `fgetc()`. Es importante verificar el fin de archivo con `feof()` (Capítulo 12, Secciones 12.3 y 12.4).
 
