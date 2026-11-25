@@ -16,8 +16,80 @@ Resumen de las secciones 6.3, 8.4.2, 8.4.3, 8.5.6, 15.1 y 15.7 de Elmasri & Nava
 | 3 | Producto cartesiano y concatenación de varias tablas | 8.4.2–8.4.3, 8.5.6 |
 | 4 | Procesamiento y optimización de consultas | 15.1, 15.7 |
 
-- Los ejemplos usan el esquema **EMPRESA** ([DDL](../unidad-2/sql-ddl.md#create-table), [datos](../unidad-2/algebra-relacional.md#anexo-estado-de-la-base-de-datos-empresa)), salvo que se indique otra cosa
+- El primer ejemplo usa dos tablas sencillas; los demás usan el esquema **EMPRESA** ([DDL](../unidad-2/sql-ddl.md#create-table), [datos](../unidad-2/algebra-relacional.md#anexo-estado-de-la-base-de-datos-empresa)), salvo que se indique otra cosa
 - Las **notas** señalan diferencias entre **SQL Server**, **PostgreSQL**, **Oracle** y **SQLite**
+
+## Un ejemplo sencillo: ESTUDIANTE y CARRERA
+
+Dos entidades y una relación: una **carrera** tiene muchos **estudiantes**; un **estudiante** pertenece a una carrera o todavía a ninguna.
+
+```mermaid
+flowchart LR
+    C["<b>CARRERA</b><br/>IdCarrera (PK)<br/>NombreCarrera"] -- "1 : N" --- E["<b>ESTUDIANTE</b><br/>IdEstudiante (PK)<br/>Nombre<br/>IdCarrera (FK)"]
+
+    classDef tabla fill:#e8eef7,stroke:#4a6fa5,stroke-width:2px,color:#1b2b40
+    class C,E tabla
+```
+
+**ESTUDIANTE**
+
+| IdEstudiante | Nombre | IdCarrera |
+| --- | --- | --- |
+| 101 | Ana | 1 |
+| 102 | Luis | 1 |
+| 103 | Eva | NULL |
+
+**CARRERA**
+
+| IdCarrera | NombreCarrera |
+| --- | --- |
+| 1 | Sistemas |
+| 2 | Derecho |
+
+- Ana y Luis estudian **la misma** carrera
+- Eva todavía **no tiene** carrera
+- Derecho todavía **no tiene** estudiantes
+
+**¿Qué estudia cada quien?** El nombre está en una tabla y la carrera en la otra. El `JOIN` las une donde `IdCarrera` coincide:
+
+```sql
+SELECT E.Nombre, C.NombreCarrera
+FROM   ESTUDIANTE E JOIN CARRERA C ON E.IdCarrera = C.IdCarrera;
+```
+
+| Nombre | NombreCarrera |
+| --- | --- |
+| Ana | Sistemas |
+| Luis | Sistemas |
+
+Sistemas sale dos veces, una por cada estudiante. Eva y Derecho no salen porque no tienen pareja. Según la pregunta, se cambia el tipo de `JOIN`:
+
+| Pregunta | Tipo | Respuesta |
+| --- | --- | --- |
+| ¿Qué estudiantes tienen carrera, y cuál? | `JOIN` | Ana–Sistemas, Luis–Sistemas |
+| ¿Qué estudia cada estudiante, **aunque no tenga** carrera? | `LEFT JOIN` | Lo anterior y Eva–`NULL` |
+| ¿Quién estudia cada carrera, **aunque no tenga** estudiantes? | `RIGHT JOIN` | Ana–Sistemas, Luis–Sistemas y `NULL`–Derecho |
+| ¿Cómo se ven **todos** los estudiantes y **todas** las carreras? | `FULL JOIN` | Ana–Sistemas, Luis–Sistemas, Eva–`NULL` y `NULL`–Derecho |
+| ¿Cuáles son todas las combinaciones posibles? | `CROSS JOIN` | 3 × 2 = 6 filas |
+
+Para probarlo:
+
+```sql
+CREATE TABLE CARRERA (
+  IdCarrera     INT PRIMARY KEY,
+  NombreCarrera VARCHAR(30) NOT NULL
+);
+CREATE TABLE ESTUDIANTE (
+  IdEstudiante INT PRIMARY KEY,
+  Nombre       VARCHAR(30) NOT NULL,
+  IdCarrera    INT REFERENCES CARRERA (IdCarrera)
+);
+INSERT INTO CARRERA VALUES (1, 'Sistemas');
+INSERT INTO CARRERA VALUES (2, 'Derecho');
+INSERT INTO ESTUDIANTE VALUES (101, 'Ana', 1);
+INSERT INTO ESTUDIANTE VALUES (102, 'Luis', 1);
+INSERT INTO ESTUDIANTE VALUES (103, 'Eva', NULL);
+```
 
 ## 1. Concatenación interna (6.3, 8.5.6)
 
@@ -321,35 +393,19 @@ El resultado son las 7 filas de C8A más esta:
 
 ### Comparación con un ejemplo pequeño
 
-Las tablas son distintas a las de la parte 1: aquí Eva no tiene departamento y Ventas no tiene empleados.
-
-**EMP**
-
-| Nombre | NumDpto |
-| --- | --- |
-| Ana | 1 |
-| Luis | 2 |
-| Eva | NULL |
-
-**DPTO**
-
-| NumDpto | NombreDpto |
-| --- | --- |
-| 1 | Compras |
-| 2 | Sistemas |
-| 3 | Ventas |
+Con las tablas [ESTUDIANTE y CARRERA](#un-ejemplo-sencillo-estudiante-y-carrera) del inicio: Eva no tiene carrera y Derecho no tiene estudiantes.
 
 ```text
-SELECT E.Nombre, D.NombreDpto
-FROM   EMP E <tipo> JOIN DPTO D ON E.NumDpto = D.NumDpto
+SELECT E.Nombre, C.NombreCarrera
+FROM   ESTUDIANTE E <tipo> JOIN CARRERA C ON E.IdCarrera = C.IdCarrera
 ```
 
-| Nombre | NombreDpto | INNER | LEFT | RIGHT | FULL |
+| Nombre | NombreCarrera | INNER | LEFT | RIGHT | FULL |
 | --- | --- | --- | --- | --- | --- |
-| Ana | Compras | Sí | Sí | Sí | Sí |
+| Ana | Sistemas | Sí | Sí | Sí | Sí |
 | Luis | Sistemas | Sí | Sí | Sí | Sí |
 | Eva | NULL | — | Sí | — | Sí |
-| NULL | Ventas | — | — | Sí | Sí |
+| NULL | Derecho | — | — | Sí | Sí |
 | **Total de filas** | | **2** | **3** | **3** | **4** |
 
 ### Filas sin pareja
@@ -374,14 +430,14 @@ WHERE  S.DniEmpleado IS NULL;
 
 ### Los JOIN como diagramas de Venn
 
-Con las tablas `EMP` y `DPTO` del ejemplo pequeño. Lo **azul** es lo que devuelve cada consulta: a la izquierda Eva (sin departamento), en el centro Ana y Luis (con pareja) y a la derecha Ventas (sin empleados).
+Con las tablas `ESTUDIANTE` y `CARRERA`. Lo **azul** es lo que devuelve cada consulta: a la izquierda Eva (sin carrera), en el centro Ana y Luis (con pareja) y a la derecha Derecho (sin estudiantes).
 
-![Siete diagramas de Venn con EMP a la izquierda y DPTO a la derecha. INNER JOIN: solo el centro. LEFT JOIN: todo EMP. RIGHT JOIN: todo DPTO. FULL JOIN: todo. Sin pareja: LEFT JOIN con IS NULL, solo Eva; RIGHT JOIN con IS NULL, solo Ventas; FULL JOIN con IS NULL, Eva y Ventas](../../assets/joins-venn.svg)
+![Siete diagramas de Venn con ESTUDIANTE a la izquierda y CARRERA a la derecha. INNER JOIN: solo el centro. LEFT JOIN: todo ESTUDIANTE. RIGHT JOIN: todo CARRERA. FULL JOIN: todo. Sin pareja: LEFT JOIN con IS NULL, solo Eva; RIGHT JOIN con IS NULL, solo Derecho; FULL JOIN con IS NULL, Eva y Derecho](../../assets/joins-venn.svg)
 
 - Los cuatro primeros son los tipos de JOIN; los marcados **sin pareja** agregan un `IS NULL` para dejar solo esas filas
 - `CROSS JOIN` no se puede dibujar así: combina todo con todo, sin condición
 
-> **Cuidado:** el dibujo muestra **qué filas sobreviven**, pero un JOIN **no** es una intersección de conjuntos. Las filas de `EMP` y `DPTO` son distintas: se **combinan** en una más ancha, y una fila puede salir **varias veces** si tiene varias parejas. La intersección real en SQL es `INTERSECT`.
+> **Cuidado:** el dibujo muestra **qué filas sobreviven**, pero un JOIN **no** es una intersección de conjuntos. Las filas de `ESTUDIANTE` y `CARRERA` son distintas: se **combinan** en una más ancha, y una fila puede salir **varias veces** si tiene varias parejas. La intersección real en SQL es `INTERSECT`.
 
 ### ON y WHERE no son lo mismo
 
